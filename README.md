@@ -4,26 +4,20 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* School Management System for Lilongwe Private School
+* Version 2.0
+
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* You need PHP 5.0 and above, Mysql DB and PHP server
 
 ### Contribution guidelines ###
 
-* Writing tests
-* Code review
-* Other guidelines
+* Developed by Blena Chisenga (Founder of Virtual Tech Malawi)
+
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* Blena Chisenga - +265886449677 email: info@virtualtechmalawi.com
+* blena@virtualtechmalawi.com
