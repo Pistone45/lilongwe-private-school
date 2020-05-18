@@ -1,17 +1,41 @@
 <?php
 include_once("functions/functions.php");
 
-if(isset($_POST['submit'])){
-	$class_id = $_POST['level'];		
+if(isset($_POST['upload'])){
+	$subjects_id = $_POST['subjects_id'];
+  $staff_id = $_SESSION['user']['username'];
+  $title = $_POST['title'];
+  $due_date = $_POST['due_date'];
+  $title = $_POST['title'];
+  $academic_year = $_POST['academic_year'];
+  $terms_id = $_POST['term'];
 
-	$getSubjectsPerClassAndTeacher = new Staff();
-	$courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
+  $target = "assignments/";
+  $target = $target . basename($_FILES['assignment']['name']);
+  $ok = 1;
+  if (move_uploaded_file($_FILES['assignment']['tmp_name'], $target))
+  {
+
+    $assignment_url= basename($_FILES['assignment']['name']);
+
+    $uploadAssignment = new Staff();
+    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id);
+  }
+  else
+  {
+    echo "Sorry, there was a problem uploading your file.";
+  }
+
+
 }
 
-  $class_id = $_POST['level'];
-  $getSubjectsPerClassAndTeacher = new Staff();
-  $courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
+$status = 1;
+$getCurrentSettings = new settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
 
+
+$getTerm = new Staff();
+$term = $getTerm->getTerm();
 ?>
 <!DOCTYPE html>
 <html>
@@ -55,7 +79,8 @@ if(isset($_POST['submit'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Subject Assignment       
+        Subject Assignment
+       
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -74,33 +99,46 @@ if(isset($_POST['submit'])){
             
            
             <!-- form start -->
-            <form role="form" action="upload-assignment.php" method="POST">
-			
+            <form action="upload-assignment" enctype="multipart/form-data" method="post">
+			     <?php
+                            if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully uploaded an Assignment";
+                                unset($_SESSION["uploaded"]);
+                                echo "</div>";
+                 header('Refresh: 5; URL= view-assignments.php');
+                            }
+              ?>
               <div class="box-body">
-			  <input type="hidden" value="<?php if(isset($class_id)){echo $class_id;}  ?>" name="level" />
-			     <div class="form-group">
-                  <label>Select Subject Assignment </label>
-                  <select name="subjects_id" class="form-control">
-					<?php
-						if(isset($courses) && count($courses)>0){
-							foreach($courses as $course){ ?>
-								<option value="<?php echo $course['subjects_id']; ?>"><?php echo $course['subject_name']; ?></option>
-							<?php
-								
-							}
-						}
-					?>
-				
-                  </select>
-                </div>
+			   
+                      <div class="form-group">
+              <label for="exampleInputEmail1">Assignments Title</label>
+              <input type="text" name="title" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Title">
+            </div>
+
+              <div class="form-group">
+                <label for="exampleFormControlFile1">Assignment</label>
+                <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
+              </div>
+
+              <div class="form-group">
+              <label for="exampleInputEmail1">Due Date</label>
+              <input type="date" name="due_date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+              <small id="emailHelp" class="form-text text-muted">Select the due date</small>
+            </div>
+
+            <input type="text" hidden="" value="<?php echo $_POST['subjects_id']; ?>" name="subjects_id">
+            <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
+            <input type="text" hidden="" value="<?php echo $term['id']; ?>" name="term">
 				
 			
-				
               </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" name="upload" class="btn btn-primary">Upload</button>
               </div>
             </form>
           </div>

@@ -31,7 +31,7 @@ class Settings{
 		}
 	}
 	
-	public function getCurrentSettings(){
+	public function getCurrentSettings($status){
 		$getCurrentSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE status=?");
 		$getCurrentSettings->bindParam(1,$status);
 		$getCurrentSettings->execute();
@@ -1022,6 +1022,60 @@ class Staff{
 		}
 		
 	}
+
+
+	public function getSubjectsPerClassAndTeacher($class_id){
+		$getSubjectsPerClassAndTeacher = $this->dbCon->Prepare("SELECT subjects_id as subjects_id, subjects.name as subject_name FROM sub_classes_has_subjects INNER JOIN subjects ON (sub_classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes_id = '$class_id'");
+		$getSubjectsPerClassAndTeacher->execute();
+		
+		if($getSubjectsPerClassAndTeacher->rowCount()>0){
+			$row = $getSubjectsPerClassAndTeacher->fetchAll();
+			return $row;
+		}
+	} //end of getting subjects
+
+
+	public function getAssignments(){
+		$staff_id = $_SESSION['user']['username'];
+		$getAssignments = $this->dbCon->Prepare("SELECT id, title, due_date, subjects_id, assignment_url, academic_year FROM assignments WHERE staff_id = '$staff_id'");
+		$getAssignments->execute();
+		
+		if($getAssignments->rowCount()>0){
+			$row = $getAssignments->fetchAll();
+			return $row;
+		}
+	} //end of getting subjects
+
+
+	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id){
+				$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id)
+				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id)" );
+				$uploadAssignment->execute(array(
+						  ':title'=>($title),
+						  ':assignment_url'=>($assignment_url),
+						  ':due_date'=>($due_date),
+						  ':academic_year'=>($academic_year),
+						  ':terms_id'=>($terms_id),
+						  ':staff_id'=>($staff_id),
+						  ':subjects_id'=>($subjects_id)					  
+						  ));
+						  
+						  $_SESSION['uploaded']=true;
+		
+	}
+
+
+
+	public function getTerm(){
+		$getTerm = $this->dbCon->Prepare("SELECT id, name FROM terms");
+		$getTerm->execute();
+		
+		if($getTerm->rowCount()>0){
+			$row = $getTerm->fetch();
+			return $row;
+		}
+	} //end of getting subjects
+
 
 }
 
