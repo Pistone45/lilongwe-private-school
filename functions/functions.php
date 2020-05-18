@@ -12,7 +12,7 @@ if(file_exists("connection/connection.php")){
 
 date_default_timezone_set("Africa/Harare");
 
-class Setttings{
+class Settings{
 	private $dbCon;
 
 //private $username;
@@ -32,7 +32,7 @@ class Setttings{
 	}
 	
 	public function getCurrentSettings(){
-		$getCurrentSettings = $this->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE status=?");
+		$getCurrentSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE status=?");
 		$getCurrentSettings->bindParam(1,$status);
 		$getCurrentSettings->execute();
 		
@@ -588,6 +588,151 @@ class Subjects{
 
 }
 
+class Exams{
+	private $dbCon;
+
+//private $username;
+
+	public function __construct(){
+
+		try{
+
+		$this->dbCon = new Connection();
+
+		$this->dbCon = $this->dbCon->dbConnection();
+		$this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		} catch (PDOException $e){
+			echo "Lost connection to the database";
+		}
+	}
+
+	public function registerExams($specialisation,$generic,$elective, $period){
+		$year = DATE('Y');
+		if(isset($generic) && count($generic)>0){			
+			foreach($generic as $ge){
+				//get examiners id
+				$id = $ge;
+				$getExaminerID = new Examiner();
+				$examiner = $getExaminerID->getExaminerID($id);
+				
+				$registerExams =$this->dbCon->PREPARE("INSERT INTO grades (period,academic_year,course_code,student_id,examiners_id) VALUES(:period,:academic_year,:course_code,:student_id,:examiners_id)");
+				$registerExams->execute(array(':period'=>($period),
+									':academic_year'=>($year),
+									':course_code'=>($ge),
+									':student_id'=>($_SESSION['user']['username']),
+									':examiners_id'=>($examiner['examiners_id'])						
+									));
+			}
+		}
+		
+		if(isset($specialisation) && count($specialisation)>0){			
+			foreach($specialisation as $sp){
+				$registerExams =$this->dbCon->PREPARE("INSERT INTO grades (period,academic_year,course_code,student_id) VALUES(:period,:academic_year,:course_code,:student_id)");
+				$registerExams->execute(array(':period'=>($period),
+									':academic_year'=>($year),
+									':course_code'=>($sp),
+									':student_id'=>($_SESSION['user']['username'])));
+			}
+		}
+		
+		if(isset($elective) && count($elective)>0){			
+			foreach($elective as $el){
+				$registerExams =$this->dbCon->PREPARE("INSERT INTO grades (period,academic_year,course_code,student_id) VALUES(:period,:academic_year,:course_code,:student_id)");
+				$registerExams->execute(array(':period'=>($period),
+									':academic_year'=>($year),
+									':course_code'=>($el),
+									':student_id'=>($_SESSION['user']['username'])));
+			}
+		}
+		
+	
+		
+		$_SESSION["exams-registered"] = true;
+		
+	} //end of registering Exams
+	
+	
+	public function getRegisteredExams(){
+		$getRegisteredExams = $this->dbCon->Prepare("SELECT academic_year,period,grades.course_code, courses.course_title FROM grades INNER JOIN courses ON (courses.course_code = grades.course_code) WHERE student_id=?");
+		$getRegisteredExams->bindParam(1,$_SESSION['user']['username']);
+		$getRegisteredExams->execute();
+		
+		if($getRegisteredExams->rowCount()>0){
+			$row = $getRegisteredExams->fetchAll();
+			return $row;
+		}
+	} //end of getting guardians
+	
+	public function getStudentsRegisteredPerECourse($course_code){
+		$getStudentsRegisteredPerECourse = $this->dbCon->PREPARE("SELECT course_code, grades.student_id as student_id, student_no FROM grades 
+		INNER JOIN student ON (grades.student_id=student.student_id) WHERE course_code=? AND examiners_id=?");
+		$getStudentsRegisteredPerECourse->bindParam(1,$course_code);
+		$getStudentsRegisteredPerECourse->bindParam(2,$_SESSION['user']['username']);
+		$getStudentsRegisteredPerECourse->execute();
+		
+		if($getStudentsRegisteredPerECourse->rowCount()>0){
+			$rows = $getStudentsRegisteredPerECourse->fetchAll();
+			
+			return $rows;
+		}
+		
+	}
+	
+	public function getStudentsPerRegisteredExamsPerLevelPerAcademicYearPerExaminer($course_code,$level,$academic_year,$period){
+		
+		$getStudentsRegisteredPerECourse = $this->dbCon->PREPARE("SELECT course_code, grades.student_id as student_id, student_no FROM grades 
+		INNER JOIN student ON (grades.student_id=student.student_id) WHERE course_code=? AND examiners_id=? AND academic_year=? AND period=?");
+		$getStudentsRegisteredPerECourse->bindParam(1,$course_code);
+		$getStudentsRegisteredPerECourse->bindParam(2,$_SESSION['user']['username']);
+		$getStudentsRegisteredPerECourse->bindParam(3,$academic_year);
+		$getStudentsRegisteredPerECourse->bindParam(4,$period);
+		$getStudentsRegisteredPerECourse->execute();
+		
+		if($getStudentsRegisteredPerECourse->rowCount()>0){
+			//echo 'dd'; die();
+			$rows = $getStudentsRegisteredPerECourse->fetchAll();
+			//var_dump($rows); die();
+			return $rows;
+		}
+		
+	}
+	
+	public function getExamResults($status){
+		$getExamResults = $this->dbCon->PREPARE("SELECT student_id,course_code,academic_year,period,marks,status,examiners_id FROM grades WHERE status !=?");
+		$getExamResults->bindParam(1,$status);
+		$getExamResults->execute();
+		
+		if($getExamResults->rowCount()>0){
+			$rows = $getExamResults->fetchAll();
+			
+			return $rows;
+		}
+		
+	}
+	
+	public function addMarks($level,$course_code,$student_no,$marks,$status){
+		if(isset($marks) && count($marks)>0){
+			foreach($marks as $mark){
+				foreach($student_no as $stud_id){					
+					$addMarks =$this->dbCon->PREPARE("UPDATE grades SET marks=?,status=? WHERE student_id=? AND course_code=?");
+					$addMarks->bindParam(1,$mark);
+					$addMarks->bindParam(2,$status);
+					$addMarks->bindParam(3,$stud_id);
+					$addMarks->bindParam(4,$course_code);
+					$addMarks->execute();
+				}
+				
+			}
+			
+		}
+		
+		
+		$_SESSION["marks-added"] = true;
+	}
+
+}
+
 
 
 class Guardian{
@@ -863,6 +1008,20 @@ class Staff{
 		
 	}
 	
+	public function getClassesPerTeacher(){
+		$getClassesPerTeacher = $this->dbCon->PREPARE(" SELECT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
+		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
+		$getClassesPerTeacher->bindParam(1,$_SESSION['user']['username']);
+		$getClassesPerTeacher->execute();
+		
+		if($getClassesPerTeacher->rowCount()>0){
+			$rows = $getClassesPerTeacher->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
 
 }
 

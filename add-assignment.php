@@ -2,13 +2,17 @@
 include_once("functions/functions.php");
 
 if(isset($_POST['submit'])){
-	$class_id = $_POST['level'];		
-
-	$getSubjectsPerClass = new Subjects();
-	$courses = $getSubjectsPerClass->getSubjectsPerClass($class_id);
+	$specialisation = $_POST['specialisation'];
+	$generic = $_POST['generic'];
+	$elective = $_POST['elective'];
+	$period = $_POST['month'];
+	
+	$registerExams = new Exams();
+	$registerExams->registerExams($specialisation,$generic,$elective, $period);
 }
 
-
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
 
 ?>
 <!DOCTYPE html>
@@ -16,7 +20,7 @@ if(isset($_POST['submit'])){
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Subject | Lilongwe Private School</title>
+  <title>Select | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -53,12 +57,12 @@ if(isset($_POST['submit'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Exam Subject
+        Class Level
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Exam Subject</a></li>
+        <li class="active"><a href="select-level.php">Course Level</a></li>
        
       </ol>
     </section>
@@ -73,17 +77,16 @@ if(isset($_POST['submit'])){
             
            
             <!-- form start -->
-            <form role="form" action="record-results.php" method="POST">
+            <form role="form" action="select-subject-assignment.php" method="POST">
 			
               <div class="box-body">
-			  <input type="hidden" value="<?php if(isset($class_id)){echo $class_id;}  ?>" name="level" />
 			     <div class="form-group">
-                  <label>Select Course </label>
-                  <select name="course" class="form-control">
+                  <label>Select Level </label>
+                  <select name="level" class="form-control">
 					<?php
-						if(isset($courses) && count($courses)>0){
-							foreach($courses as $course){ ?>
-								<option value="<?php echo $course['subjects_id']; ?>"><?php echo $course['subject']; ?></option>
+						if(isset($levels) && count($levels)>0){
+							foreach($levels as $level){ ?>
+								<option value="<?php echo $level['class_id']; ?>"><?php echo $level['class_name']; ?></option>
 							<?php
 								
 							}
@@ -92,8 +95,6 @@ if(isset($_POST['submit'])){
 				
                   </select>
                 </div>
-				
-			
 				
               </div>
               <!-- /.box-body -->

@@ -4,8 +4,8 @@ include_once("functions/functions.php");
 if(isset($_POST['submit'])){
 	$class_id = $_POST['level'];		
 
-	$getSubjectsPerClass = new Subjects();
-	$courses = $getSubjectsPerClass->getSubjectsPerClass($class_id);
+	$getSubjectsPerClassAndTeacher = new Subjects();
+	$courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
 }
 
 
