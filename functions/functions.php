@@ -1037,7 +1037,7 @@ class Staff{
 
 	public function getAssignments(){
 		$staff_id = $_SESSION['user']['username'];
-		$getAssignments = $this->dbCon->Prepare("SELECT id, title, due_date, subjects_id, assignment_url, academic_year FROM assignments WHERE staff_id = '$staff_id'");
+		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE staff_id = '$staff_id'");
 		$getAssignments->execute();
 		
 		if($getAssignments->rowCount()>0){
@@ -1064,6 +1064,29 @@ class Staff{
 		
 	}
 
+
+
+	public function deleteAssignment($id, $assignment_url){
+
+		unlink($assignment_url);
+		$deleteAssignment =$this->dbCon->PREPARE("DELETE FROM assignments WHERE id='$id'");
+		$deleteAssignment->bindParam(1,$id);
+		$deleteAssignment->execute();
+		
+	}
+
+
+	public function getSpecificAssignment($id){
+		$getSpecificAssignment = $this->dbCon->Prepare("SELECT assignment_url
+		FROM assignments WHERE id=?");
+		$getSpecificAssignment->bindParam(1,$id);
+		$getSpecificAssignment->execute();
+		
+		if($getSpecificAssignment->rowCount()>0){
+			$row = $getSpecificAssignment->fetch();
+			return $row;
+		}
+	} //end of getting teacher details
 
 
 	public function getTerm(){

@@ -8,7 +8,6 @@ $getAssignments = new Staff();
 $assignments = $getAssignments->getAssignments();
 
 
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -82,6 +81,7 @@ $assignments = $getAssignments->getAssignments();
                   <th>Academic Year</th>
                   <th>Subject</th>
                   <th>Action</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -92,8 +92,9 @@ $assignments = $getAssignments->getAssignments();
                   <td><?php echo $assignment['title']; ?></td>
                   <td><?php echo $assignment['due_date']; ?></td>
                   <td><?php echo $assignment['academic_year']; ?></td>
-				  <td><?php echo $assignment['subjects_id']; ?> </td>
+				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+          <td><a href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
                 </tr>
 					<?php
 						
@@ -108,6 +109,7 @@ $assignments = $getAssignments->getAssignments();
                   <th>Due Date</th>
                   <th>Academic Year</th>
                   <th>Subject</th>
+                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
