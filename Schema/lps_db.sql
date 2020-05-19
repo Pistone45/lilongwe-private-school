@@ -1,6 +1,6 @@
 -- MariaDB dump 10.17  Distrib 10.4.10-MariaDB, for Win64 (AMD64)
 --
--- Host: 127.0.0.1    Database: lilongwe_private
+-- Host: localhost    Database: lilongwe_private
 -- ------------------------------------------------------
 -- Server version	10.4.10-MariaDB
 
@@ -38,7 +38,7 @@ CREATE TABLE `assignments` (
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,6 +47,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
+INSERT INTO `assignments` VALUES (18,'Introduction to Hardware','VIRTUAL TECH.pdf','2020-05-08',2020,1,'0212463690',1),(19,'this is a title','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-05-15',2020,1,'0212463690',1),(22,'Pie charts','CURRICULUM VITAE.docx','2020-05-06',2020,1,'0212463690',3),(23,'Repairing Computers','CURRICULUM VITAE.docx','2020-05-27',2020,1,'0212463690',10);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -459,7 +460,7 @@ CREATE TABLE `settings` (
   `fees` decimal(50,2) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -468,6 +469,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES (1,2020,3,140000.00,1);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -691,6 +693,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
+INSERT INTO `sub_classes_has_assignments` VALUES (1,18),(1,19),(2,22),(5,23);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -721,7 +724,7 @@ CREATE TABLE `sub_classes_has_subjects` (
 
 LOCK TABLES `sub_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(5,10,'0212463690'),(7,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
+INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(1,3,'0212463690'),(5,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
 /*!40000 ALTER TABLE `sub_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -799,6 +802,7 @@ CREATE TABLE `terms` (
 
 LOCK TABLES `terms` WRITE;
 /*!40000 ALTER TABLE `terms` DISABLE KEYS */;
+INSERT INTO `terms` VALUES (1,'Term 1');
 /*!40000 ALTER TABLE `terms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -856,7 +860,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','admin','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -869,4 +873,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-18 13:37:30
+-- Dump completed on 2020-05-19 23:58:00

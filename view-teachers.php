@@ -96,7 +96,7 @@ $teachers = $getTeachers->getTeachers();
                   <td> <?php echo $teacher['lastname']; ?></td>
                   <td><?php echo $teacher['phone']; ?></td>
 				  <td><?php echo $teacher['email']; ?> </td>
-				  <td><a href="select-teacher-class.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Assin Subjects</a></td>
+				  <td><a href="select-teacher-class.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Assign Subjects</a></td>
                 </tr>
 					<?php
 						

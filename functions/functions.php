@@ -477,9 +477,9 @@ class Students{
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name 
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name, classes.name as class_name
 	FROM assignments INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
-	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
 		
@@ -981,9 +981,9 @@ class Staff{
 
 
 
-	public function getTeacherSublassID($staff_id){
+	public function getTeacherSublassID(){
 		$getTeacherSublassID = $this->dbCon->PREPARE("SELECT sub_classes_id FROM sub_classes_has_subjects WHERE staff_id=?");
-		$getTeacherSublassID->bindParam(1,$staff_id);
+		$getTeacherSublassID->bindParam(1,$_SESSION['user']['username']);
 		$getTeacherSublassID->execute();
 		
 		if($getTeacherSublassID->rowCount()>0){
@@ -1101,7 +1101,7 @@ class Staff{
 	} //end of getting subjects per class and Student
 
 	public function getAssignments(){		
-		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id as terms_id, terms.name as term_name, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN terms ON (assignments.terms_id=terms.id) WHERE staff_id =?");
+		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id as terms_id, terms.name as term_name, assignment_url, academic_year, subjects.name as subject_name, classes.name as class_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN terms ON (assignments.terms_id=terms.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE staff_id =?");
 		$getAssignments->bindParam(1,$_SESSION['user']['username']);
 		$getAssignments->execute();
 		
@@ -1128,7 +1128,7 @@ public function getAssignmentID($sub_class_id){
 
 
 
-	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id, $sub_classes_id){
+	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id){
 				$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id)
 				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id)" );
 				$uploadAssignment->execute(array(
@@ -1140,15 +1140,15 @@ public function getAssignmentID($sub_class_id){
 						  ':staff_id'=>($staff_id),
 						  ':subjects_id'=>($subjects_id)					  
 						  ));
-				$assignments_id = $this->dbCon->lastInsertId();
+				//$assignments_id = $this->dbCon->lastInsertId();
 
 
-				$SubclassesHasAssignments = $this->dbCon->prepare("INSERT INTO sub_classes_has_assignments (sub_classes_id, assignments_id)
-				VALUES (:sub_classes_id, :assignments_id)" );
-				$SubclassesHasAssignments->execute(array(
-						  ':sub_classes_id'=>($sub_classes_id),
-						  ':assignments_id'=>($assignments_id)					  
-						  ));
+				//$SubclassesHasAssignments = $this->dbCon->prepare("INSERT INTO sub_classes_has_assignments (sub_classes_id, assignments_id)
+				//VALUES (:sub_classes_id, :assignments_id)" );
+				//$SubclassesHasAssignments->execute(array(
+				//		  ':sub_classes_id'=>($sub_classes_id),
+				//		  ':assignments_id'=>($assignments_id)					  
+				//		  ));
 						  
 						  $_SESSION['uploaded']=true;
 		

@@ -28,10 +28,6 @@ $status = 1;
 $getCurrentSettings = new settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
-$staff_id = $_SESSION['user']['username'];
-$getTeacherSublassID = new Staff();
-$subclass = $getTeacherSublassID->getTeacherSublassID($staff_id);
-
 $getTerm = new Staff();
 $term = $getTerm->getTerm();
 ?>
@@ -115,11 +111,6 @@ $term = $getTerm->getTerm();
                 <label for="exampleFormControlFile1">Assignment</label>
                 <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
               </div>
-
-            <input type="text" hidden="" value="<?php echo $_POST['subjects_id']; ?>" name="subjects_id">
-            <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-            <input type="text" hidden="" value="<?php echo $term['id']; ?>" name="term">
-            <input type="text" hidden="" value="<?php echo $subclass['sub_classes_id']; ?>" name="sub_classes_id">
 				
 			
               </div>

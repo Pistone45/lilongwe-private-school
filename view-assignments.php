@@ -76,6 +76,7 @@ $assignments = $getAssignments->getAssignments();
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
+                  <th>Class</th>
                   <th>Title</th>
                   <th>Due Date</th>
                   <th>Academic Year</th>
@@ -90,6 +91,7 @@ $assignments = $getAssignments->getAssignments();
 				if(isset($assignments) && count($assignments)>0){
 					foreach($assignments as $assignment){ ?>
 					<tr>
+                  <td><?php echo $assignment['class_name']; ?></td>
                   <td><?php echo $assignment['title']; ?></td>
                   <td><?php echo $assignment['due_date']; ?></td>
                   <td><?php echo $assignment['academic_year']; ?></td>
@@ -107,6 +109,7 @@ $assignments = $getAssignments->getAssignments();
                 </tbody>
                 <tfoot>
                 <tr>
+                  <th>Class</th>
                   <th>Title</th>
                   <th>Due Date</th>
                   <th>Academic Year</th>

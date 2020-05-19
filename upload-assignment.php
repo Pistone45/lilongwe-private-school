@@ -20,7 +20,7 @@ if(isset($_POST['upload'])){
     $assignment_url= basename($_FILES['assignment']['name']);
 
     $uploadAssignment = new Staff();
-    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id, $sub_classes_id);
+    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id);
   }
   else
   {
@@ -34,9 +34,8 @@ $status = 1;
 $getCurrentSettings = new settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
-$staff_id = $_SESSION['user']['username'];
 $getTeacherSublassID = new Staff();
-$subclass = $getTeacherSublassID->getTeacherSublassID($staff_id);
+$subclass = $getTeacherSublassID->getTeacherSublassID();
 
 $getTerm = new Staff();
 $term = $getTerm->getTerm();
@@ -133,10 +132,10 @@ $term = $getTerm->getTerm();
               <small id="emailHelp" class="form-text text-muted">Select the due date</small>
             </div>
 
-            <input type="text" hidden="" value="<?php echo isset($_POST['subjects_id']) ?>" name="subjects_id">
+            <input type="text" hidden="" value="<?php if(isset($_POST['subjects_id'])) {echo $_POST['subjects_id'];}?>" name="subjects_id">
             <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
             <input type="text" hidden="" value="<?php echo $term['id']; ?>" name="term">
-            <input type="text" hidden="" value="<?php echo isset($_POST['sub_class_id']) ?>" name="sub_classes_id">
+            <input type="text" hidden="" value="<?php if(isset($_POST['sub_class_id'])) echo $_POST['sub_class_id']; ?>" name="sub_classes_id">
 				
 			
               </div>

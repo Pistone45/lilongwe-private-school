@@ -60,9 +60,7 @@ $students = $getStudents->getStudents();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assignments
-        <?php echo $details['sub_class_id'];?>
-       
+        Assignments       
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -89,6 +87,7 @@ $students = $getStudents->getStudents();
                   <th>Term</th>
                   <th>Subject</th>
                   <th>Action</th>
+                  <th>Upload</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,6 +101,7 @@ $students = $getStudents->getStudents();
                   <td><?php echo $assignment['terms_id']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+          <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Upload</a></td>
                 </tr>
 					<?php
 						
@@ -118,6 +118,8 @@ $students = $getStudents->getStudents();
                   <th>Term</th>
                   <th>Subject</th>
                   <th>Action</th>
+                  <th>Upload</th>
+
                 </tr>
                 </tfoot>
               </table>
