@@ -4,8 +4,19 @@ include_once("functions/functions.php");
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
-$getAssignments = new Staff();
-$assignments = $getAssignments->getAssignments();
+  $id = $_SESSION['user']['username'];
+  $getSpecificStudent = new Students();
+  $details = $getSpecificStudent->getSpecificStudent($id);
+  $sub_class_id = $details['sub_class_id'];
+
+  //$getAssignmentID = new Staff();
+  //$assignment = $getAssignmentID->getAssignmentID($sub_class_id);
+
+ // $assignments_id = $assignment['assignments_id'];
+
+
+$getStudentAssignment = new Staff();
+$assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
 
 
 ?>
@@ -55,6 +66,7 @@ $assignments = $getAssignments->getAssignments();
     <section class="content-header">
       <h1>
         Assignments
+        <?php echo $details['sub_class_id'];?>
        
       </h1>
       <ol class="breadcrumb">
@@ -82,7 +94,6 @@ $assignments = $getAssignments->getAssignments();
                   <th>Term</th>
                   <th>Subject</th>
                   <th>Action</th>
-                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -93,10 +104,9 @@ $assignments = $getAssignments->getAssignments();
                   <td><?php echo $assignment['title']; ?></td>
                   <td><?php echo $assignment['due_date']; ?></td>
                   <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['term_name']; ?></td>
+                  <td><?php echo $assignment['terms_id']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
                 </tr>
 					<?php
 						
@@ -112,7 +122,6 @@ $assignments = $getAssignments->getAssignments();
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Subject</th>
-                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>

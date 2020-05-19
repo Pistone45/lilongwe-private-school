@@ -1,11 +1,12 @@
 <?php
 include_once("functions/functions.php");
 
-$getStudents = new Students();
-$students = $getStudents->getStudents();
+if(isset($_POST['submit'])){
+	$class_id = $_POST['level'];		
 
-$getAssignments = new Staff();
-$assignments = $getAssignments->getAssignments();
+	$getSubjectsPerClassAndStudent = new Staff();
+	$courses = $getSubjectsPerClassAndStudent->getSubjectsPerClassAndStudent($class_id);
+}
 
 
 ?>
@@ -14,7 +15,7 @@ $assignments = $getAssignments->getAssignments();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Assignments | Lilongwe Private School</title>
+  <title>Select Subject Assignment| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -23,8 +24,6 @@ $assignments = $getAssignments->getAssignments();
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -39,8 +38,7 @@ $assignments = $getAssignments->getAssignments();
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -48,18 +46,17 @@ $assignments = $getAssignments->getAssignments();
     <?php include_once("header.html"); ?>
   <!-- Left side column. contains the logo and sidebar -->
    <?php include_once('sidebar.html'); ?>
-   
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assignments
-       
+        Subject Assignment       
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-assignments.php">Assignments</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Subject Assignment</a></li>
        
       </ol>
     </section>
@@ -67,70 +64,60 @@ $assignments = $getAssignments->getAssignments();
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
+        <!-- left column -->
+        <div class="col-md-6">
+          <!-- general form elements -->
+          <div class="box box-primary">
             
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-				<?php
-				if(isset($assignments) && count($assignments)>0){
-					foreach($assignments as $assignment){ ?>
-					<tr>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php echo $assignment['due_date']; ?></td>
-                  <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['term_name']; ?></td>
-				  <td><?php echo $assignment['subject_name']; ?> </td>
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
-                </tr>
+           
+            <!-- form start -->
+            <form role="form" action="upload-student-assignment.php" method="POST">
+			
+              <div class="box-body">
+			  <input type="hidden" value="<?php if(isset($class_id)){echo $class_id;}  ?>" name="level" />
+			     <div class="form-group">
+                  <label>Select Subject Assignment </label>
+                  <select name="subjects_id" class="form-control">
 					<?php
-						
-					}
-				}
-				?>
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table>
-            </div>
-            <!-- /.box-body -->
+						if(isset($courses) && count($courses)>0){
+							foreach($courses as $course){ ?>
+								<option value="<?php echo $course['subjects_id']; ?>"><?php echo $course['subject_name']; ?></option>
+							<?php
+								
+							}
+						}
+					?>
+				
+                  </select>
+                </div>
+				
+				
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
+
+        
+
         </div>
-        <!-- /.col -->
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
-
+  <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -332,30 +319,11 @@ $assignments = $getAssignments->getAssignments();
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

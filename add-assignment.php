@@ -2,13 +2,13 @@
 include_once("functions/functions.php");
 
 if(isset($_POST['submit'])){
-	$specialisation = $_POST['specialisation'];
-	$generic = $_POST['generic'];
-	$elective = $_POST['elective'];
-	$period = $_POST['month'];
-	
-	$registerExams = new Exams();
-	$registerExams->registerExams($specialisation,$generic,$elective, $period);
+  $specialisation = $_POST['specialisation'];
+  $generic = $_POST['generic'];
+  $elective = $_POST['elective'];
+  $period = $_POST['month'];
+  
+  $registerExams = new Exams();
+  $registerExams->registerExams($specialisation,$generic,$elective, $period);
 }
 
 $getClassesPerTeacher = new Staff();
@@ -78,24 +78,24 @@ $levels = $getClassesPerTeacher->getClassesPerTeacher();
            
             <!-- form start -->
             <form role="form" action="select-subject-assignment.php" method="POST">
-			
+      
               <div class="box-body">
-			     <div class="form-group">
+           <div class="form-group">
                   <label>Select Level </label>
                   <select name="level" class="form-control">
-					<?php
-						if(isset($levels) && count($levels)>0){
-							foreach($levels as $level){ ?>
-								<option value="<?php echo $level['class_id']; ?>"><?php echo $level['class_name']; ?></option>
-							<?php
-								
-							}
-						}
-					?>
-				
+          <?php
+            if(isset($levels) && count($levels)>0){
+              foreach($levels as $level){ ?>
+                <option value="<?php echo $level['class_id']; ?>"><?php echo $level['class_name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        
                   </select>
                 </div>
-				
+        
               </div>
               <!-- /.box-body -->
 
