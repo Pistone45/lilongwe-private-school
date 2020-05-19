@@ -1025,7 +1025,7 @@ class Staff{
 	
 	public function getClassesPerTeacher(){
 		$getClassesPerTeacher = $this->dbCon->PREPARE("SELECT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
-		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE sub_classes_id=?");
+		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
 		$getClassesPerTeacher->bindParam(1,$_SESSION['user']['username']);
 		$getClassesPerTeacher->execute();
 		
@@ -1108,7 +1108,7 @@ public function getAssignmentID($sub_class_id){
 
 public function getStudentAssignment($sub_class_id){
 
-		$getStudentAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
 		

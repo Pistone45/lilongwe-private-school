@@ -133,10 +133,10 @@ $term = $getTerm->getTerm();
               <small id="emailHelp" class="form-text text-muted">Select the due date</small>
             </div>
 
-            <input type="text" hidden="" value="<?php echo $_POST['subjects_id']; ?>" name="subjects_id">
+            <input type="text" hidden="" value="<?php echo isset($_POST['subjects_id']) ?>" name="subjects_id">
             <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
             <input type="text" hidden="" value="<?php echo $term['id']; ?>" name="term">
-            <input type="text" hidden="" value="<?php echo $subclass['sub_classes_id']; ?>" name="sub_classes_id">
+            <input type="text" hidden="" value="<?php echo isset($_POST['sub_class_id']) ?>" name="sub_classes_id">
 				
 			
               </div>

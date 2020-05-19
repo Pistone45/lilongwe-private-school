@@ -91,7 +91,7 @@ if(isset($_POST['submit'])){
                   </select>
                 </div>
 				
-			
+			<input type="text" hidden="" value="<?php echo isset($class_id = $_POST['level']) ?>" name="sub_class_id">
 				
               </div>
               <!-- /.box-body -->
