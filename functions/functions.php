@@ -1025,26 +1025,28 @@ class Staff{
 
 
 	public function getSubjectsPerClassAndTeacher($class_id){
-		$getSubjectsPerClassAndTeacher = $this->dbCon->Prepare("SELECT subjects_id as subjects_id, subjects.name as subject_name FROM sub_classes_has_subjects INNER JOIN subjects ON (sub_classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes_id = '$class_id'");
+		$getSubjectsPerClassAndTeacher = $this->dbCon->Prepare("SELECT subjects_id as subjects_id, subjects.name as subject_name FROM sub_classes_has_subjects INNER JOIN subjects ON (sub_classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes_id =? AND staff_id=?");
+		$getSubjectsPerClassAndTeacher->bindParam(1,$class_id);
+		$getSubjectsPerClassAndTeacher->bindParam(2,$_SESSION['user']['username']);
 		$getSubjectsPerClassAndTeacher->execute();
 		
 		if($getSubjectsPerClassAndTeacher->rowCount()>0){
-			$row = $getSubjectsPerClassAndTeacher->fetchAll();
-			return $row;
+			$rows = $getSubjectsPerClassAndTeacher->fetchAll();
+			return $rows;
 		}
-	} //end of getting subjects
+	} //end of getting subjects per class and teacher
 
 
-	public function getAssignments(){
-		$staff_id = $_SESSION['user']['username'];
-		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE staff_id = '$staff_id'");
+	public function getAssignments(){		
+		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE staff_id =?");
+		$getAssignments->bindParam(1,$_SESSION['user']['username']);
 		$getAssignments->execute();
 		
 		if($getAssignments->rowCount()>0){
-			$row = $getAssignments->fetchAll();
-			return $row;
+			$rows = $getAssignments->fetchAll();
+			return $rows;
 		}
-	} //end of getting subjects
+	} //end of getting assignments per teacher
 
 
 	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id){

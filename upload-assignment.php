@@ -7,8 +7,8 @@ if(isset($_POST['upload'])){
   $title = $_POST['title'];
   $due_date = $_POST['due_date'];
   $title = $_POST['title'];
-  $academic_year = $_POST['academic_year'];
-  $terms_id = $_POST['term'];
+  $academic_year = (int)$_POST['academic_year'];
+  $terms_id = (int)$_POST['term'];
 
   $target = "assignments/";
   $target = $target . basename($_FILES['assignment']['name']);

@@ -8,9 +8,6 @@ if(isset($_POST['submit'])){
 	$courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
 }
 
-  $class_id = $_POST['level'];
-  $getSubjectsPerClassAndTeacher = new Staff();
-  $courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
 
 ?>
 <!DOCTYPE html>
