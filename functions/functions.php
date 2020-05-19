@@ -349,7 +349,7 @@ class Students{
 				$getStudentCount->execute();
 				
 				if($getStudentCount->rowCount()>0){
-					echo "ff"; die();
+					//echo "ff"; die();
 					$row = $getStudentCount->fetch();
 					
 					$count = $row['student_count'];
@@ -473,6 +473,25 @@ class Students{
 		$updateStudentCount->bindParam(2,$id);
 		$updateStudentCount->execute();
 	}
+	
+	
+	public function getStudentAssignment($sub_class_id){
+
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name 
+	FROM assignments INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
+		$getStudentAssignment->bindParam(1, $sub_class_id);
+		$getStudentAssignment->execute();
+		
+		if($getStudentAssignment->rowCount()>0){
+			$rows = $getStudentAssignment->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
+
+
+	
+	
 }
 
 class Subjects{
@@ -1105,18 +1124,6 @@ public function getAssignmentID($sub_class_id){
 
 		//$assignments_id = $getAssignmentID['assignments_id'];
 }
-
-public function getStudentAssignment($sub_class_id){
-
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
-		$getStudentAssignment->bindParam(1, $sub_class_id);
-		$getStudentAssignment->execute();
-		
-		if($getStudentAssignment->rowCount()>0){
-			$rows = $getStudentAssignment->fetchAll();
-			return $rows;
-		}
-	} //end of getting assignments per student
 
 
 

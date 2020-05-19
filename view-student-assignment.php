@@ -9,14 +9,9 @@ $students = $getStudents->getStudents();
   $details = $getSpecificStudent->getSpecificStudent($id);
   $sub_class_id = $details['sub_class_id'];
 
-  //$getAssignmentID = new Staff();
-  //$assignment = $getAssignmentID->getAssignmentID($sub_class_id);
 
- // $assignments_id = $assignment['assignments_id'];
-
-
-$getStudentAssignment = new Staff();
-$assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+  $getStudentAssignment = new Students();
+  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
 
 
 ?>
