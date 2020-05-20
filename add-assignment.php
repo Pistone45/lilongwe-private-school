@@ -1,15 +1,6 @@
 <?php
 include_once("functions/functions.php");
 
-if(isset($_POST['submit'])){
-  $specialisation = $_POST['specialisation'];
-  $generic = $_POST['generic'];
-  $elective = $_POST['elective'];
-  $period = $_POST['month'];
-  
-  $registerExams = new Exams();
-  $registerExams->registerExams($specialisation,$generic,$elective, $period);
-}
 
 $getClassesPerTeacher = new Staff();
 $levels = $getClassesPerTeacher->getClassesPerTeacher();
@@ -20,7 +11,7 @@ $levels = $getClassesPerTeacher->getClassesPerTeacher();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select | Lilongwe Private School</title>
+  <title>Select Class| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->

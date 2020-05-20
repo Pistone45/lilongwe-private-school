@@ -1194,7 +1194,7 @@ public function getAssignmentID($sub_class_id){
 
 
 
-	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id){
+	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level){
 				$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id)
 				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id)" );
 				$uploadAssignment->execute(array(
@@ -1203,18 +1203,20 @@ public function getAssignmentID($sub_class_id){
 						  ':due_date'=>($due_date),
 						  ':academic_year'=>($academic_year),
 						  ':terms_id'=>($terms_id),
-						  ':staff_id'=>($staff_id),
+						  ':staff_id'=>($_SESSION['user']['username']),
 						  ':subjects_id'=>($subjects_id)					  
 						  ));
-				//$assignments_id = $this->dbCon->lastInsertId();
+						  
+						  
+				$assignments_id = $this->dbCon->lastInsertId();
 
 
-				//$SubclassesHasAssignments = $this->dbCon->prepare("INSERT INTO sub_classes_has_assignments (sub_classes_id, assignments_id)
-				//VALUES (:sub_classes_id, :assignments_id)" );
-				//$SubclassesHasAssignments->execute(array(
-				//		  ':sub_classes_id'=>($sub_classes_id),
-				//		  ':assignments_id'=>($assignments_id)					  
-				//		  ));
+				$addSubclassesHasAssignments = $this->dbCon->prepare("INSERT INTO sub_classes_has_assignments (sub_classes_id, assignments_id)
+				VALUES (:sub_classes_id, :assignments_id)" );
+				$addSubclassesHasAssignments->execute(array(
+						  ':sub_classes_id'=>($level),
+						  ':assignments_id'=>($assignments_id)					  
+						  ));
 						  
 						  $_SESSION['uploaded']=true;
 		

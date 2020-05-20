@@ -1,15 +1,19 @@
 <?php
 include_once("functions/functions.php");
 
+if(isset($_POST['submit'])){
+	$level = $_POST['level'];
+	
+}
+
 if(isset($_POST['upload'])){
-	$subjects_id = $_POST['subjects_id'];
-  $staff_id = $_SESSION['user']['username'];
+  $subjects_id = $_POST['subjects_id'];
   $title = $_POST['title'];
   $due_date = $_POST['due_date'];
   $title = $_POST['title'];
   $academic_year = (int)$_POST['academic_year'];
   $terms_id = (int)$_POST['term'];
-  $sub_classes_id = $_POST['sub_classes_id'];
+  $level = $_POST['level'];
 
   $target = "assignments/";
   $target = $target . basename($_FILES['assignment']['name']);
@@ -20,7 +24,7 @@ if(isset($_POST['upload'])){
     $assignment_url= basename($_FILES['assignment']['name']);
 
     $uploadAssignment = new Staff();
-    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id, $staff_id, $subjects_id);
+    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level);
   }
   else
   {
@@ -34,11 +38,6 @@ $status = 1;
 $getCurrentSettings = new settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
-$getTeacherSublassID = new Staff();
-$subclass = $getTeacherSublassID->getTeacherSublassID();
-
-$getTerm = new Staff();
-$term = $getTerm->getTerm();
 ?>
 <!DOCTYPE html>
 <html>
@@ -134,8 +133,8 @@ $term = $getTerm->getTerm();
 
             <input type="text" hidden="" value="<?php if(isset($_POST['subjects_id'])) {echo $_POST['subjects_id'];}?>" name="subjects_id">
             <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-            <input type="text" hidden="" value="<?php echo $term['id']; ?>" name="term">
-            <input type="text" hidden="" value="<?php if(isset($_POST['sub_class_id'])) echo $_POST['sub_class_id']; ?>" name="sub_classes_id">
+            <input type="text" hidden="" value="<?php echo $settings['term']; ?>" name="term">
+            <input type="text" hidden="" value="<?php if(isset($level)){ echo $level;} ?>" name="level">
 				
 			
               </div>
