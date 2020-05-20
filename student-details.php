@@ -5,6 +5,9 @@ if(isset($_GET['id'])){
 	
 	$getSpecificStudent = new Students();
 	$details = $getSpecificStudent->getSpecificStudent($id);
+
+  $getLoginStatus = new Students();
+  $loginstatus = $getLoginStatus->getLoginStatus($id);
 }
 
 ?>
@@ -93,7 +96,17 @@ if(isset($_GET['id'])){
 					<a href="approve-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-success btn-block"><b>Edit Student</b></a>
 				</div>
 				<div class="col-lg-6">
-					<a href="reject-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-danger btn-block"><b>Reject Application</b></a>
+<?phP
+if ($loginstatus['user_status_id'] == 0) { ?>
+  <a href="enable-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-success btn-block"><b>Enable</b></a><?php
+
+} else { ?>
+  <a href="disable-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-danger btn-block"><b>Disable</b></a><?php
+
+}
+
+          
+          ?>
 				</div>
 			</div>
               

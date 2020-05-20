@@ -140,7 +140,7 @@ class User{
 						  ':firstname'=>($firstname),
 						  ':middlename'=>($middlename),
 						  ':lastname'=>($lastname),
-						  ':user_status_id'=>($status),
+						  ':user_status_id'=>('1'),
 						  ':roles_role_id'=>($role),
 						  ':date_added'=>($date)
 						  ));		
@@ -335,8 +335,22 @@ class Students{
 			$row = $getSpecificStudent->fetch();
 			return $row;
 		}
-	} //end of getting news
+	} //end of getting Specific Student
 	
+
+
+public function getLoginStatus($id){
+		$getLoginStatus = $this->dbCon->Prepare("SELECT user_status_id FROM users WHERE username=?");
+		$getLoginStatus->bindParam(1,$id);
+		$getLoginStatus->execute();
+		
+		if($getLoginStatus->rowCount()>0){
+			$row = $getLoginStatus->fetch();
+			return $row;
+		}
+	} //end of getting Specific Login Status of Student
+
+
 	//add student
 	public function addStudent($guardian_id,$sub_class,$student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date){
 				//echo 'dd'; die();
@@ -524,6 +538,23 @@ public function uploadStudentAssignment($assignments_id, $submitted_assignment){
 		
 	}
 
+
+public function disableSpecificStudent($id){
+		$status = '0';
+		$disableSpecificStudent = $this->dbCon->PREPARE("UPDATE users SET user_status_id=? WHERE username=?");
+		$disableSpecificStudent->bindParam(1,$status);
+		$disableSpecificStudent->bindParam(2,$id);
+		$disableSpecificStudent->execute();
+	}//End of Disabling a student
+
+
+public function enableSpecificStudent($id){
+		$status = '1';
+		$enableSpecificStudent = $this->dbCon->PREPARE("UPDATE users SET user_status_id=? WHERE username=?");
+		$enableSpecificStudent->bindParam(1,$status);
+		$enableSpecificStudent->bindParam(2,$id);
+		$enableSpecificStudent->execute();
+	}//End of enabling a student
 
 	
 	
