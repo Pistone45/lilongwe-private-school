@@ -87,7 +87,7 @@ $students = $getStudents->getStudents();
                   <th>Term</th>
                   <th>Subject</th>
                   <th>Action</th>
-                  <th>Upload</th>
+                  <th>Uploads</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -96,12 +96,19 @@ $students = $getStudents->getStudents();
 					foreach($assignments as $assignment){ ?>
 					<tr>
                   <td><?php echo $assignment['title']; ?></td>
-                  <td><?php echo $assignment['due_date']; ?></td>
+                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
+                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
+                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
                   <td><?php echo $assignment['academic_year']; ?></td>
                   <td><?php echo $assignment['terms_id']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Upload</a></td>
+          <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
+                    echo "<td>Date Passed</td>";
+                  } else { ?>
+                    <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Uploads</a></td> <?php
+          }
+                   ?>
                 </tr>
 					<?php
 						

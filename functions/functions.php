@@ -490,6 +490,41 @@ class Students{
 	} //end of getting assignments per student
 
 
+
+	public function getUploadedStudentAssignment($assignments_id){
+
+	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, classes.name as class_name
+	FROM submissions INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id)  INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE submissions.assignments_id=?");
+		$getUploadedStudentAssignment->bindParam(1, $assignments_id);
+		$getUploadedStudentAssignment->execute();
+		
+		if($getUploadedStudentAssignment->rowCount()>0){
+			$rows = $getUploadedStudentAssignment->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
+
+
+
+public function uploadStudentAssignment($assignments_id, $submitted_assignment){
+			$date = DATE("Y-m-d h:i");
+				$uploadStudentAssignment = $this->dbCon->prepare("INSERT INTO submissions (assignments_id, students_student_no, submitted_assignment, date_submitted, marks)
+				VALUES ( :assignments_id, :students_student_no, :submitted_assignment, :date_submitted, :marks)" );
+				$uploadStudentAssignment->execute(array(
+						':assignments_id'=>($assignments_id),
+						':students_student_no'=>($_SESSION['user']['username']),
+						':submitted_assignment'=>($submitted_assignment),
+						':date_submitted'=>($date),
+						':marks'=>('0')					  
+						  ));
+				//$assignments_id = $this->dbCon->lastInsertId();
+						  
+						  $_SESSION['uploaded']=true;
+		
+	}
+
+
 	
 	
 }
@@ -1156,35 +1191,16 @@ public function getAssignmentID($sub_class_id){
 
 
 
-	public function uploadStudentAssignment($submitted_assignment, $students_student_no){
-			$date = DATE("Y-m-d h:i");
-				$uploadStudentAssignment = $this->dbCon->prepare("INSERT INTO submissions (submitted_assignment, students_student_no, date_submitted)
-				VALUES (:submitted_assignment, :students_student_no, :date_submitted)" );
-				$uploadStudentAssignment->execute(array(
-						  ':submitted_assignment'=>($submitted_assignment),
-						  ':students_student_no'=>($students_student_no),
-						  ':date_submitted'=>($date)					  
-						  ));
-				$assignments_id = $this->dbCon->lastInsertId();
-
-
-				$SubclassesHasAssignments = $this->dbCon->prepare("INSERT INTO sub_classes_has_assignments (sub_classes_id, assignments_id)
-				VALUES (:sub_classes_id, :assignments_id)" );
-				$SubclassesHasAssignments->execute(array(
-						  ':sub_classes_id'=>($sub_classes_id),
-						  ':assignments_id'=>($assignments_id)					  
-						  ));
-						  
-						  $_SESSION['uploaded']=true;
-		
-	}
-
-
 
 
 	public function deleteAssignment($id, $assignment_url){
 
 		unlink($assignment_url);
+
+		$deleteForeignTable =$this->dbCon->PREPARE("DELETE FROM sub_classes_has_assignments WHERE assignments_id='$id'");
+		$deleteForeignTable->bindParam(1,$id);
+		$deleteForeignTable->execute();
+
 		$deleteAssignment =$this->dbCon->PREPARE("DELETE FROM assignments WHERE id='$id'");
 		$deleteAssignment->bindParam(1,$id);
 		$deleteAssignment->execute();

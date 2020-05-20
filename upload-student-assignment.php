@@ -2,10 +2,9 @@
 include_once("functions/functions.php");
 
 if(isset($_POST['upload'])){
-	$subjects_id = $_POST['subjects_id'];
-  $students_student_no = $_SESSION['user']['username'];
+  $assignments_id = $_POST['assignments_id'];
 
-  $target = "assignments/";
+  $target = "assignments/students/";
   $target = $target . basename($_FILES['assignment']['name']);
   $ok = 1;
   if (move_uploaded_file($_FILES['assignment']['tmp_name'], $target))
@@ -13,8 +12,8 @@ if(isset($_POST['upload'])){
 
     $submitted_assignment= basename($_FILES['assignment']['name']);
 
-    $uploadStudentAssignment = new Staff();
-    $uploadStudentAssignment->uploadStudentAssignment($submitted_assignment, $students_student_no);
+    $uploadStudentAssignment = new Students();
+    $uploadStudentAssignment->uploadStudentAssignment($assignments_id, $submitted_assignment);
   }
   else
   {
@@ -30,6 +29,11 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
 
 $getTerm = new Staff();
 $term = $getTerm->getTerm();
+
+  if (isset($_GET['id'])) {$assignments_id = $_GET['id'];}
+
+  $getUploadedStudentAssignment = new Students();
+  $uploaded = $getUploadedStudentAssignment->getUploadedStudentAssignment($assignments_id);
 ?>
 <!DOCTYPE html>
 <html>
@@ -74,7 +78,6 @@ $term = $getTerm->getTerm();
     <section class="content-header">
       <h1>
         Upload Assignment
-       
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -102,7 +105,7 @@ $term = $getTerm->getTerm();
                                 echo "<strong>Success! </strong>"; echo "You have successfully uploaded an Assignment";
                                 unset($_SESSION["uploaded"]);
                                 echo "</div>";
-                 header('Refresh: 5; URL= view-assignments.php');
+                 header('Refresh: 5; URL= view-student-assignment.php');
                             }
               ?>
               <div class="box-body">
@@ -111,7 +114,7 @@ $term = $getTerm->getTerm();
                 <label for="exampleFormControlFile1">Assignment</label>
                 <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
               </div>
-				
+				  <input type="text" hidden="" value="<?php if (isset($_GET['id'])) {echo $assignments_id = $_GET['id'];} ?>" name="assignments_id">
 			
               </div>
               <!-- /.box-body -->
@@ -129,7 +132,40 @@ $term = $getTerm->getTerm();
         <!--/.col (left) -->
         <!-- right column -->
         <div class="col-md-6">
-          
+          <div class="box box-primary">
+          <div class="box-body">
+            <h4><b>Uploaded Assignments</b></h4>
+
+                       <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Subject</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        if(isset($uploaded) && count($uploaded)>0){
+          foreach($uploaded as $upload){ ?>
+          <tr>
+                  <td><?php echo $upload['assignment_title']; ?></td>
+          <td><?php echo $upload['subject_name']; ?> </td>
+          <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+                </tr>
+          <?php
+            
+          }
+        } else{
+          echo "You have not Uploaded any Assignment";
+        }
+        ?>
+                
+                </tbody>
+              </table>   
+
+          </div>
+          </div>
         </div>
         <!--/.col (right) -->
       </div>
