@@ -1,6 +1,6 @@
 -- MariaDB dump 10.17  Distrib 10.4.10-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: lilongwe_private
+-- Host: 127.0.0.1    Database: lilongwe_private
 -- ------------------------------------------------------
 -- Server version	10.4.10-MariaDB
 
@@ -38,7 +38,7 @@ CREATE TABLE `assignments` (
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +47,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (18,'Introduction to Hardware','VIRTUAL TECH.pdf','2020-05-08',2020,1,'0212463690',1),(19,'this is a title','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-05-15',2020,1,'0212463690',1),(22,'Pie charts','CURRICULUM VITAE.docx','2020-05-06',2020,1,'0212463690',3),(23,'Repairing Computers','CURRICULUM VITAE.docx','2020-05-27',2020,1,'0212463690',10);
+INSERT INTO `assignments` VALUES (2,'Introduction to Keyboards','Application_Rejected.pdf','2020-05-30',2020,1,'0212463690',10),(3,'TEST NEWS 2020','Application_Rejected.pdf','2020-05-31',2020,1,'0212463690',1),(4,'INTRODUCING THE NEW PRESIDENT OF BASKETBALL ASSOCIATION OF MALAWI2','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',1),(5,'ict TEST 2','Application_Rejected.pdf','2020-06-07',2020,1,'0212463690',10),(6,'New ICT TEST','Application_Rejected.pdf','2020-06-05',2020,1,'0212463690',10),(7,'AI ICT','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',10),(8,'BIO AI ICT','Application_Rejected.pdf','2020-06-03',2020,1,'0212463690',10),(9,'TEST 4444','Application_Rejected.pdf','2020-06-07',2020,1,'0212463690',10),(10,'FINAL TEST','Application_Rejected.pdf','2020-06-02',2020,1,'0212463690',10),(11,'BIO AI ICT','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',10);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -469,7 +469,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,2020,3,140000.00,1);
+INSERT INTO `settings` VALUES (1,2020,1,500000.00,1);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -529,7 +529,7 @@ CREATE TABLE `student_count` (
 
 LOCK TABLES `student_count` WRITE;
 /*!40000 ALTER TABLE `student_count` DISABLE KEYS */;
-INSERT INTO `student_count` VALUES (10,6);
+INSERT INTO `student_count` VALUES (10,7);
 /*!40000 ALTER TABLE `student_count` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -609,7 +609,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES ('LPS/S/1','Shawn','BSC','Chisenga','2019-04-17','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/2','Lusu','','Chisenga','2019-06-10','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-02-24',NULL,1,1,1,'0886449677',1),('LPS/S/3','Sam','','Chisenga','2018-11-07','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/4','Test','','Chisenga','2020-02-24','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/Jazz.jpg','NA','2020-02-27',NULL,1,1,1,'0886449677',1),('LPS/S/5','Bronny','','James','2019-11-26','Ohio','USA','American','English',2020,'Basketball','Hiphop','Dancing','NA','NA','students/mask.jpg','NA','2020-03-02',NULL,1,1,1,'0999999999',1);
+INSERT INTO `students` VALUES ('LPS/S/1','Shawn','BSC','Chisenga','2019-04-17','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/2','Lusu','','Chisenga','2019-06-10','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-02-24',NULL,1,1,1,'0886449677',1),('LPS/S/3','Sam','','Chisenga','2018-11-07','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/4','Test','','Chisenga','2020-02-24','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/Jazz.jpg','NA','2020-02-27',NULL,1,1,1,'0886449677',1),('LPS/S/5','Bronny','','James','2019-11-26','Ohio','USA','American','English',2020,'Basketball','Hiphop','Dancing','NA','NA','students/mask.jpg','NA','2020-03-02',NULL,1,1,1,'0999999999',1),('LPS/S/6','Kyle','','Chisenga','2020-05-30','Blantyre','Malawi','Malawi','English, Chichewa',2015,'Basketball','Hiphop','NA','NA','NA','students/bball.png','NA','2020-05-29',NULL,1,1,5,'0886449677',1);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -638,7 +638,7 @@ CREATE TABLE `students_has_classes_has_subjects` (
 
 LOCK TABLES `students_has_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `students_has_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `students_has_classes_has_subjects` VALUES ('LPS/S/2',1,1),('LPS/S/2',1,2),('LPS/S/2',1,3),('LPS/S/2',1,6),('LPS/S/2',1,7),('LPS/S/2',1,8),('LPS/S/2',1,9),('LPS/S/2',1,10),('LPS/S/2',1,15),('LPS/S/3',1,1),('LPS/S/3',1,2),('LPS/S/3',1,3),('LPS/S/3',1,6),('LPS/S/3',1,7),('LPS/S/3',1,8),('LPS/S/3',1,9),('LPS/S/3',1,10),('LPS/S/3',1,15),('LPS/S/4',1,1),('LPS/S/4',1,2),('LPS/S/4',1,3),('LPS/S/4',1,6),('LPS/S/4',1,7),('LPS/S/4',1,8),('LPS/S/4',1,9),('LPS/S/4',1,10),('LPS/S/4',1,15),('LPS/S/5',1,1),('LPS/S/5',1,2),('LPS/S/5',1,3),('LPS/S/5',1,6),('LPS/S/5',1,7),('LPS/S/5',1,8),('LPS/S/5',1,9),('LPS/S/5',1,10),('LPS/S/5',1,15);
+INSERT INTO `students_has_classes_has_subjects` VALUES ('LPS/S/2',1,1),('LPS/S/2',1,2),('LPS/S/2',1,3),('LPS/S/2',1,6),('LPS/S/2',1,7),('LPS/S/2',1,8),('LPS/S/2',1,9),('LPS/S/2',1,10),('LPS/S/2',1,15),('LPS/S/3',1,1),('LPS/S/3',1,2),('LPS/S/3',1,3),('LPS/S/3',1,6),('LPS/S/3',1,7),('LPS/S/3',1,8),('LPS/S/3',1,9),('LPS/S/3',1,10),('LPS/S/3',1,15),('LPS/S/4',1,1),('LPS/S/4',1,2),('LPS/S/4',1,3),('LPS/S/4',1,6),('LPS/S/4',1,7),('LPS/S/4',1,8),('LPS/S/4',1,9),('LPS/S/4',1,10),('LPS/S/4',1,15),('LPS/S/5',1,1),('LPS/S/5',1,2),('LPS/S/5',1,3),('LPS/S/5',1,6),('LPS/S/5',1,7),('LPS/S/5',1,8),('LPS/S/5',1,9),('LPS/S/5',1,10),('LPS/S/5',1,15),('LPS/S/6',2,1),('LPS/S/6',2,2),('LPS/S/6',2,3),('LPS/S/6',2,6),('LPS/S/6',2,7),('LPS/S/6',2,8),('LPS/S/6',2,9),('LPS/S/6',2,10),('LPS/S/6',2,15);
 /*!40000 ALTER TABLE `students_has_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -693,7 +693,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_assignments` VALUES (1,18),(1,19),(2,22),(5,23);
+INSERT INTO `sub_classes_has_assignments` VALUES (1,3),(1,4),(5,8),(5,9),(5,10),(5,11);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -724,7 +724,7 @@ CREATE TABLE `sub_classes_has_subjects` (
 
 LOCK TABLES `sub_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(1,3,'0212463690'),(5,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
+INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(5,10,'0212463690'),(7,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
 /*!40000 ALTER TABLE `sub_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -779,6 +779,7 @@ CREATE TABLE `submissions` (
 
 LOCK TABLES `submissions` WRITE;
 /*!40000 ALTER TABLE `submissions` DISABLE KEYS */;
+INSERT INTO `submissions` VALUES ('LPS/S/6',8,0.00,'Services-List-Virtual-Tech.pdf','2020-05-20');
 /*!40000 ALTER TABLE `submissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -860,7 +861,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','admin','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -873,4 +874,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-19 23:58:00
+-- Dump completed on 2020-05-20 16:08:06
