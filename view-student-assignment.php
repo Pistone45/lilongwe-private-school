@@ -4,9 +4,9 @@ include_once("functions/functions.php");
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
-  $id = $_SESSION['user']['username'];
-  $getSpecificStudent = new Students();
-  $details = $getSpecificStudent->getSpecificStudent($id);
+
+  $getStudentDetails = new Students();
+  $details = $getStudentDetails->getStudentDetails();
   $sub_class_id = $details['sub_class_id'];
 
 
