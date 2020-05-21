@@ -103,11 +103,19 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <td><?php echo $assignment['student_surname']; ?></td>
                   <td><?php echo $assignment['subject_name']; ?></td>
                   <td><?php if($assignment['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
+          <?php
+          if ($assignment['marks'] > 0) {
+             ?><td><?php echo$assignment['marks']; ?></td><?php
+          } else { ?>
           <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
           <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
           <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subjects_id'];  ?>" name="subject_id">
           <td><button type="submit" name="variables" class="btn btn-info">Assign Marks</button></td>
-          </form>
+          </form><?php
+            
+          }
+ 
+          ?>
 
           <td><a href="assignments/students/<?php echo $assignment['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
