@@ -4,6 +4,10 @@ include_once("functions/functions.php");
 if (isset($_POST['submit'])) {
   $level = $_POST['level'];
   $subject_id = $_POST['subjects_id'];
+} else{
+
+  $level = $_POST['level'];
+  $subject_id = $_POST['subjects_id'];
 }
 
 $getStudentsUploadedAssignments = new Staff();
@@ -83,6 +87,7 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
+                  <th>Subject</th>
                   <th>Marks</th>
                   <th>Action</th>
                   <th>Action</th>
@@ -96,8 +101,14 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <td><?php echo $assignment['students_student_no']; ?></td>
                   <td><?php echo $assignment['student_firstname']; ?></td>
                   <td><?php echo $assignment['student_surname']; ?></td>
-                  <td><?php echo $assignment['marks']; ?></td>
-          <td><a href="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>"><button class="btn btn-info">Assign Marks</button></a></td>
+                  <td><?php echo $assignment['subject_name']; ?></td>
+                  <td><?php if($assignment['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
+          <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
+          <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
+          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subjects_id'];  ?>" name="subject_id">
+          <td><button type="submit" name="variables" class="btn btn-info">Assign Marks</button></td>
+          </form>
+
           <td><a href="assignments/students/<?php echo $assignment['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
                 </tr>
@@ -113,6 +124,7 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
+                  <th>Subject</th>
                   <th>Marks</th>
                   <th>Action</th>
                   <th>Action</th>

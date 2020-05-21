@@ -7,7 +7,7 @@ $students = $getStudents->getStudents();
 
   $getStudentDetails = new Students();
   $details = $getStudentDetails->getStudentDetails();
-  $sub_class_id = $details['sub_class_id'];
+  $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
 
   $getStudentAssignment = new Students();
@@ -15,6 +15,7 @@ $students = $getStudents->getStudents();
 
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>

@@ -1,11 +1,5 @@
 <?php
 include_once("functions/functions.php");
-
-if (isset($_POST['variables'])) {
-  $level = $_POST['level'];
-  $subject_id = $_POST['subject_id'];
-}
-
 if (isset($_POST['submit'])) {
   $marks = $_POST['marks'];
   $assignments_id = $_POST['assignment_id'];
@@ -14,25 +8,15 @@ if (isset($_POST['submit'])) {
   $assignStudentMarks = new Staff();
   $marks = $assignStudentMarks->assignStudentMarks($marks, $assignments_id);
 }
-if (isset($_GET['id'])) {
-  $assignment_id=$_GET['id'];
-} else{
-  $assignment_id = $_POST['assignment_id'];
-}
-  $getSpecificStudentId = new Students();
-  $student = $getSpecificStudentId->getSpecificStudentId($assignment_id);
-  $id = $student['students_student_no'];
-
-  $getSpecificStudent = new Students();
-  $student = $getSpecificStudent->getSpecificStudent($id);
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Subject Assignment| Lilongwe Private School</title>
+  <title>Marks Assigned| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -69,12 +53,12 @@ if (isset($_GET['id'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assigning a Mark to <?php echo$student['firstname']." ".$student['lastname']."'s"; ?> Assignment
+        Success
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Subject Assignment</a></li>
+        <li class="active"><a href="#">Assign Marks</a></li>
        
       </ol>
     </section>
@@ -87,17 +71,14 @@ if (isset($_GET['id'])) {
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-body">
-            <form action="assigned-marks.php" method="POST">
-
-            <div class="form-group">
-              <label for="exampleInputEmail1">Marks</label>
-              <input type="text" name="marks" required="" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter Marks">
-              <small id="emailHelp" class="form-text text-muted">Decimals can also be added</small>
-              <input type="text" hidden="" value="<?php if(isset($_GET['id'])){echo$_GET['id'];}  ?>" name="assignment_id">
-            </div>
+            <form action="view-submitted-assignments.php" method="POST">
           <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
-          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subject_id'];  ?>" name="subject_id">
-            <button type="submit" name="submit" class="btn btn-primary btn-block">Submit</button>
+          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subject_id'];  ?>" name="subjects_id">
+          <div class="alert alert-primary">
+          	You have assigned a Mark. Click continue to get view more Assignments
+          </div>
+
+            <button type="submit" name="submit" class="btn btn-primary btn-block">Continue</button>
             </form>
 
             </div>

@@ -96,7 +96,7 @@ $term = $getTerm->getTerm();
           $date = DATE("Y-m-d h:i");
 
         if ($due_date < $date) { ?>
-
+<!-- Execute this code when the assignment due date is passed -->
             <div class="col-md-6">
           <div class="box box-primary">
           <div class="box-body">
@@ -107,6 +107,7 @@ $term = $getTerm->getTerm();
                 <tr>
                   <th>Title</th>
                   <th>Subject</th>
+                  <th>Marks</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -117,6 +118,7 @@ $term = $getTerm->getTerm();
           <tr>
                   <td><?php echo $upload['assignment_title']; ?></td>
           <td><?php echo $upload['subject_name']; ?> </td>
+          <td><?php if($upload['marks'] == ""){echo "<b>Not Marked</b>";}else{echo$upload['marks'];} ?> </td>
           <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
                 </tr>
           <?php
@@ -132,10 +134,13 @@ $term = $getTerm->getTerm();
 
           </div>
           </div>
-        </div>      
+        </div>
+<!-- End -->      
           <?php
           
         } else { ?>
+
+<!-- Execute this code when the condition is false and allow the student to upload only according to date -->
           <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
@@ -158,7 +163,7 @@ $term = $getTerm->getTerm();
 
               <div class="form-group">
                 <label for="exampleFormControlFile1">Assignment</label>
-                <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
+                <input type="file" name="assignment" required="" class="form-control-file" id="exampleFormControlFile1">
               </div>
           <input type="text" hidden="" value="<?php if (isset($_GET['id'])) {echo $assignments_id = $_GET['id'];} ?>" name="assignments_id">
       
@@ -187,6 +192,8 @@ $term = $getTerm->getTerm();
                 <tr>
                   <th>Title</th>
                   <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -197,7 +204,9 @@ $term = $getTerm->getTerm();
           <tr>
                   <td><?php echo $upload['assignment_title']; ?></td>
           <td><?php echo $upload['subject_name']; ?> </td>
+          <td><?php if($upload['marks'] == ""){echo "<b>Not Marked</b>";}else{echo$upload['marks'];} ?> </td>
           <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+          <td><a href="delete-student-assignment.php?id=<?php echo $upload['assignment_id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
                 </tr>
           <?php
             
@@ -219,8 +228,89 @@ $term = $getTerm->getTerm();
         
             
           }
+        } else{ ?>
+
+ <div class="col-md-6">
+          <!-- general form elements -->
+          <div class="box box-primary">
+            
+           
+            <!-- form start -->
+            <form action="upload-student-assignment" enctype="multipart/form-data" method="post">
+           <?php
+                            if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully uploaded an Assignment";
+                                unset($_SESSION["uploaded"]);
+                                echo "</div>";
+                 header('Refresh: 5; URL= view-student-assignment.php');
+                            }
+              ?>
+              <div class="box-body">
+
+              <div class="form-group">
+                <label for="exampleFormControlFile1">Assignment</label>
+                <input type="file" name="assignment" required="" class="form-control-file" id="exampleFormControlFile1">
+              </div>
+          <input type="text" hidden="" value="<?php if (isset($_GET['id'])) {echo $assignments_id = $_GET['id'];} ?>" name="assignments_id">
+      
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" name="upload" class="btn btn-primary">Upload</button>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        
+
+        </div>
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+          <div class="box box-primary">
+          <div class="box-body">
+            <h4><b>Uploaded Assignments</b></h4>
+
+                       <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        if(isset($uploaded) && count($uploaded)>0){
+          foreach($uploaded as $upload){ ?>
+          <tr>
+                  <td><?php echo $upload['assignment_title']; ?></td>
+          <td><?php echo $upload['subject_name']; ?> </td>
+          <td><?php if($upload['marks'] == ""){echo "<b>Not Marked</b>";}else{echo$upload['marks'];} ?> </td>
+          <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+                </tr>
+          <?php
+            
+          }
         } else{
           echo "You have not Uploaded any Assignment";
+        }
+        ?>
+                
+                </tbody>
+              </table>   
+
+          </div>
+          </div>
+        </div>
+          <?php
+          
         }
         ?>
         

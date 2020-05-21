@@ -506,8 +506,7 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name
-	FROM assignments INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments  INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
@@ -522,7 +521,7 @@ public function getLoginStatus($id){
 
 	public function getUploadedStudentAssignment($assignments_id){
 
-	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, assignments.due_date as due_date, classes.name as class_name
+	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, assignments.due_date as due_date, classes.name as class_name, marks
 	FROM submissions INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id)  INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE submissions.assignments_id=?");
 		$getUploadedStudentAssignment->bindParam(1, $assignments_id);
@@ -538,14 +537,13 @@ public function getLoginStatus($id){
 
 public function uploadStudentAssignment($assignments_id, $submitted_assignment){
 			$date = DATE("Y-m-d h:i");
-				$uploadStudentAssignment = $this->dbCon->prepare("INSERT INTO submissions (assignments_id, students_student_no, submitted_assignment, date_submitted, marks)
-				VALUES ( :assignments_id, :students_student_no, :submitted_assignment, :date_submitted, :marks)" );
+				$uploadStudentAssignment = $this->dbCon->prepare("INSERT INTO submissions (assignments_id, students_student_no, submitted_assignment, date_submitted)
+				VALUES ( :assignments_id, :students_student_no, :submitted_assignment, :date_submitted)" );
 				$uploadStudentAssignment->execute(array(
 						':assignments_id'=>($assignments_id),
 						':students_student_no'=>($_SESSION['user']['username']),
 						':submitted_assignment'=>($submitted_assignment),
-						':date_submitted'=>($date),
-						':marks'=>('0')					  
+						':date_submitted'=>($date)					  
 						  ));
 				//$assignments_id = $this->dbCon->lastInsertId();
 						  
@@ -1221,7 +1219,7 @@ class Staff{
 
 
 	public function getStudentsUploadedAssignments($level, $subject_id){		
-		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
+		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, subjects.name as subject_name, submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
 		$getStudentsUploadedAssignments->bindParam(1,$level);
 		$getStudentsUploadedAssignments->bindParam(2,$subject_id);
 		$getStudentsUploadedAssignments->execute();
@@ -1293,7 +1291,18 @@ public function getAssignmentID($sub_class_id){
 		$deleteAssignment->bindParam(1,$id);
 		$deleteAssignment->execute();
 		
-	}
+	}//End od deleting an assignment together with the linking table
+
+
+public function deleteStudentAssignment($id, $assignment_url){
+
+		unlink($assignment_url);
+
+		$deleteStudentAssignment =$this->dbCon->PREPARE("DELETE FROM submissions WHERE assignments_id=?");
+		$deleteStudentAssignment->bindParam(1,$id);
+		$deleteStudentAssignment->execute();
+		
+	}//End of deleting a submitted student assignment
 
 
 	public function getSpecificAssignment($id){
@@ -1306,8 +1315,19 @@ public function getAssignmentID($sub_class_id){
 			$row = $getSpecificAssignment->fetch();
 			return $row;
 		}
-	} //end of getting teacher details
+	} //end of getting Assignment URL
 
+
+	public function getSpecificStudentAssignmentURL($id){
+		$getSpecificStudentAssignmentURL = $this->dbCon->Prepare("SELECT submitted_assignment FROM submissions WHERE assignments_id=?");
+		$getSpecificStudentAssignmentURL->bindParam(1,$id);
+		$getSpecificStudentAssignmentURL->execute();
+		
+		if($getSpecificStudentAssignmentURL->rowCount()>0){
+			$row = $getSpecificStudentAssignmentURL->fetch();
+			return $row;
+		}
+	} //end of getting Submitted Assignment URL
 
 	public function getTerm(){
 		$getTerm = $this->dbCon->Prepare("SELECT id, name FROM terms");
