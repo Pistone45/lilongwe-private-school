@@ -104,7 +104,7 @@ $students = $getStudents->getStudents();
 				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
           <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
-                    echo "<td>Date Passed</td>";
+                    ?><td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> View</a></td><?php
                   } else { ?>
                     <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Uploads</a></td> <?php
           }

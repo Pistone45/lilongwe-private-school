@@ -1,46 +1,21 @@
 <?php
 include_once("functions/functions.php");
 
-if(isset($_POST['upload'])){
-  $assignments_id = $_POST['assignments_id'];
+if(isset($_POST['submit'])){
+	$class_id = $_POST['level'];		
 
-  $target = "assignments/students/";
-  $target = $target . basename($_FILES['assignment']['name']);
-  $ok = 1;
-  if (move_uploaded_file($_FILES['assignment']['tmp_name'], $target))
-  {
-
-    $submitted_assignment= basename($_FILES['assignment']['name']);
-
-    $uploadStudentAssignment = new Students();
-    $uploadStudentAssignment->uploadStudentAssignment($assignments_id, $submitted_assignment);
-  }
-  else
-  {
-    echo "Sorry, there was a problem uploading your file.";
-  }
-
-
+	$getSubjectsPerClassAndTeacher = new Staff();
+	$courses = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
 }
 
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
 
-$getTerm = new Staff();
-$term = $getTerm->getTerm();
-
-  if (isset($_GET['id'])) {$assignments_id = $_GET['id'];}
-
-  $getUploadedStudentAssignment = new Students();
-  $uploaded = $getUploadedStudentAssignment->getUploadedStudentAssignment($assignments_id);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Upload Assignment| Lilongwe Private School</title>
+  <title>Select Subject Assignment| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -77,96 +52,50 @@ $term = $getTerm->getTerm();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Upload Assignment
+        Subject Assignment     
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Upload Assignment</a></li>
+        <li class="active"><a href="#">Subject Assignment</a></li>
        
       </ol>
     </section>
+
     <!-- Main content -->
     <section class="content">
       <div class="row">
         <!-- left column -->
-        <?php
-        if(isset($uploaded) && count($uploaded)>0){
-          foreach($uploaded as $upload){
-          $due_date = $upload['due_date'];
-          $date = DATE("Y-m-d h:i");
-
-        if ($due_date < $date) { ?>
-
-            <div class="col-md-6">
-          <div class="box box-primary">
-          <div class="box-body">
-            <h4><b>Uploaded Assignments</b></h4>
-
-                       <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-        if(isset($uploaded) && count($uploaded)>0){
-          foreach($uploaded as $upload){ ?>
-          <tr>
-                  <td><?php echo $upload['assignment_title']; ?></td>
-          <td><?php echo $upload['subject_name']; ?> </td>
-          <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-                </tr>
-          <?php
-            
-          }
-        } else{
-          echo "You have not Uploaded any Assignment";
-        }
-        ?>
-                
-                </tbody>
-              </table>   
-
-          </div>
-          </div>
-        </div>      
-          <?php
-          
-        } else { ?>
-          <div class="col-md-6">
+        <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
             
            
             <!-- form start -->
-            <form action="upload-student-assignment" enctype="multipart/form-data" method="post">
-           <?php
-                            if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully uploaded an Assignment";
-                                unset($_SESSION["uploaded"]);
-                                echo "</div>";
-                 header('Refresh: 5; URL= view-student-assignment.php');
-                            }
-              ?>
+            <form role="form" action="view-submitted-assignments.php" method="POST">
+			
               <div class="box-body">
-
-              <div class="form-group">
-                <label for="exampleFormControlFile1">Assignment</label>
-                <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
-              </div>
-          <input type="text" hidden="" value="<?php if (isset($_GET['id'])) {echo $assignments_id = $_GET['id'];} ?>" name="assignments_id">
-      
+			  <input type="hidden" value="<?php if(isset($class_id)){echo $class_id;}  ?>" name="level" />
+			     <div class="form-group">
+                  <label>Select Subject Assignment </label>
+                  <select name="subjects_id" class="form-control">
+					<?php
+						if(isset($courses) && count($courses)>0){
+							foreach($courses as $course){ ?>
+								<option value="<?php echo $course['subjects_id']; ?>"><?php echo $course['subject_name']; ?></option>
+							<?php
+								
+							}
+						}
+					?>
+				
+                  </select>
+                </div>
+				
               </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" name="upload" class="btn btn-primary">Upload</button>
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
               </div>
             </form>
           </div>
@@ -178,52 +107,8 @@ $term = $getTerm->getTerm();
         <!--/.col (left) -->
         <!-- right column -->
         <div class="col-md-6">
-          <div class="box box-primary">
-          <div class="box-body">
-            <h4><b>Uploaded Assignments</b></h4>
-
-                       <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-        if(isset($uploaded) && count($uploaded)>0){
-          foreach($uploaded as $upload){ ?>
-          <tr>
-                  <td><?php echo $upload['assignment_title']; ?></td>
-          <td><?php echo $upload['subject_name']; ?> </td>
-          <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-                </tr>
-          <?php
-            
-          }
-        } else{
-          echo "You have not Uploaded any Assignment";
-        }
-        ?>
-                
-                </tbody>
-              </table>   
-
-          </div>
-          </div>
+          
         </div>
-          <?php
-          # code...
-        }
-        
-            
-          }
-        } else{
-          echo "You have not Uploaded any Assignment";
-        }
-        ?>
-        
         <!--/.col (right) -->
       </div>
       <!-- /.row -->

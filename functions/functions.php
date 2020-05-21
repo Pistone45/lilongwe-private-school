@@ -522,7 +522,7 @@ public function getLoginStatus($id){
 
 	public function getUploadedStudentAssignment($assignments_id){
 
-	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, classes.name as class_name
+	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, assignments.due_date as due_date, classes.name as class_name
 	FROM submissions INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id)  INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE submissions.assignments_id=?");
 		$getUploadedStudentAssignment->bindParam(1, $assignments_id);
@@ -570,6 +570,31 @@ public function enableSpecificStudent($id){
 		$enableSpecificStudent->bindParam(2,$id);
 		$enableSpecificStudent->execute();
 	}//End of enabling a student
+
+
+public function getSubclass($level){
+		$getSubclass = $this->dbCon->Prepare("SELECT name FROM sub_classes WHERE id=?");
+		$getSubclass->bindParam(1,$level);
+		$getSubclass->execute();
+		
+		if($getSubclass->rowCount()>0){
+			$row = $getSubclass->fetch();
+			return $row;
+		}
+	} //end of getting Specific Sub Class Name
+
+
+
+public function getSpecificStudentId($assignment_id){
+		$getSpecificStudentId = $this->dbCon->Prepare("SELECT students_student_no FROM submissions WHERE assignments_id=?");
+		$getSpecificStudentId->bindParam(1,$assignment_id);
+		$getSpecificStudentId->execute();
+		
+		if($getSpecificStudentId->rowCount()>0){
+			$row = $getSpecificStudentId->fetch();
+			return $row;
+		}
+	} //end of getting Specific Sub Class Name
 
 	
 	
@@ -1193,6 +1218,21 @@ class Staff{
 	} //end of getting assignments per teacher
 
 
+
+
+	public function getStudentsUploadedAssignments($level, $subject_id){		
+		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
+		$getStudentsUploadedAssignments->bindParam(1,$level);
+		$getStudentsUploadedAssignments->bindParam(2,$subject_id);
+		$getStudentsUploadedAssignments->execute();
+		
+		if($getStudentsUploadedAssignments->rowCount()>0){
+			$rows = $getStudentsUploadedAssignments->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments uploaded by students
+
+
 public function getAssignmentID($sub_class_id){
 		$getAssignmentID = $this->dbCon->Prepare("SELECT assignments_id, sub_classes_id FROM sub_classes_has_assignments WHERE sub_classes_id=?");
 		$getAssignmentID->bindParam(1,$sub_class_id);
@@ -1278,6 +1318,20 @@ public function getAssignmentID($sub_class_id){
 			return $row;
 		}
 	} //end of getting subjects
+
+
+
+	public function assignStudentMarks($marks,$assignments_id){
+		$assignStudentMarks =$this->dbCon->PREPARE("UPDATE submissions SET marks =? WHERE assignments_id=?");
+		$assignStudentMarks->bindParam(1,$marks);
+		$assignStudentMarks->bindParam(2,$assignments_id);
+		$assignStudentMarks->execute();
+		
+		 $_SESSION['marked']=true;
+		
+	}
+
+
 
 
 }
