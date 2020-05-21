@@ -63,7 +63,7 @@ $getSubclass = $getSubclass->getSubclass($level);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Viewing <?php echo$getSubclass['name']; ?> Assignments
+        Viewing <?php echo$getSubclass['name']; ?> Assignments <a href="select-class.php"><button class="btn btn-primary">Change Class</button></a>
        
       </h1>
       <ol class="breadcrumb">
