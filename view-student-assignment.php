@@ -79,6 +79,8 @@ $students = $getStudents->getStudents();
             
             <!-- /.box-header -->
             <div class="box-body">
+                      <?php
+        if(isset($assignments) && count($assignments)>0){ ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -92,8 +94,7 @@ $students = $getStudents->getStudents();
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-				if(isset($assignments) && count($assignments)>0){
+                  <?php
 					foreach($assignments as $assignment){ ?>
 					<tr>
                   <td><?php echo $assignment['title']; ?></td>
@@ -113,9 +114,8 @@ $students = $getStudents->getStudents();
                 </tr>
 					<?php
 						
-					}
-				}
-				?>
+					} ?>
+
                 
                 </tbody>
                 <tfoot>
@@ -130,7 +130,11 @@ $students = $getStudents->getStudents();
 
                 </tr>
                 </tfoot>
-              </table>
+              </table> <?php
+                      }else{
+                        echo "No assignments Available at the moment";
+                      }
+        ?>
             </div>
             <!-- /.box-body -->
           </div>

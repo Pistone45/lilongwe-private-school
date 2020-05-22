@@ -77,6 +77,8 @@ $getSubclass = $getSubclass->getSubclass($level);
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-body">
+                      <?php
+        if(isset($assignments) && count($assignments)>0){ ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -84,20 +86,21 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
+                  <th>Assignment Name</th>
                   <th>Marks</th>
                   <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </thead>
-                <tbody>
-        <?php
-        if(isset($assignments) && count($assignments)>0){
+                <tbody><?php
+
           foreach($assignments as $assignment){ ?>
           <tr>
                   <td><?php echo $assignment['students_student_no']; ?></td>
                   <td><?php echo $assignment['student_firstname']; ?></td>
                   <td><?php echo $assignment['student_surname']; ?></td>
                   <td><?php echo $assignment['subject_name']; ?></td>
+                  <td><?php echo $assignment['assignment_title']; ?></td>
                   <td><?php if($assignment['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
           <?php
           if ($assignment['marks'] > 0) {
@@ -118,9 +121,8 @@ $getSubclass = $getSubclass->getSubclass($level);
                 </tr>
           <?php
             
-          }
-        }
-        ?>
+          } ?>
+
                 
                 </tbody>
                 <tfoot>
@@ -129,12 +131,17 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
+                  <th>Assignment Name</th>
                   <th>Marks</th>
                   <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
-              </table>
+              </table> <?php
+                      }else {
+                        echo "No Assignments Available for ".$getSubclass['name'];
+                      }
+        ?>
             </div>
               <!-- /.box-body -->
 

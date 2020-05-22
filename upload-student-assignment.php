@@ -194,7 +194,6 @@ $term = $getTerm->getTerm();
                   <th>Subject</th>
                   <th>Marks</th>
                   <th>Action</th>
-                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -206,7 +205,6 @@ $term = $getTerm->getTerm();
           <td><?php echo $upload['subject_name']; ?> </td>
           <td><?php if($upload['marks'] == ""){echo "<b>Not Marked</b>";}else{echo$upload['marks'];} ?> </td>
           <td><a href="assignments/students/<?php echo $upload['submitted_assignment']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a href="delete-student-assignment.php?id=<?php echo $upload['assignment_id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
                 </tr>
           <?php
             

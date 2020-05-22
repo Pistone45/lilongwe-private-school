@@ -523,8 +523,9 @@ public function getLoginStatus($id){
 
 	$getUploadedStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, assignments.title as assignment_title, subjects_id, submitted_assignment, subjects.name as subject_name, assignments.due_date as due_date, classes.name as class_name, marks
 	FROM submissions INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
-	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id)  INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE submissions.assignments_id=?");
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id)  INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE submissions.assignments_id=? AND students_student_no=? LIMIT 1");
 		$getUploadedStudentAssignment->bindParam(1, $assignments_id);
+		$getUploadedStudentAssignment->bindParam(2, $_SESSION['user']['username']);
 		$getUploadedStudentAssignment->execute();
 		
 		if($getUploadedStudentAssignment->rowCount()>0){
@@ -1220,7 +1221,7 @@ class Staff{
 
 	public function getStudentsUploadedAssignments($level, $subject_id){		
 		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, subjects.name as subject_name,
-		submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname, sub_classes.name as class_name 
+		submissions.students_student_no as students_student_no, assignments.title as assignment_title, marks, students.firstname as student_firstname, students.lastname as student_surname, sub_classes.name as class_name 
 		FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no)
 		INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) 
 		INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
