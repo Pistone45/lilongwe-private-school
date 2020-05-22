@@ -6,18 +6,9 @@ if (isset($_POST['variables'])) {
   $subject_id = $_POST['subject_id'];
 }
 
-if (isset($_POST['submit'])) {
-  $marks = $_POST['marks'];
-  $assignments_id = $_POST['assignment_id'];
 
-
-  $assignStudentMarks = new Staff();
-  $marks = $assignStudentMarks->assignStudentMarks($marks, $assignments_id);
-}
 if (isset($_GET['id'])) {
   $assignment_id=$_GET['id'];
-} else{
-  $assignment_id = $_POST['assignment_id'];
 }
   $getSpecificStudentId = new Students();
   $student = $getSpecificStudentId->getSpecificStudentId($assignment_id);
@@ -69,7 +60,7 @@ if (isset($_GET['id'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assigning a Mark to <?php echo$student['firstname']." ".$student['lastname']."'s"; ?> Assignment
+        Assigning a Mark to <?php echo $student['firstname']." ".$student['lastname']."'s"; ?> Assignment
        
       </h1>
       <ol class="breadcrumb">
@@ -93,10 +84,10 @@ if (isset($_GET['id'])) {
               <label for="exampleInputEmail1">Marks</label>
               <input type="text" name="marks" required="" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter Marks">
               <small id="emailHelp" class="form-text text-muted">Decimals can also be added</small>
-              <input type="text" hidden="" value="<?php if(isset($_GET['id'])){echo$_GET['id'];}  ?>" name="assignment_id">
+              <input type="text" hidden="" value="<?php if(isset($_GET['id'])){echo $_GET['id'];}  ?>" name="assignment_id">
             </div>
-          <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
-          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subject_id'];  ?>" name="subject_id">
+          <input type="text" hidden="" value="<?php echo $level = $_POST['level']; ?>" name="level">
+          <input type="text" hidden="" value="<?php echo $subject_id = $_POST['subject_id'];  ?>" name="subject_id">
             <button type="submit" name="submit" class="btn btn-primary btn-block">Submit</button>
             </form>
 

@@ -1219,7 +1219,11 @@ class Staff{
 
 
 	public function getStudentsUploadedAssignments($level, $subject_id){		
-		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, subjects.name as subject_name, submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
+		$getStudentsUploadedAssignments = $this->dbCon->Prepare("SELECT submitted_assignment, assignments_id, subjects.name as subject_name,
+		submissions.students_student_no as students_student_no, marks, students.firstname as student_firstname, students.lastname as student_surname, sub_classes.name as class_name 
+		FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no)
+		INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) 
+		INNER JOIN subjects ON(assignments.subjects_id=subjects.id) WHERE sub_classes.id = ? AND subjects.id=?");
 		$getStudentsUploadedAssignments->bindParam(1,$level);
 		$getStudentsUploadedAssignments->bindParam(2,$subject_id);
 		$getStudentsUploadedAssignments->execute();

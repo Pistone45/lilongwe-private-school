@@ -4,10 +4,6 @@ include_once("functions/functions.php");
 if (isset($_POST['submit'])) {
   $level = $_POST['level'];
   $subject_id = $_POST['subjects_id'];
-} else{
-
-  $level = $_POST['level'];
-  $subject_id = $_POST['subjects_id'];
 }
 
 $getStudentsUploadedAssignments = new Staff();
@@ -26,7 +22,7 @@ $getSubclass = $getSubclass->getSubclass($level);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Subject Assignment| Lilongwe Private School</title>
+  <title>View Submitted Assignments| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -63,7 +59,7 @@ $getSubclass = $getSubclass->getSubclass($level);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Viewing <?php echo$getSubclass['name']; ?> Assignments <a href="select-class.php"><button class="btn btn-primary">Change Class</button></a>
+        Viewing <?php echo $getSubclass['name']; ?> Assignments <a href="select-class.php"><button class="btn btn-primary">Change Class</button></a>
        
       </h1>
       <ol class="breadcrumb">
@@ -105,7 +101,7 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <td><?php if($assignment['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
           <?php
           if ($assignment['marks'] > 0) {
-             ?><td><?php echo$assignment['marks']; ?></td><?php
+             ?><td></td><?php
           } else { ?>
           <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
           <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
