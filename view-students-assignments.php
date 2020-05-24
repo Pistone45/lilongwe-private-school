@@ -10,7 +10,7 @@ if (isset($_POST['submit'])) {
 
 
 $getAllSubmittedAssignments = new Students();
-$submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id);
+$submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id, $settings_id);
 }
 
 

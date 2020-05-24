@@ -612,20 +612,20 @@ public function getSpecificStudentId($assignment_id){
 
 
 
-public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id){
+public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id, $settings_id){
 
-	$getAllSubmittedAssignments = $this->dbCon->Prepare("SELECT students_student_no, assignments.id as assignments_id, marks, submitted_assignment, students.firstname as firstname, students.lastname as lastname, date_submitted, assignments.title as assignment_title, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes_has_assignments ON(sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes_has_subjects ON(classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) WHERE classes.id=? AND sub_classes.id=? AND sub_classes_has_subjects.subjects_id=?");
+	$getAllSubmittedAssignments = $this->dbCon->Prepare("SELECT students_student_no, assignments.id as assignments_id, marks, submitted_assignment, students.firstname as firstname, students.lastname as lastname, date_submitted, assignments.title as assignment_title, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes_has_assignments ON(sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes_has_subjects ON(classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) WHERE classes.id=? AND sub_classes.id=? AND sub_classes_has_subjects.subjects_id=? AND assignments.terms_id=?");
 		$getAllSubmittedAssignments->bindParam(1, $class_id);
 		$getAllSubmittedAssignments->bindParam(2, $sub_class_id);
 		$getAllSubmittedAssignments->bindParam(3, $subject_id);
-		//$getAllSubmittedAssignments->bindParam(4, $settings_id);
+		$getAllSubmittedAssignments->bindParam(4, $settings_id);
 		$getAllSubmittedAssignments->execute();
 		
 		if($getAllSubmittedAssignments->rowCount()>0){
 			$rows = $getAllSubmittedAssignments->fetchAll();
 			return $rows;
 		}
-	} //end of getting assignments per student
+	} //end of getting assignments per student on the admin side
 
 	
 	
