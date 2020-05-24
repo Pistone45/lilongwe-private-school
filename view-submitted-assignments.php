@@ -108,6 +108,7 @@ $getSubclass = $getSubclass->getSubclass($level);
           } else { ?>
           <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
           <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
+          <input type="text" hidden="" value="<?php echo$students_student_no = $assignment['students_student_no']; ?>" name="students_student_no">
           <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subjects_id'];  ?>" name="subject_id">
           <td><button type="submit" name="variables" class="btn btn-info">Assign Marks</button></td>
           </form><?php

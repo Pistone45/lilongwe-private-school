@@ -87,6 +87,7 @@ if (isset($_GET['id'])) {
               <input type="text" hidden="" value="<?php if(isset($_GET['id'])){echo $_GET['id'];}  ?>" name="assignment_id">
             </div>
           <input type="text" hidden="" value="<?php echo $level = $_POST['level']; ?>" name="level">
+          <input type="text" hidden="" value="<?php echo $students_student_no = $_POST['students_student_no']; ?>" name="students_student_no">
           <input type="text" hidden="" value="<?php echo $subject_id = $_POST['subject_id'];  ?>" name="subject_id">
             <button type="submit" name="submit" class="btn btn-primary btn-block">Submit</button>
             </form>

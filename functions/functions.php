@@ -43,6 +43,21 @@ class Settings{
 		}
 	}
 	
+
+
+public function getSpecificCurrentSettings($settings_id){
+		$getSpecificCurrentSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE id=?");
+		$getSpecificCurrentSettings->bindParam(1,$settings_id);
+		$getSpecificCurrentSettings->execute();
+		
+		if($getSpecificCurrentSettings->rowCount()>0){
+			$rows = $getSpecificCurrentSettings->fetchAll();
+			
+			return $rows;
+		}
+	}
+
+
 } //end of class settings
 
 
@@ -594,6 +609,23 @@ public function getSpecificStudentId($assignment_id){
 			return $row;
 		}
 	} //end of getting Specific Sub Class Name
+
+
+
+public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id){
+
+	$getAllSubmittedAssignments = $this->dbCon->Prepare("SELECT students_student_no, assignments.id as assignments_id, marks, submitted_assignment, students.firstname as firstname, students.lastname as lastname, date_submitted, assignments.title as assignment_title, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes_has_assignments ON(sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes_has_subjects ON(classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) WHERE classes.id=? AND sub_classes.id=? AND sub_classes_has_subjects.subjects_id=?");
+		$getAllSubmittedAssignments->bindParam(1, $class_id);
+		$getAllSubmittedAssignments->bindParam(2, $sub_class_id);
+		$getAllSubmittedAssignments->bindParam(3, $subject_id);
+		//$getAllSubmittedAssignments->bindParam(4, $settings_id);
+		$getAllSubmittedAssignments->execute();
+		
+		if($getAllSubmittedAssignments->rowCount()>0){
+			$rows = $getAllSubmittedAssignments->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
 
 	
 	
@@ -1164,6 +1196,54 @@ class Staff{
 
 
 
+	public function getAllclasses(){
+		$getAllclasses = $this->dbCon->PREPARE("SELECT id as class_id, name as class_name FROM classes");
+		$getAllclasses->bindParam(1,$_SESSION['user']['username']);
+		$getAllclasses->execute();
+		
+		if($getAllclasses->rowCount()>0){
+			$rows = $getAllclasses->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+public function getAllSubclasses($class_id){
+		$getAllSubclasses = $this->dbCon->PREPARE("SELECT id as sub_class_id, name as sub_class_name FROM sub_classes WHERE classes_id =?");
+		$getAllSubclasses->bindParam(1,$class_id);
+		$getAllSubclasses->execute();
+		
+		if($getAllSubclasses->rowCount()>0){
+			$rows = $getAllSubclasses->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+public function getAllSubclassSubjects($sub_class_id){
+		$getAllSubclassSubjects = $this->dbCon->PREPARE("SELECT subjects_id as subject_id, subjects.name as subject_name FROM sub_classes_has_subjects INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) WHERE Sub_classes_id =?");
+		$getAllSubclassSubjects->bindParam(1,$sub_class_id);
+		$getAllSubclassSubjects->execute();
+		
+		if($getAllSubclassSubjects->rowCount()>0){
+			$rows = $getAllSubclassSubjects->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
 	public function getClassPerStudent($sub_class_id){
 		$getClassPerStudent = $this->dbCon->PREPARE(" SELECT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
 		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE sub_classes_id=? LIMIT 1");
@@ -1346,10 +1426,11 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 
-	public function assignStudentMarks($marks,$assignments_id){
-		$assignStudentMarks =$this->dbCon->PREPARE("UPDATE submissions SET marks =? WHERE assignments_id=?");
+	public function assignStudentMarks($marks, $assignments_id, $students_student_no){
+		$assignStudentMarks =$this->dbCon->PREPARE("UPDATE submissions SET marks =? WHERE assignments_id=? AND students_student_no=? ");
 		$assignStudentMarks->bindParam(1,$marks);
 		$assignStudentMarks->bindParam(2,$assignments_id);
+		$assignStudentMarks->bindParam(3,$students_student_no);
 		$assignStudentMarks->execute();
 		
 		 $_SESSION['marked']=true;
