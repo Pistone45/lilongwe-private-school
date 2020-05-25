@@ -521,7 +521,7 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments  INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
@@ -614,7 +614,7 @@ public function getSpecificStudentId($assignment_id){
 
 public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id, $settings_id){
 
-	$getAllSubmittedAssignments = $this->dbCon->Prepare("SELECT students_student_no, assignments.id as assignments_id, marks, submitted_assignment, students.firstname as firstname, students.lastname as lastname, date_submitted, assignments.title as assignment_title, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN sub_classes_has_assignments ON(sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes_has_subjects ON(classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) WHERE classes.id=? AND sub_classes.id=? AND sub_classes_has_subjects.subjects_id=? AND assignments.terms_id=?");
+	$getAllSubmittedAssignments = $this->dbCon->Prepare("SELECT students_student_no, assignments.id as assignments_id, marks, assignment_type.name as assignment_type_name, submitted_assignment, students.firstname as firstname, students.lastname as lastname, date_submitted, assignments.title as assignment_title, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON(sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON(sub_classes_has_assignments.sub_classes_id=sub_classes.id) INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes_has_subjects ON(classes_has_subjects.subjects_id=subjects.id) INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) WHERE classes.id=? AND sub_classes.id=? AND sub_classes_has_subjects.subjects_id=? AND assignments.terms_id=?");
 		$getAllSubmittedAssignments->bindParam(1, $class_id);
 		$getAllSubmittedAssignments->bindParam(2, $sub_class_id);
 		$getAllSubmittedAssignments->bindParam(3, $subject_id);
@@ -1196,6 +1196,21 @@ class Staff{
 
 
 
+
+	public function getAssignmentType(){
+		$getAssignmentType = $this->dbCon->PREPARE("SELECT id, name, description FROM assignment_type LIMIT 2");
+		$getAssignmentType->execute();
+		
+		if($getAssignmentType->rowCount()>0){
+			$rows = $getAssignmentType->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
 	public function getAllclasses(){
 		$getAllclasses = $this->dbCon->PREPARE("SELECT id as class_id, name as class_name FROM classes");
 		$getAllclasses->bindParam(1,$_SESSION['user']['username']);
@@ -1286,7 +1301,7 @@ public function getAllSubclassSubjects($sub_class_id){
 	} //end of getting subjects per class and Student
 
 	public function getAssignments(){		
-		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id as terms_id, terms.name as term_name, assignment_url, academic_year, subjects.name as subject_name, classes.name as class_name FROM assignments INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN terms ON (assignments.terms_id=terms.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE staff_id =?");
+		$getAssignments = $this->dbCon->Prepare("SELECT assignments.id, title, due_date, subjects_id, terms_id as terms_id, assignment_type.name as assignment_type_name, terms.name as term_name, assignment_url, academic_year, subjects.name as subject_name, classes.name as class_name FROM assignments INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) INNER JOIN terms ON (assignments.terms_id=terms.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN classes ON(sub_classes.classes_id=classes.id) WHERE staff_id =?");
 		$getAssignments->bindParam(1,$_SESSION['user']['username']);
 		$getAssignments->execute();
 		
@@ -1332,9 +1347,9 @@ public function getAssignmentID($sub_class_id){
 
 
 
-	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level){
-				$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id)
-				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id)" );
+	public function uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level, $assignment_type){
+				$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id, assignment_type_id)
+				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id, :assignment_type_id)" );
 				$uploadAssignment->execute(array(
 						  ':title'=>($title),
 						  ':assignment_url'=>($assignment_url),
@@ -1342,7 +1357,8 @@ public function getAssignmentID($sub_class_id){
 						  ':academic_year'=>($academic_year),
 						  ':terms_id'=>($terms_id),
 						  ':staff_id'=>($_SESSION['user']['username']),
-						  ':subjects_id'=>($subjects_id)					  
+						  ':subjects_id'=>($subjects_id),
+						  ':assignment_type_id'=>($assignment_type)					  
 						  ));
 						  
 						  

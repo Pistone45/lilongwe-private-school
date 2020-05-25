@@ -78,6 +78,7 @@ $assignments = $getAssignments->getAssignments();
                 <tr>
                   <th>Class</th>
                   <th>Title</th>
+                  <th>Type</th>
                   <th>Due Date</th>
                   <th>Academic Year</th>
                   <th>Term</th>
@@ -93,6 +94,7 @@ $assignments = $getAssignments->getAssignments();
 					<tr>
                   <td><?php echo $assignment['class_name']; ?></td>
                   <td><?php echo $assignment['title']; ?></td>
+                  <td><?php echo $assignment['assignment_type_name']; ?></td>
                   <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';} else {
                     $date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}
                    ?></td>
@@ -113,6 +115,7 @@ $assignments = $getAssignments->getAssignments();
                 <tr>
                   <th>Class</th>
                   <th>Title</th>
+                  <th>Type</th>
                   <th>Due Date</th>
                   <th>Academic Year</th>
                   <th>Term</th>

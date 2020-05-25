@@ -87,6 +87,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
+                  <th>Assignment Type</th>
                   <th>Assignment Name</th>
                   <th>Marks</th>
                   <th>Action</th>
@@ -102,6 +103,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
                   <td><?php echo $submit['firstname']; ?></td>
                   <td><?php echo $submit['lastname']; ?></td>
                   <td><?php echo $submit['subject_name']; ?></td>
+                  <td><?php echo $submit['assignment_type_name']; ?></td>
                   <td><?php echo $submit['assignment_title']; ?></td>
                   <td><?php if($submit['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$submit['marks'];} ?> </td>
                   <td>                <!-- Button trigger modal -->

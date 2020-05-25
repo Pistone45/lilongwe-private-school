@@ -1,12 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
+$getAssignmentType = new Staff();
+$types = $getAssignmentType->getAssignmentType();
+
 if(isset($_POST['submit'])){
 	$level = $_POST['level'];
 	
 }
 
 if(isset($_POST['upload'])){
+  $assignment_type = $_POST['assignment_type'];
   $subjects_id = $_POST['subjects_id'];
   $title = $_POST['title'];
   $due_date = $_POST['due_date'];
@@ -24,7 +28,7 @@ if(isset($_POST['upload'])){
     $assignment_url= basename($_FILES['assignment']['name']);
 
     $uploadAssignment = new Staff();
-    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level);
+    $uploadAssignment->uploadAssignment($title, $assignment_url, $due_date, $academic_year, $terms_id,$subjects_id,$level, $assignment_type);
   }
   else
   {
@@ -123,6 +127,22 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
               <div class="form-group">
                 <label for="exampleFormControlFile1">Assignment</label>
                 <input type="file" name="assignment" class="form-control-file" id="exampleFormControlFile1">
+              </div>
+
+              <div class="form-group">
+                  <label>Select Level </label>
+                  <select name="assignment_type" class="form-control">
+          <?php
+            if(isset($types) && count($types)>0){
+              foreach($types as $type){ ?>
+                <option value="<?php echo $type['id']; ?>"><?php echo $type['name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        
+                  </select>
               </div>
 
               <div class="form-group">

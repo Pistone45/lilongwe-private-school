@@ -89,6 +89,7 @@ $students = $getStudents->getStudents();
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Subject</th>
+                  <th>Assignment Type</th>
                   <th>Action</th>
                   <th>Uploads</th>
                 </tr>
@@ -104,9 +105,10 @@ $students = $getStudents->getStudents();
                   <td><?php echo $assignment['academic_year']; ?></td>
                   <td><?php echo $assignment['terms_id']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>
+          <td><?php echo $assignment['assignment_type_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
           <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
-                    ?><td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> View</a></td><?php
+                    ?><td>Date Passed</a></td><?php
                   } else { ?>
                     <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Uploads</a></td> <?php
           }
@@ -125,6 +127,7 @@ $students = $getStudents->getStudents();
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Subject</th>
+                  <th>Assignment Type</th>
                   <th>Action</th>
                   <th>Upload</th>
 
