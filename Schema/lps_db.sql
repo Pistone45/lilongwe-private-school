@@ -1,6 +1,6 @@
 -- MariaDB dump 10.17  Distrib 10.4.10-MariaDB, for Win64 (AMD64)
 --
--- Host: 127.0.0.1    Database: lilongwe_private
+-- Host: localhost    Database: lilongwe_private
 -- ------------------------------------------------------
 -- Server version	10.4.10-MariaDB
 
@@ -14,6 +14,31 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `assignment_type`
+--
+
+DROP TABLE IF EXISTS `assignment_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `assignment_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `assignment_type`
+--
+
+LOCK TABLES `assignment_type` WRITE;
+/*!40000 ALTER TABLE `assignment_type` DISABLE KEYS */;
+INSERT INTO `assignment_type` VALUES (1,'CE1','first assignment'),(2,'CE2','second assignment'),(3,'FN','final Exam'),(4,'FN Seniors','exam for seniors');
+/*!40000 ALTER TABLE `assignment_type` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `assignments`
@@ -31,14 +56,16 @@ CREATE TABLE `assignments` (
   `terms_id` int(11) NOT NULL,
   `staff_id` varchar(255) NOT NULL,
   `subjects_id` int(11) NOT NULL,
+  `assignment_type_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_assignments_terms1_idx` (`terms_id`),
   KEY `fk_assignments_staff1_idx` (`staff_id`),
   KEY `fk_assignments_subjects1_idx` (`subjects_id`),
+  KEY `assignment_type_id` (`assignment_type_id`),
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +74,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (2,'Introduction to Keyboards','Application_Rejected.pdf','2020-05-30',2020,1,'0212463690',10),(3,'TEST NEWS 2020','Application_Rejected.pdf','2020-05-31',2020,1,'0212463690',1),(4,'INTRODUCING THE NEW PRESIDENT OF BASKETBALL ASSOCIATION OF MALAWI2','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',1),(5,'ict TEST 2','Application_Rejected.pdf','2020-06-07',2020,1,'0212463690',10),(6,'New ICT TEST','Application_Rejected.pdf','2020-06-05',2020,1,'0212463690',10),(7,'AI ICT','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',10),(8,'BIO AI ICT','Application_Rejected.pdf','2020-06-03',2020,1,'0212463690',10),(9,'TEST 4444','Application_Rejected.pdf','2020-06-07',2020,1,'0212463690',10),(10,'FINAL TEST','Application_Rejected.pdf','2020-06-02',2020,1,'0212463690',10),(11,'BIO AI ICT','Application_Rejected.pdf','2020-06-04',2020,1,'0212463690',10);
+INSERT INTO `assignments` VALUES (17,'First ICT assignment','null.docx','2020-05-30',2020,1,'0212463690',10,1),(18,'Second Assignment','volunteer-form.docx','2020-05-31',2020,1,'0212463690',10,1),(19,'Bonjour','Mitra Services.docx','2020-05-30',2020,1,'0212463690',7,1),(21,'New Assignment','services (1).docx','2020-05-13',2020,1,'0212463690',7,1);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -693,7 +720,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_assignments` VALUES (1,3),(1,4),(5,8),(5,9),(5,10),(5,11);
+INSERT INTO `sub_classes_has_assignments` VALUES (1,19),(1,21),(5,17),(5,18);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -724,7 +751,7 @@ CREATE TABLE `sub_classes_has_subjects` (
 
 LOCK TABLES `sub_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(5,10,'0212463690'),(7,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
+INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(1,7,'0212463690'),(5,10,'0212463690'),(7,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
 /*!40000 ALTER TABLE `sub_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -762,7 +789,7 @@ DROP TABLE IF EXISTS `submissions`;
 CREATE TABLE `submissions` (
   `students_student_no` varchar(45) NOT NULL,
   `assignments_id` int(11) NOT NULL,
-  `marks` decimal(10,2) NOT NULL,
+  `marks` decimal(10,2) DEFAULT NULL,
   `submitted_assignment` varchar(255) NOT NULL,
   `date_submitted` date NOT NULL,
   PRIMARY KEY (`students_student_no`,`assignments_id`),
@@ -779,7 +806,7 @@ CREATE TABLE `submissions` (
 
 LOCK TABLES `submissions` WRITE;
 /*!40000 ALTER TABLE `submissions` DISABLE KEYS */;
-INSERT INTO `submissions` VALUES ('LPS/S/6',8,0.00,'Services-List-Virtual-Tech.pdf','2020-05-20');
+INSERT INTO `submissions` VALUES ('LPS/S/1',19,70.00,'services.docx','2020-05-22'),('LPS/S/2',19,84.00,'null.docx','2020-05-24'),('LPS/S/6',17,0.00,'services.docx','2020-05-21');
 /*!40000 ALTER TABLE `submissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -861,7 +888,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -874,4 +901,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-20 16:08:06
+-- Dump completed on 2020-05-25 15:17:21
