@@ -54,9 +54,25 @@ $settings = $getSpecificCurrentSettings->getSpecificCurrentSettings($settings_id
         
 
 }
+//End of getting Drop own Lists for the Admin side
 
-//$getAllclasses = new Staff();
-//$levels = $getAllclasses->getAllclasses();
+if (isset($_POST['sub_class'])) {
+  $class_id = $_POST['sub_class'];
+
+  $getSubjectsPerClassAndTeacher = new Staff();
+  $subject = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
+
+    echo "<option>Select Subject</option>";
+            if(isset($subject) && count($subject)>0){
+              foreach($subject as $subjects){ ?>
+                <option value="<?php echo $subjects['subjects_id']; ?>"><?php echo $subjects['subject_name']; ?></option>
+              <?php
+                
+              }
+            }
+        
+
+}
 
 
 if (isset($_POST['submit'])) {

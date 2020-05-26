@@ -2,16 +2,44 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-  $class_id = $_POST['class_id']." class left";
-  $sub_class_id = $_POST['sub_class_id']." sub class left";
-  $subject_id = $_POST['subject_id']." subject left";
-  $academic_year = $_POST['academic_year']. "aca year left";
-  $settings_id = $_POST['term'];
+  $subject_id = $_POST['subject_id'];
+  $sub_class_id = $_POST['sub_class_id'];
 
+$getAllStudentsPerClassSubject = new Staff();
+$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
 
-$getAllSubmittedAssignments = new Students();
-$submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id, $settings_id);
+$getClassesWithSubjects = new Staff();
+$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
+$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
+$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
 }
+
+if(isset($student) && count($student)>0){
+  foreach($student as $students){
+$student_no = $students['student_no'];
+
+$getStudentsMarks = new Staff();
+$mark = $getStudentsMarks->getStudentsMarks($student_no);
+} }
+
+if(isset($mark) && count($mark)>0){
+  foreach($mark as $marks){
+$marks = $marks['marks'];
+
+
+$getStudentsMarks = new Staff();
+$mark = $getStudentsMarks->getStudentsMarks($student_no);
+} }
+
+$status = 1;
+$getCurrentSettings = new settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+$getExamTypes = new Staff();
+$exam_type = $getExamTypes->getExamTypes();
+
+$getUserUsingUsername = new Staff();
+$singleUser = $getUserUsingUsername->getUserUsingUsername();
 
 
 ?>
@@ -20,7 +48,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dsiplay Assignments| Lilongwe Private School</title>
+  <title>Display Students| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -78,7 +106,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
           <div class="box box-primary">
       <?php
       $i = 0;
-        if(isset($submitted) && count($submitted)>0){ 
+        if(isset($student) && count($student)>0){ 
           ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
@@ -88,30 +116,25 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
                   <th>Last Name</th>
                   <th>Subject</th>
                   <th>Assignment Type</th>
-                  <th>Assignment Name</th>
                   <th>Marks</th>
-                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody><?php
 
-          foreach($submitted as $submit){ 
+          foreach($student as $students){ 
             $i++;  ?>
           <tr>
-                  <td><?php echo $submit['students_student_no']; ?></td>
-                  <td><?php echo $submit['firstname']; ?></td>
-                  <td><?php echo $submit['lastname']; ?></td>
-                  <td><?php echo $submit['subject_name']; ?></td>
-                  <td><?php echo $submit['assignment_type_name']; ?></td>
-                  <td><?php echo $submit['assignment_title']; ?></td>
-                  <td><?php if($submit['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$submit['marks'];} ?> </td>
+                  <td><?php echo $students['student_no']; ?></td>
+                  <td><?php echo $students['firstname']; ?></td>
+                  <td><?php echo $students['lastname']; ?></td>
+                  <td><?php echo$subject_id ?></td>
+                  <td><?php echo "Final Exam"; ?></td>
+                  <td><?php //echo $marks; //if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
                   <td>                <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
-Edit Marks
+Record Mark
 </button></td>
-
-          <td><a href="assignments/students/<?php echo $submit['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
                 </tr>
 
@@ -121,23 +144,47 @@ Edit Marks
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="<?php echo $i; ?>">Assign a Mark to <?php echo $submit['firstname'] ." ".$submit['lastname']. "'s". " Assignment"; ?></h5>
+        <h5 class="modal-title" id="<?php echo $i; ?>">Assign a Mark to <?php echo $students['firstname']." ".$students['lastname']; ?></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
+
   <form id="myForm" method="post">
     <div class="form-group">
-    <label for="exampleInputEmail1">New Mark</label>
-    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
+    <label for="exampleInputEmail1">Final Exam Mark</label>
+    <input type="text" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
   </div>
-  <input type="text" hidden="" id="assignments_id" value="<?php echo $submit['assignments_id']; ?>" name="assignments_id">
 
-  <input type="text" hidden="" id="students_student_no" value="<?php echo $submit['students_student_no']; ?>" name="students_student_no">
+  <div class="form-group">
+        <label style="color: red;">Select Exam Type </label>
+        <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
+          <option VALUE="">Select Exam Type</option>
+<?php
+  if(isset($exam_type) && count($exam_type)>0){
+    foreach($exam_type as $exam_types){ ?>
+      <option value="<?php echo $exam_types['id']; ?>"><?php echo $exam_types['name']; ?></option>
+    <?php
+      
+    }
+  }
+?>
 
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitFormData();" value="Submit" />
+        </select>
+</div>
+
+  <input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
+  <input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
+
+  <input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
+  <input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
+  <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
+  <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
+
+    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
    </form>
+
    <br>
    <br>
 
@@ -166,15 +213,14 @@ Edit Marks
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
-                  <th>Assignment Name</th>
+                  <th>Assignment Type</th>
                   <th>Marks</th>
-                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Assignments Available";
+                        echo "No Students Available to record Exams";
                       }
         ?>
            
@@ -195,6 +241,24 @@ Edit Marks
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script type="text/javascript">
+    function RecordExams() {
+    var mark = $("#mark").val();
+    var academic_year = $("#academic_year").val();
+    var term = $("#term").val();
+    var students_student_no = $("#students_student_no").val();
+    var exam_type_id = $("#exam_type_id").val();
+    var staff_id = $("#staff_id").val();
+    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
+    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
+    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
+     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
+    function(data) {
+   $('#results').html(data);
+   $('#myForm')[0].reset();
+    });
+}
+  </script>
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

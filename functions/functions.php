@@ -265,7 +265,7 @@ class User{
 	public function getSingleUser($username){
 		//get one users
 		try{
-			$getUsers = $this->dbCon->prepare("SELECT username, fname, lname, email, phone, users.role_id AS role_id, roles.name AS role from users INNER JOIN roles ON (roles.role_id = users.role_id) WHERE username = ?" );
+			$getUsers = $this->dbCon->prepare("SELECT id, username, fname, lname, email, phone, users.role_id AS role_id, roles.name AS role from users INNER JOIN roles ON (roles.role_id = users.role_id) WHERE username = ?" );
 			$getUsers->bindParam(1, $username);
 			$getUsers->execute();
 			if($getUsers->rowCount()>0){
@@ -1451,6 +1451,119 @@ public function deleteStudentAssignment($id, $assignment_url){
 		
 		 $_SESSION['marked']=true;
 		
+	}
+
+
+
+public function getAllStudentsPerClassSubject($sub_class_id){
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT student_no, firstname, lastname FROM students WHERE students.sub_classes_id=?");
+		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
+		$getAllStudentsPerClassSubject->execute();
+		
+		if($getAllStudentsPerClassSubject->rowCount()>0){
+			$rows = $getAllStudentsPerClassSubject->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+public function getClassesWithSubjects($sub_class_id, $subject_id){
+		$getClassesWithSubjects = $this->dbCon->PREPARE("SELECT classes_has_subjects.classes_id as linked_classes_id, subjects_id FROM classes_has_subjects INNER JOIN classes ON(classes_has_subjects.classes_id=classes.id) INNER JOIN sub_classes ON(sub_classes.classes_id=classes.id) WHERE subjects_id=? AND classes_has_subjects.classes_id=sub_classes.classes_id");
+		$getClassesWithSubjects->bindParam(1,$subject_id);
+		$getClassesWithSubjects->execute();
+		
+		if($getClassesWithSubjects->rowCount()>0){
+			$rows = $getClassesWithSubjects->fetch();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+public function getStudentsMarks($student_no){
+		$getStudentsMarks = $this->dbCon->PREPARE("SELECT marks FROM exam_results WHERE students_student_no=?");
+		$getStudentsMarks->bindParam(1,$student_no);
+		$getStudentsMarks->execute();
+		
+		if($getStudentsMarks->rowCount()>0){
+			$rows = $getStudentsMarks->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+public function getExamTypes(){
+		$getExamTypes = $this->dbCon->PREPARE("SELECT id, name FROM exam_type");
+		$getExamTypes->execute();
+		
+		if($getExamTypes->rowCount()>0){
+			$rows = $getExamTypes->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+public function getUserUsingUsername(){
+		$getUserUsingUsername = $this->dbCon->PREPARE("SELECT id FROM staff WHERE id=?");
+		$getUserUsingUsername->bindParam(1,$_SESSION['user']['username']);
+		$getUserUsingUsername->execute();
+		
+		if($getUserUsingUsername->rowCount()>0){
+			$row = $getUserUsingUsername->fetch();
+			
+			return $row;
+			
+		}
+		
+	}
+
+
+
+public function getUser(){
+		$getUser = $this->dbCon->PREPARE("SELECT id, name FROM exam_type");
+		$getUser->execute();
+		
+		if($getUser->rowCount()>0){
+			$rows = $getUser->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+	public function recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $staff_id, $classes_has_subjects_classes_id, $classes_has_subjects_subjects_id){
+			$exam_status_id = 1;
+				$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results (marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id, exam_status_id)
+				VALUES (:marks,:academic_year,:terms_id,:students_student_no,:exam_type_id,:staff_id,:classes_has_subjects_classes_id, :classes_has_subjects_subjects_id, :exam_status_id)" );
+				$recordStudentsExams->execute(array(
+						  ':marks'=>($marks),
+						  ':academic_year'=>($academic_year),
+						  ':terms_id'=>($term),
+						  ':students_student_no'=>($students_student_no),
+						  ':exam_type_id'=>($exam_type_id),
+						  ':staff_id'=>($staff_id),
+						  ':classes_has_subjects_classes_id'=>($classes_has_subjects_classes_id),
+						  ':classes_has_subjects_subjects_id'=>($classes_has_subjects_subjects_id),
+						  ':exam_status_id'=>($exam_status_id)				  
+						  ));
+						  						 		
 	}
 
 

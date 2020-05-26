@@ -1,18 +1,9 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-  $class_id = $_POST['class_id']." class left";
-  $sub_class_id = $_POST['sub_class_id']." sub class left";
-  $subject_id = $_POST['subject_id']." subject left";
-  $academic_year = $_POST['academic_year']. "aca year left";
-  $settings_id = $_POST['term'];
 
-
-$getAllSubmittedAssignments = new Students();
-$submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id, $settings_id);
-}
-
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
 
 ?>
 <!DOCTYPE html>
@@ -20,7 +11,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dsiplay Assignments| Lilongwe Private School</title>
+  <title>Select Class| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -44,8 +35,6 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -59,12 +48,12 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Display Assignments
+        Class Level
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
+        <li class="active"><a href="select-exam-class.php">Exam Level</a></li>
        
       </ol>
     </section>
@@ -73,113 +62,44 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
     <section class="content">
       <div class="row">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
-      <?php
-      $i = 0;
-        if(isset($submitted) && count($submitted)>0){ 
-          ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Assignment Name</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody><?php
-
-          foreach($submitted as $submit){ 
-            $i++;  ?>
-          <tr>
-                  <td><?php echo $submit['students_student_no']; ?></td>
-                  <td><?php echo $submit['firstname']; ?></td>
-                  <td><?php echo $submit['lastname']; ?></td>
-                  <td><?php echo $submit['subject_name']; ?></td>
-                  <td><?php echo $submit['assignment_type_name']; ?></td>
-                  <td><?php echo $submit['assignment_title']; ?></td>
-                  <td><?php if($submit['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$submit['marks'];} ?> </td>
-                  <td>                <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
-Edit Marks
-</button></td>
-
-          <td><a href="assignments/students/<?php echo $submit['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
-
-                </tr>
-
-
-<!-- Start of Modal -->
-<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="<?php echo $i; ?>">Assign a Mark to <?php echo $submit['firstname'] ." ".$submit['lastname']. "'s". " Assignment"; ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-  <form id="myForm" method="post">
-    <div class="form-group">
-    <label for="exampleInputEmail1">New Mark</label>
-    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-  <input type="text" hidden="" id="assignments_id" value="<?php echo $submit['assignments_id']; ?>" name="assignments_id">
-
-  <input type="text" hidden="" id="students_student_no" value="<?php echo $submit['students_student_no']; ?>" name="students_student_no">
-
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitFormData();" value="Submit" />
-   </form>
-   <br>
-   <br>
-
-<div class="alert alert-success">
-    <div id="results">
-
-    </div>
-</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End of Modal -->
-          <?php
             
-          } ?>
-
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Name</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Assignments Available";
-                      }
-        ?>
            
             <!-- form start -->
+            <form role="form" action="record-exams.php" method="POST">
+      
+              <div class="box-body">
+           <div class="form-group">
+                  <label>Select Level </label>
+                  <select name="sub_class_id" class="form-control" id="sub_class" required="" onchange="showSubject(this.value)">
+                    <option VALUE="">Select Level</option>
+          <?php
+            if(isset($levels) && count($levels)>0){
+              foreach($levels as $level){ ?>
+                <option value="<?php echo $level['class_id']; ?>"><?php echo $level['class_name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        
+                  </select>
+                </div>
 
+      <label>Select Subject </label>
+      <select class="form-control" required="" name="subject_id" id="subject">
+        <option VALUE="">Select Subject</option>     
+      </select>
+        
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
 
@@ -188,13 +108,32 @@ Edit Marks
         </div>
         <!--/.col (left) -->
         <!-- right column -->
-
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script type="text/javascript">
+function showSubject(val) {
+    // alert(val);
+    $.ajax({
+  type: "POST",
+  url: "results.php",
+  data:'sub_class='+val,
+  success: function(data){
+    // alert(data);
+    $("#subject").html(data);
+  }
+  });
+  
+}
+</script>
+
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
