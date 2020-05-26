@@ -8,28 +8,15 @@ if (isset($_POST['submit'])) {
 $getAllStudentsPerClassSubject = new Staff();
 $student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
 
+$getSubjectById = new Staff();
+$subject = $getSubjectById->getSubjectById($subject_id);
+
 $getClassesWithSubjects = new Staff();
 $classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
 $classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
 $classes_has_subjects_subjects_id = $classsubject['subjects_id'];
 }
 
-if(isset($student) && count($student)>0){
-  foreach($student as $students){
-$student_no = $students['student_no'];
-
-$getStudentsMarks = new Staff();
-$mark = $getStudentsMarks->getStudentsMarks($student_no);
-} }
-
-if(isset($mark) && count($mark)>0){
-  foreach($mark as $marks){
-$marks = $marks['marks'];
-
-
-$getStudentsMarks = new Staff();
-$mark = $getStudentsMarks->getStudentsMarks($student_no);
-} }
 
 $status = 1;
 $getCurrentSettings = new settings();
@@ -128,19 +115,24 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php echo $students['student_no']; ?></td>
                   <td><?php echo $students['firstname']; ?></td>
                   <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$subject_id ?></td>
+                  <td><?php echo$subject['subject_name']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
-                  <td><?php //echo $marks; //if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td>                <!-- Button trigger modal -->
+                  <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
+                  <td><?php if ($students['marks'] > 0) {
+                    
+                  } else { ?>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
 Record Mark
-</button></td>
+</button><?php
+                  }
+                   ?>            <!-- Button trigger modal -->
+</td>
 
                 </tr>
 
 
 <!-- Start of Modal -->
-<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
+<div class="modal fade" id="<?php echo $i; ?>" tabindex="-<?php echo $i; ?>" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

@@ -1456,7 +1456,7 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 public function getAllStudentsPerClassSubject($sub_class_id){
-		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT student_no, firstname, lastname FROM students WHERE students.sub_classes_id=?");
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT student_no, firstname, lastname, exam_results.marks as marks FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) WHERE students.sub_classes_id=?");
 		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
 		$getAllStudentsPerClassSubject->execute();
 		
@@ -1469,6 +1469,22 @@ public function getAllStudentsPerClassSubject($sub_class_id){
 		
 	}
 
+
+
+
+public function getSubjectById($subject_id){
+		$getSubjectById = $this->dbCon->PREPARE("SELECT name as subject_name FROM subjects WHERE id=?");
+		$getSubjectById->bindParam(1,$subject_id);
+		$getSubjectById->execute();
+		
+		if($getSubjectById->rowCount()>0){
+			$row = $getSubjectById->fetch();
+			
+			return $row;
+			
+		}
+		
+	}
 
 
 public function getClassesWithSubjects($sub_class_id, $subject_id){
@@ -1486,19 +1502,6 @@ public function getClassesWithSubjects($sub_class_id, $subject_id){
 	}
 
 
-public function getStudentsMarks($student_no){
-		$getStudentsMarks = $this->dbCon->PREPARE("SELECT marks FROM exam_results WHERE students_student_no=?");
-		$getStudentsMarks->bindParam(1,$student_no);
-		$getStudentsMarks->execute();
-		
-		if($getStudentsMarks->rowCount()>0){
-			$rows = $getStudentsMarks->fetchAll();
-			
-			return $rows;
-			
-		}
-		
-	}
 
 
 
