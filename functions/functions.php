@@ -1471,6 +1471,25 @@ public function getAllStudentsPerClassSubject($sub_class_id){
 
 
 
+public function getAllExamsPerClassSubject($class_id, $sub_class_id, $subject_id, $settings_id){
+		$getAllExamsPerClassSubject = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, terms.name as term_name, academic_year, subjects.name as subject_name  FROM exam_results INNER JOIN terms ON(exam_results.terms_id=terms.id) INNER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN classes_has_subjects ON(exam_results.classes_has_subjects_subjects_id=classes_has_subjects.subjects_id) INNER JOIN subjects ON(classes_has_subjects.subjects_id=subjects.id) WHERE students.sub_classes_id=? AND classes_has_subjects.classes_id=? AND classes_has_subjects.subjects_id=? AND terms_id=?");
+		$getAllExamsPerClassSubject->bindParam(1,$sub_class_id);
+		$getAllExamsPerClassSubject->bindParam(2,$class_id);
+		$getAllExamsPerClassSubject->bindParam(3,$subject_id);
+		$getAllExamsPerClassSubject->bindParam(4,$settings_id);
+		$getAllExamsPerClassSubject->execute();
+		
+		if($getAllExamsPerClassSubject->rowCount()>0){
+			$rows = $getAllExamsPerClassSubject->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
 public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year){
 		$getStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=?");
 		$getStudentsPerExamType->bindParam(1,$sub_class_id);
@@ -1601,6 +1620,17 @@ public function getUser(){
 						  ':exam_status_id'=>($exam_status_id)				  
 						  ));
 						  						 		
+	}
+
+
+
+
+	public function updateStudentExamMark($marks, $student_no){
+		$updateStudentExamMark =$this->dbCon->PREPARE("UPDATE exam_results SET marks =? WHERE students_student_no=? ");
+		$updateStudentExamMark->bindParam(1,$marks);
+		$updateStudentExamMark->bindParam(2,$student_no);
+		$updateStudentExamMark->execute();
+				
 	}
 
 

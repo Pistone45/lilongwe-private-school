@@ -2,31 +2,16 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-  $subject_id = $_POST['subject_id'];
-  $sub_class_id = $_POST['sub_class_id'];
+  $class_id = $_POST['class_id']." class left";
+  $sub_class_id = $_POST['sub_class_id']." sub class left";
+  $subject_id = $_POST['subject_id']." subject left";
+  $academic_year = $_POST['academic_year']. "aca year left";
+  $settings_id = $_POST['term'];
 
-$getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
+$getAllExamsPerClassSubject = new Staff();
+$exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub_class_id, $subject_id, $settings_id);
 
-$getSubjectById = new Staff();
-$subject = $getSubjectById->getSubjectById($subject_id);
-
-$getClassesWithSubjects = new Staff();
-$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
-$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
-$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
 }
-
-
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
-
-$getExamTypes = new Staff();
-$exam_type = $getExamTypes->getExamTypes();
-
-$getUserUsingUsername = new Staff();
-$singleUser = $getUserUsingUsername->getUserUsingUsername();
 
 
 ?>
@@ -35,7 +20,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Students| Lilongwe Private School</title>
+  <title>Exam Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -74,7 +59,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Display Assignments
+        Exam Results
        
       </h1>
       <ol class="breadcrumb">
@@ -93,9 +78,8 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
           <div class="box box-primary">
       <?php
       $i = 0;
-        if(isset($student) && count($student)>0){ 
+        if(isset($exams) && count($exams)>0){ 
           ?>
-
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -103,101 +87,64 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
-                  <th>Assignment Type</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
                   <th>Marks</th>
                   <th>Action</th>
                 </tr>
                 </thead>
-                <tbody>
-                  <?php
+                <tbody><?php
 
-          foreach($student as $students){ 
+          foreach($exams as $exam){ 
             $i++;  ?>
           <tr>
-                  <td><?php echo $students['student_no']; ?></td>
-                  <td><?php echo $students['firstname']; ?></td>
-                  <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$subject['subject_name']; ?></td>
-                  <td><?php echo "Final Exam"; ?></td>
-                  <td><?php if($students['marks'] == "0.00" || $students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td><?php if ($students['marks'] > 0) {
-                    
-                  } else { ?>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Edit Mark</button>
-  <!-- Start of Modal -->
-<!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+                  <td><?php echo $exam['student_no']; ?></td>
+                  <td><?php echo $exam['firstname']; ?></td>
+                  <td><?php echo $exam['lastname']; ?></td>
+                  <td><?php echo $exam['subject_name']; ?></td>
+                  <td><?php echo $exam['academic_year']; ?></td>
+                  <td><?php echo $exam['term_name']; ?></td>
+                  <td><?php if($exam['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$exam['marks'];} ?> </td>
+                  <td>                <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
+Edit Marks
+</button></td>
+          </tr>
 
-    <!-- Modal content-->
+
+<!-- Start of Modal -->
+<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+        <h5 class="modal-title" id="<?php echo $i; ?>">Edit <?php echo $exam['firstname'] ." ".$exam['lastname']. "'s". " Exam Mark"; ?></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
-
   <form id="myForm" method="post">
     <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
-
-    <input type="number" max="15" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-
-  <div class="form-group">
-        <label style="color: red;">Select Exam Type </label>
-        <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
-          <option VALUE="">Select Exam Type</option>
-<?php
-  if(isset($exam_type) && count($exam_type)>0){
-    foreach($exam_type as $exam_types){ ?>
-      <option value="<?php echo $exam_types['id']; ?>"><?php echo $exam_types['name']; ?></option>
-    <?php
-      
-    }
-  }
-?>
-
-        </select>
-</div>
-
-  <input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-  <input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
-
-  <input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
-  <input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
-  <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
-  <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
-
-
-  <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
+    <label for="exampleInputEmail1">New Mark</label>
+    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
+    <input type="text" id="student_no" hidden="" value="<?php echo $exam['student_no']; ?>" name="student_no">
+<br>
+    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitData();" value="Submit" />
    </form>
-
    <br>
    <br>
-
 
     <div id="results">
-  
+
 </div>
+      </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
       </div>
     </div>
-
   </div>
 </div>
 <!-- End of Modal -->
-  <?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
-
-
-                </tr>
-
-
-
           <?php
             
           } ?>
@@ -210,18 +157,17 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
-                  <th>Assignment Type</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
                   <th>Marks</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Students Available to record Exams";
+                        echo "No Assignments Available";
                       }
         ?>
-
-
            
             <!-- form start -->
 
@@ -241,17 +187,10 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
   </div>
   <!-- /.content-wrapper -->
   <script type="text/javascript">
-    function RecordExams() {
+    function SubmitData() {
     var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
+    var student_no = $("#student_no").val();
+    $.post("submit-exam.php", { mark: mark, student_no: student_no },
     function(data) {
    $('#results').html(data);
    $('#myForm')[0].reset();
