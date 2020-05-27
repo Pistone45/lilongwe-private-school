@@ -1471,6 +1471,24 @@ public function getAllStudentsPerClassSubject($sub_class_id){
 
 
 
+public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year){
+		$getStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=?");
+		$getStudentsPerExamType->bindParam(1,$sub_class_id);
+		$getStudentsPerExamType->bindParam(2,$exam_type_id);
+		$getStudentsPerExamType->bindParam(3,$academic_year);
+		$getStudentsPerExamType->execute();
+		
+		if($getStudentsPerExamType->rowCount()>0){
+			$rows = $getStudentsPerExamType->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
 
 public function getSubjectById($subject_id){
 		$getSubjectById = $this->dbCon->PREPARE("SELECT name as subject_name FROM subjects WHERE id=?");
@@ -1485,6 +1503,22 @@ public function getSubjectById($subject_id){
 		}
 		
 	}
+
+
+public function getClassByID($sub_class_id){
+		$getClassByID = $this->dbCon->PREPARE("SELECT name as sub_class_name FROM sub_classes WHERE id=?");
+		$getClassByID->bindParam(1,$sub_class_id);
+		$getClassByID->execute();
+		
+		if($getClassByID->rowCount()>0){
+			$row = $getClassByID->fetch();
+			
+			return $row;
+			
+		}
+		
+	}
+
 
 
 public function getClassesWithSubjects($sub_class_id, $subject_id){

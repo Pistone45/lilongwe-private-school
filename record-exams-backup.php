@@ -95,7 +95,6 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
       $i = 0;
         if(isset($student) && count($student)>0){ 
           ?>
-
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -108,8 +107,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>Action</th>
                 </tr>
                 </thead>
-                <tbody>
-                  <?php
+                <tbody><?php
 
           foreach($student as $students){ 
             $i++;  ?>
@@ -123,8 +121,15 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php if ($students['marks'] > 0) {
                     
                   } else { ?>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Edit Mark</button>
-  <!-- Start of Modal -->
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Open Modal</button><?php
+                  }
+                   ?>            <!-- Button trigger modal -->
+</td>
+
+                </tr>
+
+
+<!-- Start of Modal -->
 <!-- Modal -->
 <div id="<?php echo $i; ?>" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -139,7 +144,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 
   <form id="myForm" method="post">
     <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
+    <label for="exampleInputEmail1">Final Exam Mark</label>
     <input type="text" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
   </div>
 
@@ -186,16 +191,6 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
   </div>
 </div>
 <!-- End of Modal -->
-  <?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
-
-
-                </tr>
-
-
-
           <?php
             
           } ?>
@@ -218,8 +213,6 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                         echo "No Students Available to record Exams";
                       }
         ?>
-
-
            
             <!-- form start -->
 

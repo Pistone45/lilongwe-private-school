@@ -1,33 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-  $subject_id = $_POST['subject_id'];
-  $sub_class_id = $_POST['sub_class_id'];
 
-$getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
-
-$getSubjectById = new Staff();
-$subject = $getSubjectById->getSubjectById($subject_id);
-
-$getClassesWithSubjects = new Staff();
-$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
-$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
-$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
-}
-
-
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
 
 $getExamTypes = new Staff();
 $exam_type = $getExamTypes->getExamTypes();
 
-$getUserUsingUsername = new Staff();
-$singleUser = $getUserUsingUsername->getUserUsingUsername();
-
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
 
 ?>
 <!DOCTYPE html>
@@ -35,7 +18,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Students| Lilongwe Private School</title>
+  <title>Select Class| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -59,8 +42,6 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -74,12 +55,12 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Display Assignments
+        Class Level For Exams
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
+        <li class="active"><a href="select-exam-class.php">Exam Level</a></li>
        
       </ol>
     </section>
@@ -88,65 +69,42 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
     <section class="content">
       <div class="row">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
-      <?php
-      $i = 0;
-        if(isset($student) && count($student)>0){ 
+            
+           
+            <!-- form start -->
+            <form role="form" action="view-exam-results.php" method="POST">
+      
+              <div class="box-body">
+           <div class="form-group">
+                  <label>Select Level </label>
+                  <select name="sub_class_id" class="form-control" id="sub_class" required="" onchange="showSubject(this.value)">
+                    <option VALUE="">Select Level</option>
+          <?php
+            if(isset($levels) && count($levels)>0){
+              foreach($levels as $level){ ?>
+                <option value="<?php echo $level['class_id']; ?>"><?php echo $level['class_name']; ?></option>
+              <?php
+                
+              }
+            }
           ?>
+        
+                  </select>
+                </div>
 
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
+      <label>Select Subject </label>
+      <select class="form-control" required="" name="subject_id" id="subject">
+        <option VALUE="">Select Subject</option>     
+      </select>
+      <br>
 
-          foreach($student as $students){ 
-            $i++;  ?>
-          <tr>
-                  <td><?php echo $students['student_no']; ?></td>
-                  <td><?php echo $students['firstname']; ?></td>
-                  <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$subject['subject_name']; ?></td>
-                  <td><?php echo "Final Exam"; ?></td>
-                  <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td><?php if ($students['marks'] > 0) {
-                    
-                  } else { ?>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Edit Mark</button>
-  <!-- Start of Modal -->
-<!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body">
-
-  <form id="myForm" method="post">
     <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
-    <input type="text" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-
-  <div class="form-group">
-        <label style="color: red;">Select Exam Type </label>
-        <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
-          <option VALUE="">Select Exam Type</option>
+      <label style="color: red;">Select Exam Type </label>
+      <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
+        <option VALUE="">Select Exam Type</option>
 <?php
   if(isset($exam_type) && count($exam_type)>0){
     foreach($exam_type as $exam_types){ ?>
@@ -160,69 +118,21 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
         </select>
 </div>
 
-  <input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-  <input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
-
-  <input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
-  <input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
-  <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
-  <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
-
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
-   </form>
-
-   <br>
-   <br>
-
-<div class="alert alert-success">
-    <div id="results">
-      </div>
-    </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
+    <div class="form-group">
+      <label>Select Academic Year </label>
+      <select required="" name="academic_year" class="form-control" id="academic_year">
+        <option VALUE="">Select Academic Year</option>
+      <option value="<?php echo $settings['academic_year']; ?>"><?php echo $settings['academic_year']; ?></option>
+    </select>
 </div>
-<!-- End of Modal -->
-  <?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
+        
+              </div>
+              <!-- /.box-body -->
 
-
-                </tr>
-
-
-
-          <?php
-            
-          } ?>
-
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Students Available to record Exams";
-                      }
-        ?>
-
-
-           
-            <!-- form start -->
-
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
 
@@ -231,7 +141,10 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
         </div>
         <!--/.col (left) -->
         <!-- right column -->
-
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
@@ -239,23 +152,21 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
   </div>
   <!-- /.content-wrapper -->
   <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
+function showSubject(val) {
+    // alert(val);
+    $.ajax({
+  type: "POST",
+  url: "results.php",
+  data:'sub_class='+val,
+  success: function(data){
+    // alert(data);
+    $("#subject").html(data);
+  }
+  });
+  
 }
-  </script>
+</script>
+
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

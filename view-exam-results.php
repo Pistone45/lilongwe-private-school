@@ -4,29 +4,24 @@ include_once("functions/functions.php");
 if (isset($_POST['submit'])) {
   $subject_id = $_POST['subject_id'];
   $sub_class_id = $_POST['sub_class_id'];
+  $exam_type_id = $_POST['exam_type_id'];
+  $academic_year = $_POST['academic_year'];
 
-$getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
+$getStudentsPerExamType = new Staff();
+$student = $getStudentsPerExamType->getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year);
 
 $getSubjectById = new Staff();
 $subject = $getSubjectById->getSubjectById($subject_id);
 
-$getClassesWithSubjects = new Staff();
-$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
-$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
-$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
+$getClassByID = new Staff();
+$classname = $getClassByID->getClassByID($sub_class_id);
+
 }
 
 
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
-
-$getExamTypes = new Staff();
-$exam_type = $getExamTypes->getExamTypes();
-
 $getUserUsingUsername = new Staff();
 $singleUser = $getUserUsingUsername->getUserUsingUsername();
+
 
 
 ?>
@@ -35,7 +30,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Students| Lilongwe Private School</title>
+  <title>Display Exam Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -74,7 +69,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Display Assignments
+        Exam Results for <?php echo $classname['sub_class_name']; ?>
        
       </h1>
       <ol class="breadcrumb">
@@ -103,9 +98,10 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
+                  <th>Academic Year</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  <th>Action</th>
+                  
                 </tr>
                 </thead>
                 <tbody>
@@ -117,79 +113,11 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php echo $students['student_no']; ?></td>
                   <td><?php echo $students['firstname']; ?></td>
                   <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$subject['subject_name']; ?></td>
+                  <td><?php echo $subject['subject_name']; ?></td>
+                  <td><?php echo $students['academic_year']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
                   <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td><?php if ($students['marks'] > 0) {
-                    
-                  } else { ?>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Edit Mark</button>
-  <!-- Start of Modal -->
-<!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body">
-
-  <form id="myForm" method="post">
-    <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
-    <input type="text" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-
-  <div class="form-group">
-        <label style="color: red;">Select Exam Type </label>
-        <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
-          <option VALUE="">Select Exam Type</option>
-<?php
-  if(isset($exam_type) && count($exam_type)>0){
-    foreach($exam_type as $exam_types){ ?>
-      <option value="<?php echo $exam_types['id']; ?>"><?php echo $exam_types['name']; ?></option>
-    <?php
-      
-    }
-  }
-?>
-
-        </select>
-</div>
-
-  <input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-  <input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
-
-  <input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
-  <input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
-  <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
-  <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
-
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
-   </form>
-
-   <br>
-   <br>
-
-<div class="alert alert-success">
-    <div id="results">
-      </div>
-    </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- End of Modal -->
-  <?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
+                  <td></td>
 
 
                 </tr>
@@ -208,9 +136,10 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
+                  <th>Academic Year</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  <th>Action</th>
+                  
                 </tr>
                 </tfoot>
               </table> <?php
