@@ -1,20 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-  $level = $_POST['level'];
-  $subject_id = $_POST['subjects_id'];
-}
 
-$getStudentsUploadedAssignments = new Staff();
-$assignments = $getStudentsUploadedAssignments->getStudentsUploadedAssignments($level, $subject_id);
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
+
+$getExamTypes = new Staff();
+$exam_type = $getExamTypes->getExamTypes();
 
 $status = 1;
-$getCurrentSettings = new settings();
+$getCurrentSettings = new Settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
-
-$getSubclass = new Students();
-$getSubclass = $getSubclass->getSubclass($level);
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +18,7 @@ $getSubclass = $getSubclass->getSubclass($level);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Submitted Assignments| Lilongwe Private School</title>
+  <title>Filter Exam Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -59,12 +55,12 @@ $getSubclass = $getSubclass->getSubclass($level);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Viewing <?php echo $getSubclass['name']; ?> Assignments <a href="select-class.php"><button class="btn btn-primary">Change Class</button></a>
+        Filter Exam Results
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Subject Assignment</a></li>
+        <li class="active"><a href="filter-fina.php">Filter Exam Results</a></li>
        
       </ol>
     </section>
@@ -73,83 +69,33 @@ $getSubclass = $getSubclass->getSubclass($level);
     <section class="content">
       <div class="row">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
-            <div class="box-body">
-                      <?php
-        if(isset($assignments) && count($assignments)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Assignment Name</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody><?php
-
-          foreach($assignments as $assignment){ ?>
-          <tr>
-                  <td><?php echo $assignment['students_student_no']; ?></td>
-                  <td><?php echo $assignment['student_firstname']; ?></td>
-                  <td><?php echo $assignment['student_surname']; ?></td>
-                  <td><?php echo $assignment['subject_name']; ?></td>
-                  <td><?php echo $assignment['assignment_type_name']; ?></td>
-                  <td><?php echo $assignment['assignment_title']; ?></td>
-                  <td><?php if($assignment['marks'] == "" || $assignment['marks']==0){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
-          <?php
-          if ($assignment['marks'] > 0) {
-             ?><td></td><?php
-          } else { ?>
-          <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
-          <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
-          <input type="text" hidden="" value="<?php echo$students_student_no = $assignment['students_student_no']; ?>" name="students_student_no">
-          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subjects_id'];  ?>" name="subject_id">
-          <td><button type="submit" name="variables" class="btn btn-info">Assign Marks</button></td>
-          </form><?php
             
-          }
- 
-          ?>
+           
+            <!-- form start -->
+      <form role="form" action="view-final-results.php" method="POST">
+      
+      <div class="box-body">
 
-          <td><a href="assignments/students/<?php echo $assignment['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
-
-                </tr>
-          <?php
-            
-          } ?>
-
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Assignment Name</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Assignments Available for ".$getSubclass['name'];
-                      }
-        ?>
-            </div>
+    <div class="form-group">
+      <label>Select Academic Year </label>
+      <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+        <option VALUE="">Select Academic Year</option>
+      <option value="<?php echo $settings['id']; ?>"><?php echo $settings['academic_year']; ?></option>
+    </select>
+</div>
+      <label>Select Term </label>
+      <select class="form-control" required="" name="term" id="term">
+        <option VALUE="">Select Term</option>     
+      </select>
+        
+              </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
               </div>
             </form>
           </div>
@@ -159,12 +105,33 @@ $getSubclass = $getSubclass->getSubclass($level);
 
         </div>
         <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script type="text/javascript">
+function showTerm(val) {
+    // alert(val);
+    $.ajax({
+  type: "POST",
+  url: "results.php",
+  data:'academic_year='+val,
+  success: function(data){
+    // alert(data);
+    $("#term").html(data);
+  }
+  });
+  
+}
+</script>
+
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

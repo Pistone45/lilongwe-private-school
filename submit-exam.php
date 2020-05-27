@@ -5,10 +5,10 @@ include_once("functions/functions.php");
   $student_no = $_POST['student_no'];
 
 
-  if ($marks = $_POST['mark'] > 15) {
+  if ($marks = $_POST['mark'] > 70) {
 		?>
 		<div class="alert alert-danger">
-		<?php echo "Failed, The Mark should be between 0 to 15"; ?>
+		<?php echo "Failed, The Mark should be between 0 to 70"; ?>
 		</div> <?php
 
   } else {

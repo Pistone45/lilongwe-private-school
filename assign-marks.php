@@ -82,7 +82,7 @@ if (isset($_GET['id'])) {
 
             <div class="form-group">
               <label for="exampleInputEmail1">Marks</label>
-              <input type="text" name="marks" required="" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter Marks">
+              <input type="number" name="marks" max="15" required="" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter Marks">
               <small id="emailHelp" class="form-text text-muted">Decimals can also be added</small>
               <input type="text" hidden="" value="<?php if(isset($_GET['id'])){echo $_GET['id'];}  ?>" name="assignment_id">
             </div>

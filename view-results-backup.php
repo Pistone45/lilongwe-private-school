@@ -2,19 +2,17 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-  $level = $_POST['level'];
-  $subject_id = $_POST['subjects_id'];
+  $class_id = $_POST['class_id']." class left";
+  $sub_class_id = $_POST['sub_class_id']." sub class left";
+  $subject_id = $_POST['subject_id']." subject left";
+  $academic_year = $_POST['academic_year']. "aca year left";
+  $settings_id = $_POST['term'];
+
+$getAllExamsPerClassSubject = new Staff();
+$exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub_class_id, $subject_id, $settings_id);
+
 }
 
-$getStudentsUploadedAssignments = new Staff();
-$assignments = $getStudentsUploadedAssignments->getStudentsUploadedAssignments($level, $subject_id);
-
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
-
-$getSubclass = new Students();
-$getSubclass = $getSubclass->getSubclass($level);
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +20,7 @@ $getSubclass = $getSubclass->getSubclass($level);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Submitted Assignments| Lilongwe Private School</title>
+  <title>Exam Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -46,6 +44,8 @@ $getSubclass = $getSubclass->getSubclass($level);
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -59,12 +59,12 @@ $getSubclass = $getSubclass->getSubclass($level);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Viewing <?php echo $getSubclass['name']; ?> Assignments <a href="select-class.php"><button class="btn btn-primary">Change Class</button></a>
+        Exam Results
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Subject Assignment</a></li>
+        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
        
       </ol>
     </section>
@@ -76,9 +76,10 @@ $getSubclass = $getSubclass->getSubclass($level);
         <div class="col-md-12">
           <!-- general form elements -->
           <div class="box box-primary">
-            <div class="box-body">
-                      <?php
-        if(isset($assignments) && count($assignments)>0){ ?>
+      <?php
+      $i = 0;
+        if(isset($exams) && count($exams)>0){ 
+          ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -86,42 +87,64 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Assignment Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
                   <th>Marks</th>
-                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody><?php
 
-          foreach($assignments as $assignment){ ?>
+          foreach($exams as $exam){ 
+            $i++;  ?>
           <tr>
-                  <td><?php echo $assignment['students_student_no']; ?></td>
-                  <td><?php echo $assignment['student_firstname']; ?></td>
-                  <td><?php echo $assignment['student_surname']; ?></td>
-                  <td><?php echo $assignment['subject_name']; ?></td>
-                  <td><?php echo $assignment['assignment_type_name']; ?></td>
-                  <td><?php echo $assignment['assignment_title']; ?></td>
-                  <td><?php if($assignment['marks'] == "" || $assignment['marks']==0){echo "<i>Not Marked</i>";}else{echo$assignment['marks'];} ?> </td>
-          <?php
-          if ($assignment['marks'] > 0) {
-             ?><td></td><?php
-          } else { ?>
-          <form action="assign-marks.php?id=<?php echo $assignment['assignments_id']; ?>" method="POST">
-          <input type="text" hidden="" value="<?php echo$level = $_POST['level']; ?>" name="level">
-          <input type="text" hidden="" value="<?php echo$students_student_no = $assignment['students_student_no']; ?>" name="students_student_no">
-          <input type="text" hidden="" value="<?php echo$subject_id = $_POST['subjects_id'];  ?>" name="subject_id">
-          <td><button type="submit" name="variables" class="btn btn-info">Assign Marks</button></td>
-          </form><?php
-            
-          }
- 
-          ?>
+                  <td><?php echo $exam['student_no']; ?></td>
+                  <td><?php echo $exam['firstname']; ?></td>
+                  <td><?php echo $exam['lastname']; ?></td>
+                  <td><?php echo $exam['subject_name']; ?></td>
+                  <td><?php echo $exam['academic_year']; ?></td>
+                  <td><?php echo $exam['term_name']; ?></td>
+                  <td><?php if($exam['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$exam['marks'];} ?> </td>
+                  <td>                <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
+Edit Marks
+</button></td>
+          </tr>
 
-          <td><a href="assignments/students/<?php echo $assignment['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
-                </tr>
+<!-- Start of Modal -->
+<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="<?php echo $i; ?>">Edit <?php echo $exam['firstname'] ." ".$exam['lastname']. "'s". " Exam Mark"; ?></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+  <form id="myForm" method="post">
+    <div class="form-group">
+    <label for="exampleInputEmail1">New Mark</label>
+    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
+    <input type="text" id="student_no" hidden="" value="<?php echo $exam['student_no']; ?>" name="student_no">
+<br>
+    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitData();" value="Submit" />
+   </form>
+   <br>
+   <br>
+
+    <div id="results">
+
+</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Modal -->
           <?php
             
           } ?>
@@ -134,24 +157,20 @@ $getSubclass = $getSubclass->getSubclass($level);
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Assignment Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
                   <th>Marks</th>
-                  <th>Action</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Assignments Available for ".$getSubclass['name'];
+                        echo "No Assignments Available";
                       }
         ?>
-            </div>
-              <!-- /.box-body -->
+           
+            <!-- form start -->
 
-              <div class="box-footer">
-              </div>
-            </form>
           </div>
           <!-- /.box -->
 
@@ -159,12 +178,25 @@ $getSubclass = $getSubclass->getSubclass($level);
 
         </div>
         <!--/.col (left) -->
+        <!-- right column -->
+
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script type="text/javascript">
+    function SubmitData() {
+    var mark = $("#mark").val();
+    var student_no = $("#student_no").val();
+    $.post("submit-exam.php", { mark: mark, student_no: student_no },
+    function(data) {
+   $('#results').html(data);
+   $('#myForm')[0].reset();
+    });
+}
+  </script>
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
