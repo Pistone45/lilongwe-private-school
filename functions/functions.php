@@ -1361,9 +1361,10 @@ public function getAllSubclassSubjects($sub_class_id){
 
 
 	public function getStudentsPerSubclass($sub_class_id, $subject_id, $term){		
-		$getStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, exam_results.academic_year as academic_year, terms.name as term_name, firstname, lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) LEFT OUTER JOIN terms ON (exam_results.terms_id=terms.id) ORDER BY student_no ASC");
-		$getStudentsPerSubclass->bindParam(1,$_SESSION['user']['username']);
-		$getStudentsPerSubclass->bindParam(2,$term);
+		$getStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, exam_results.academic_year as academic_year, terms.name as term_name, firstname, lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) LEFT OUTER JOIN terms ON (exam_results.terms_id=terms.id) WHERE sub_classes.id=? ORDER BY student_no ASC");
+		//$getStudentsPerSubclass->bindParam(1,$_SESSION['user']['username']);
+		//$getStudentsPerSubclass->bindParam(2,$term);
+		$getStudentsPerSubclass->bindParam(1,$sub_class_id);
 		$getStudentsPerSubclass->execute();
 		
 		if($getStudentsPerSubclass->rowCount()>0){
@@ -1556,10 +1557,10 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
-		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT students_student_no as student_no, marks, students.firstname as firstname, students.lastname as lastname FROM exam_results LEFT OUTER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN classes_has_subjects ON(exam_results.classes_has_subjects_subjects_id=classes_has_subjects.subjects_id) WHERE students.sub_classes_id=? AND classes_has_subjects.subjects_id=?");
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT students_student_no as student_no, marks, students.firstname as firstname, students.lastname as lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes.id=?");
 
 		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
-		$getAllStudentsPerClassSubject->bindParam(2,$subjects_id);
+		//$getAllStudentsPerClassSubject->bindParam(2,$subjects_id);
 		$getAllStudentsPerClassSubject->execute();
 		
 		if($getAllStudentsPerClassSubject->rowCount()>0){
@@ -1725,6 +1726,16 @@ public function getUser(){
 
 	public function recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $staff_id, $classes_has_subjects_classes_id, $classes_has_subjects_subjects_id){
 			$exam_status_id = 1;
+
+		$checkExamResult = $this->dbCon->prepare("SELECT classes_has_subjects_classes_id, classes_has_subjects_subjects_id FROM exam_results where classes_has_subjects_classes_id=? AND classes_has_subjects_classes_id=?" );
+		$checkExamResult->bindValue(1, $classes_has_subjects_classes_id);
+		$checkExamResult->bindValue(2, $classes_has_subjects_classes_id);
+		$checkExamResult->execute();
+		if($checkExamResult->rowCount() >= 1){
+
+			echo "<script>alert('You have already Recorded Exams for this Student'); window.location = 'select-exam-class.php';</script>";
+		}else{
+
 				$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results (marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id, exam_status_id)
 				VALUES (:marks,:academic_year,:terms_id,:students_student_no,:exam_type_id,:staff_id,:classes_has_subjects_classes_id, :classes_has_subjects_subjects_id, :exam_status_id)" );
 				$recordStudentsExams->execute(array(
@@ -1738,7 +1749,9 @@ public function getUser(){
 						  ':classes_has_subjects_subjects_id'=>($classes_has_subjects_subjects_id),
 						  ':exam_status_id'=>($exam_status_id)				  
 						  ));
-						  						 		
+						  		
+				}
+
 	}
 
 

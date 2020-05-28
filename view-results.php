@@ -106,7 +106,7 @@ $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub
                   <td><?php echo $exam['term_name']; ?></td>
                   <td><?php if($exam['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$exam['marks'];} ?> </td>
                   <td>
-          <form action="submit-exam?id=<?php echo $exam['student_no']; ?>" method="POST">
+          <form action="submit-exam.php?id=<?php echo $exam['student_no']; ?>" method="POST">
 
         <input type="text" hidden="" value="<?php echo $exam['student_no']; ?>" name="student_no">
         <!-- Start of the variables to passed on to the next page -->
@@ -121,40 +121,6 @@ $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub
           </form></td>
           </tr>
 
-
-<!-- Start of Modal -->
-<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="<?php echo $i; ?>">Edit <?php echo $exam['firstname'] ." ".$exam['lastname']. "'s". " Exam Mark"; ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-  <form id="myForm" method="post">
-    <div class="form-group">
-    <label for="exampleInputEmail1">New Mark</label>
-    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-    <input type="text" id="student_no" hidden="" value="<?php echo $exam['student_no']; ?>" name="student_no">
-<br>
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitData();" value="Submit" />
-   </form>
-   <br>
-   <br>
-
-    <div id="results">
-
-</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End of Modal -->
           <?php
             
           } ?>
@@ -196,17 +162,7 @@ $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function SubmitData() {
-    var mark = $("#mark").val();
-    var student_no = $("#student_no").val();
-    $.post("submit-exam.php", { mark: mark, student_no: student_no },
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
+
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
