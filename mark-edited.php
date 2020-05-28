@@ -1,18 +1,22 @@
 <?php
 include_once("functions/functions.php");
+if (isset($_POST['variables'])) {
 
-$getStudents = new Students();
-$students = $getStudents->getStudents();
+  $class_id = $_POST['class_id']." class left";
+  $sub_class_id = $_POST['sub_class_id']." sub class left";
+  $subject_id = $_POST['subject_id']." subject left";
+  $academic_year = $_POST['academic_year']. "aca year left";
+  $settings_id = $_POST['settings_id'];
 
 
-  $getStudentDetails = new Students();
-  $details = $getStudentDetails->getStudentDetails();
-  $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
+  $marks = $_POST['mark'];
+  $assignments_id = $_POST['assignments_id'];
+  $students_student_no = $_POST['students_student_no'];
 
 
-  $getStudentAssignment = new Students();
-  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
-
+  $assignStudentMarks = new Staff();
+  $marks = $assignStudentMarks->assignStudentMarks($marks, $assignments_id, $students_student_no);
+}
 
 ?>
 
@@ -21,7 +25,7 @@ $students = $getStudents->getStudents();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Assignments | Lilongwe Private School</title>
+  <title>Mark Edited| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -30,8 +34,6 @@ $students = $getStudents->getStudents();
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -46,8 +48,7 @@ $students = $getStudents->getStudents();
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -55,17 +56,18 @@ $students = $getStudents->getStudents();
     <?php include_once("header.html"); ?>
   <!-- Left side column. contains the logo and sidebar -->
    <?php include_once('sidebar.html'); ?>
-   
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assignments       
+        Success
+       
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-assignments.php">Assignments</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Mark Edited</a></li>
        
       </ol>
     </section>
@@ -73,88 +75,47 @@ $students = $getStudents->getStudents();
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
-            
-            <!-- /.box-header -->
+        <!-- left column -->
+        <div class="col-md-6">
+          <!-- general form elements -->
+          <div class="box box-primary">
             <div class="box-body">
-                      <?php
-        if(isset($assignments) && count($assignments)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Uploads</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-					foreach($assignments as $assignment){ ?>
-					<tr>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
-                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
-                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
-                  <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['terms_id']; ?></td>
-				  <td><?php echo $assignment['subject_name']; ?> </td>
-          <td><?php echo $assignment['assignment_type_name']; ?> </td>
-          <td><?php if($assignment['marks'] == ""){echo "Not Marked";}else{echo $assignment['marks'];}  ?> </td>
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
-                    ?><td style="color: red;">Date Passed</a></td><?php
-                  } else { ?>
-                    <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Uploads</a></td> <?php
-          }
-                   ?>
-                </tr>
-					<?php
-						
-					} ?>
+            <form action="view-students-assignments.php" method="POST">
+                      <!-- Start of the variables to passed on to the next page -->
+         <input type="text" hidden="" name="term" value="<?php echo$_POST['settings_id']; ?>">
+        <input type="text" hidden="" name="class_id" value="<?php echo$_POST['class_id']; ?>">
+        <input type="text" hidden="" name="sub_class_id" value="<?php echo$_POST['sub_class_id']; ?>">
+        <input type="text" hidden="" name="subject_id" value="<?php echo$_POST['subject_id']; ?>">
+        <input type="text" hidden="" name="academic_year" value="<?php echo$_POST['academic_year']; ?>">
+        
+        <!-- End of the variables to passed on to the next page -->
+          <div class="alert alert-success">
+          	You have Edited a Mark. Click continue to get view more Assignments
+          </div>
 
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                  <th>Upload</th>
+            <button type="submit" name="submit" class="btn btn-primary btn-block">Continue</button>
+            </form>
 
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else{
-                        echo "No assignments Available at the moment";
-                      }
-        ?>
             </div>
-            <!-- /.box-body -->
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              </div>
           </div>
           <!-- /.box -->
+
+        
+
         </div>
-        <!-- /.col -->
+        <div class="col-md-6"></div>
+        <!--/.col (left) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
-
+  <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -356,30 +317,11 @@ $students = $getStudents->getStudents();
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

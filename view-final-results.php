@@ -111,7 +111,7 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
                   <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
                   <td><?php echo $marks['academic_year']; ?></td>
                   <td><?php echo $marks['term_name']; ?></td>
-                  <td><?php echo $marks['final_mark'] + $marks['exam_mark']; ?> </td>
+                  <td><?php if($marks['final_mark'] == 0 || $marks['exam_mark'] == 0){ echo"Not Marked"; }else {echo $marks['final_mark'] + $marks['exam_mark'];} ?> </td>
                   <td></td>
 
                 </tr>

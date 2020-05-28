@@ -20,7 +20,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dsiplay Assignments| Lilongwe Private School</title>
+  <title>Display Assignments| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -106,54 +106,29 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
                   <td><?php echo $submit['assignment_type_name']; ?></td>
                   <td><?php echo $submit['assignment_title']; ?></td>
                   <td><?php if($submit['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$submit['marks'];} ?> </td>
-                  <td>                <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
-Edit Marks
-</button></td>
+                  <td>
+          <form action="submit.php?id=<?php echo $_POST['term']; ?>" method="POST">
+        <input type="text" hidden="" id="assignments_id" value="<?php echo $submit['assignments_id']; ?>" name="assignments_id">
+
+        <input type="text" hidden="" id="students_student_no" value="<?php echo $submit['students_student_no']; ?>" name="students_student_no">
+        <!-- Start of the variables to passed on to the next page -->
+        <input type="text" hidden="" name="class_id" value="<?php echo$_POST['class_id']; ?>">
+        <input type="text" hidden="" name="sub_class_id" value="<?php echo$_POST['sub_class_id']; ?>">
+        <input type="text" hidden="" name="subject_id" value="<?php echo$_POST['subject_id']; ?>">
+        <input type="text" hidden="" name="academic_year" value="<?php echo$_POST['academic_year']; ?>">
+        <input type="text" hidden="" name="settings_id" value="<?php echo$_POST['term']; ?>">
+
+        <!-- End of the variables to passed on to the next page -->
+          
+          <td><button type="submit" name="variables" class="btn btn-info">Edit Marks</button></td>
+          </form></td>
 
           <td><a href="assignments/students/<?php echo $submit['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
                 </tr>
 
 
-<!-- Start of Modal -->
-<div class="modal fade" id="<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $i; ?>" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="<?php echo $i; ?>">Assign a Mark to <?php echo $submit['firstname'] ." ".$submit['lastname']. "'s". " Assignment"; ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-  <form id="myForm" method="post">
-    <div class="form-group">
-    <label for="exampleInputEmail1">New Mark</label>
-    <input type="text" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-  <input type="text" hidden="" id="assignments_id" value="<?php echo $submit['assignments_id']; ?>" name="assignments_id">
 
-  <input type="text" hidden="" id="students_student_no" value="<?php echo $submit['students_student_no']; ?>" name="students_student_no">
-
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="SubmitFormData();" value="Submit" />
-   </form>
-   <br>
-   <br>
-
-<div class="alert alert-success">
-    <div id="results">
-
-    </div>
-</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End of Modal -->
           <?php
             
           } ?>

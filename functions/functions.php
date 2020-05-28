@@ -521,7 +521,7 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
@@ -1180,7 +1180,7 @@ class Staff{
 	}
 	
 	public function getClassesPerTeacher(){
-		$getClassesPerTeacher = $this->dbCon->PREPARE("SELECT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
+		$getClassesPerTeacher = $this->dbCon->PREPARE("SELECT DISTINCT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
 		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
 		$getClassesPerTeacher->bindParam(1,$_SESSION['user']['username']);
 		$getClassesPerTeacher->execute();
@@ -1555,9 +1555,11 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 
-public function getAllStudentsPerClassSubject($sub_class_id){
-		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT student_no, firstname, lastname, exam_results.marks as marks FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) WHERE students.sub_classes_id=?");
+public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT students_student_no as student_no, marks, students.firstname as firstname, students.lastname as lastname FROM exam_results LEFT OUTER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN classes_has_subjects ON(exam_results.classes_has_subjects_subjects_id=classes_has_subjects.subjects_id) WHERE students.sub_classes_id=? AND classes_has_subjects.subjects_id=?");
+
 		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
+		$getAllStudentsPerClassSubject->bindParam(2,$subjects_id);
 		$getAllStudentsPerClassSubject->execute();
 		
 		if($getAllStudentsPerClassSubject->rowCount()>0){

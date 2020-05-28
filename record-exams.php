@@ -2,11 +2,11 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-  $subject_id = $_POST['subject_id'];
-  $sub_class_id = $_POST['sub_class_id'];
+  echo$subject_id = $_POST['subject_id'];
+  echo$sub_class_id = $_POST['sub_class_id'];
 
 $getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id);
+$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
 
 $getSubjectById = new Staff();
 $subject = $getSubjectById->getSubjectById($subject_id);

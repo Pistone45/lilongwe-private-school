@@ -105,10 +105,20 @@ $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub
                   <td><?php echo $exam['academic_year']; ?></td>
                   <td><?php echo $exam['term_name']; ?></td>
                   <td><?php if($exam['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$exam['marks'];} ?> </td>
-                  <td>                <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>">
-Edit Marks
-</button></td>
+                  <td>
+          <form action="submit-exam?id=<?php echo $exam['student_no']; ?>" method="POST">
+
+        <input type="text" hidden="" value="<?php echo $exam['student_no']; ?>" name="student_no">
+        <!-- Start of the variables to passed on to the next page -->
+        <input type="text" hidden="" name="class_id" value="<?php echo$_POST['class_id']; ?>">
+        <input type="text" hidden="" name="sub_class_id" value="<?php echo$_POST['sub_class_id']; ?>">
+        <input type="text" hidden="" name="subject_id" value="<?php echo$_POST['subject_id']; ?>">
+        <input type="text" hidden="" name="academic_year" value="<?php echo$_POST['academic_year']; ?>">
+        <input type="text" hidden="" name="settings_id" value="<?php echo$_POST['term']; ?>">
+        <!-- End of the variables to passed on to the next page -->
+          
+          <td><button type="submit" name="variables" class="btn btn-info">Edit Marks</button></td>
+          </form></td>
           </tr>
 
 
