@@ -95,6 +95,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
       $i = 0;
         if(isset($student) && count($student)>0){ 
           ?>
+
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -107,7 +108,8 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <th>Action</th>
                 </tr>
                 </thead>
-                <tbody><?php
+                <tbody>
+                  <?php
 
           foreach($student as $students){ 
             $i++;  ?>
@@ -117,19 +119,12 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php echo $students['lastname']; ?></td>
                   <td><?php echo$subject['subject_name']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
-                  <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
+                  <td><?php if($students['marks'] == "0.00" || $students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
                   <td><?php if ($students['marks'] > 0) {
                     
                   } else { ?>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Open Modal</button><?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
-
-                </tr>
-
-
-<!-- Start of Modal -->
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#<?php echo $i; ?>">Edit Mark</button>
+  <!-- Start of Modal -->
 <!-- Modal -->
 <div id="<?php echo $i; ?>" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -144,8 +139,9 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
 
   <form id="myForm" method="post">
     <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark</label>
-    <input type="text" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
+    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
+
+    <input type="number" max="15" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
   </div>
 
   <div class="form-group">
@@ -173,16 +169,17 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
   <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
   <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
 
-    <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
+
+  <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
    </form>
 
    <br>
    <br>
 
-<div class="alert alert-success">
+
     <div id="results">
-      </div>
-    </div>
+  
+</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -191,6 +188,16 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
   </div>
 </div>
 <!-- End of Modal -->
+  <?php
+                  }
+                   ?>            <!-- Button trigger modal -->
+</td>
+
+
+                </tr>
+
+
+
           <?php
             
           } ?>
@@ -213,6 +220,8 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                         echo "No Students Available to record Exams";
                       }
         ?>
+
+
            
             <!-- form start -->
 

@@ -2,12 +2,13 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-	
+
+	$sub_class_id = $_POST['sub_class_id'];
 	$academic_year = $_POST['academic_year'];
 	$term = $_POST['term'];
 
-$getFinalAssignmentMark = new Staff();
-$FinamMarks = $getFinalAssignmentMark->getFinalAssignmentMark($academic_year, $term);
+$getStudentsPerSubclass = new Staff();
+$studentsubclass = $getStudentsPerSubclass->getStudentsPerSubclass($sub_class_id, $academic_year, $term);
 
 $getTrialMark = new Staff();
 $mark = $getTrialMark->getTrialMark($academic_year, $term);
@@ -21,6 +22,9 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
 //$getFinalExamPerTerm = new Staff();
 //$exammarks = $getFinalExamPerTerm->getFinalExamPerTerm($academic_year, $term);
 }
+
+$getClassByID = new Staff();
+$classname = $getClassByID->getClassByID($sub_class_id);
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +71,7 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Final Results
+        All Students in <?php echo $classname['sub_class_name']; ?> <button class="btn btn-info">Approve Class</button>
        
       </h1>
       <ol class="breadcrumb">
@@ -85,34 +89,37 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
           <!-- general form elements -->
           <div class="box box-primary">
 
-       <h3>Exam Result</h3>
       <?php
       $i = 0;
-        if(isset($mark) && count($mark)>0){ 
+        if(isset($studentsubclass) && count($studentsubclass)>0){ 
           ?>
 
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Subject</th>
-                  <th>Grading Type</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
                   <th>Academic Year</th>
                   <th>Term</th>
-                  <th>Marks</th>
+                  <th>Final Mark</th>
+                  <th>Action</th>
+
                 </tr>
                 </thead>
                 <tbody>
                   <?php
 
-          foreach($mark as $marks){ 
+          foreach($studentsubclass as $studentsubclasses){ 
             $i++;  ?>
           <tr>
-                  <td><?php echo $marks['subject_name']; ?></td>
-                  <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
-                  <td><?php echo $marks['academic_year']; ?></td>
-                  <td><?php echo $marks['term_name']; ?></td>
-                  <td><?php echo $marks['final_mark'] + $marks['exam_mark']; ?> </td>
-                  <td></td>
+                  <td><?php echo $studentsubclasses['student_no']; ?></td>
+                  <td><?php echo $studentsubclasses['firstname']; ?></td>
+                  <td><?php echo $studentsubclasses['lastname']; ?></td>
+                  <td><?php echo $studentsubclasses['academic_year']; ?></td>
+                  <td><?php echo $studentsubclasses['term_name']; ?></td>
+                  <td><?php echo "Mark here"; ?></td>
+                  <td><input type="button" name="view" value="view" id="<?php echo $studentsubclasses["student_no"]; ?>" class="btn btn-info view_data" /></td>
 
                 </tr>
 
@@ -126,11 +133,13 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Subject</th>
-                  <th>Grading Type</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
                   <th>Academic Year</th>
                   <th>Term</th>
-                  <th>Marks</th>
+                  <th>Final Mark</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
               </table> <?php
@@ -156,24 +165,38 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
+  <div id="dataModal" class="modal fade">  
+      <div class="modal-dialog">  
+           <div class="modal-content">  
+                <div class="modal-header">  
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>  
+                     <h4 class="modal-title">Students Marks Per Subject</h4>  
+                </div>  
+                <div class="modal-body" id="employee_detail">  
+                </div>  
+                <div class="modal-footer">  
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
+                </div>  
+           </div>  
+      </div>  
+ </div>  
+ <script>  
+ $(document).ready(function(){  
+      $('.view_data').click(function(){  
+           var employee_id = $(this).attr("id");  
+           $.ajax({  
+                url:"select.php",  
+                method:"post",  
+                data:{employee_id:employee_id},  
+                success:function(data){  
+                     $('#employee_detail').html(data);  
+                     $('#dataModal').modal("show");  
+                }  
+           });  
+      });  
+ });  
+ </script>
+
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

@@ -521,7 +521,7 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
@@ -1196,6 +1196,21 @@ class Staff{
 
 
 
+	public function getAllSubclassesOnFilter(){
+		$getAllSubclassesOnFilter = $this->dbCon->PREPARE("SELECT id as sub_class_id, name FROM sub_classes");
+		//$getAllSubclassesOnFilter->bindParam(1,$_SESSION['user']['username']);
+		$getAllSubclassesOnFilter->execute();
+		
+		if($getAllSubclassesOnFilter->rowCount()>0){
+			$rows = $getAllSubclassesOnFilter->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
 
 	public function getAssignmentType(){
 		$getAssignmentType = $this->dbCon->PREPARE("SELECT id, name, description FROM assignment_type LIMIT 2");
@@ -1345,6 +1360,20 @@ public function getAllSubclassSubjects($sub_class_id){
 
 
 
+	public function getStudentsPerSubclass($sub_class_id, $subject_id, $term){		
+		$getStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, exam_results.academic_year as academic_year, terms.name as term_name, firstname, lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) LEFT OUTER JOIN terms ON (exam_results.terms_id=terms.id) ORDER BY student_no ASC");
+		$getStudentsPerSubclass->bindParam(1,$_SESSION['user']['username']);
+		$getStudentsPerSubclass->bindParam(2,$term);
+		$getStudentsPerSubclass->execute();
+		
+		if($getStudentsPerSubclass->rowCount()>0){
+			$rows = $getStudentsPerSubclass->fetchAll();
+			return $rows;
+		}
+	} //end of getting Assignments Results
+
+
+
 	public function getTrialMark($subject_id, $term){		
 		$getTrialMark = $this->dbCon->Prepare("SELECT SUM(submissions.marks) as final_mark, exam_results.marks as exam_mark, exam_results.academic_year as academic_year, terms.name as term_name, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN terms ON (exam_results.terms_id=terms.id) WHERE submissions.students_student_no=? AND exam_results.students_student_no=? ");
 		$getTrialMark->bindParam(1,$_SESSION['user']['username']);
@@ -1353,6 +1382,19 @@ public function getAllSubclassSubjects($sub_class_id){
 		
 		if($getTrialMark->rowCount()>0){
 			$row = $getTrialMark->fetchAll();
+			return $row;
+		}
+	} //end of getting Assignments Results
+
+
+	public function getStudentsMarkPerSUbject($subject_id, $term, $student_id){		
+		$getStudentsMarkPerSUbject = $this->dbCon->Prepare("SELECT SUM(submissions.marks) as final_mark, exam_results.marks as exam_mark, exam_results.academic_year as academic_year, terms.name as term_name, submissions.students_student_no as stu_no, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN terms ON (exam_results.terms_id=terms.id) WHERE submissions.students_student_no=? AND exam_results.students_student_no=? ");
+		$getStudentsMarkPerSUbject->bindParam(1,$student_id);
+		$getStudentsMarkPerSUbject->bindParam(2,$student_id);
+		$getStudentsMarkPerSUbject->execute();
+		
+		if($getStudentsMarkPerSUbject->rowCount()>0){
+			$row = $getStudentsMarkPerSUbject->fetchAll();
 			return $row;
 		}
 	} //end of getting Assignments Results
@@ -1580,6 +1622,23 @@ public function getSubjectById($subject_id){
 		}
 		
 	}
+
+
+
+public function getStudentID($student_id){
+		$getStudentID = $this->dbCon->PREPARE("SELECT student_no, firstname, lastname FROM students WHERE student_no=?");
+		$getStudentID->bindParam(1,$student_id);
+		$getStudentID->execute();
+		
+		if($getStudentID->rowCount()>0){
+			$row = $getStudentID->fetchAll();
+			
+			return $row;
+			
+		}
+		
+	}
+
 
 
 public function getClassByID($sub_class_id){
