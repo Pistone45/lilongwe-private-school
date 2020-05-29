@@ -1557,7 +1557,7 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
-		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT students_student_no as student_no, marks, students.firstname as firstname, students.lastname as lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes.id=?");
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE("SELECT DISTINCT student_no, exam_results.marks as marks, subjects.name as subject_name, students.firstname as firstname, students.lastname as lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) LEFT OUTER JOIN classes_has_subjects ON(exam_results.classes_has_subjects_subjects_id=classes_has_subjects.subjects_id) LEFT OUTER JOIN subjects ON(classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes.id=?");
 
 		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
 		//$getAllStudentsPerClassSubject->bindParam(2,$subjects_id);

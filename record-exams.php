@@ -118,7 +118,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php echo $students['student_no']; ?></td>
                   <td><?php echo $students['firstname']; ?></td>
                   <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$subject['subject_name']; ?></td>
+                  <td><?php echo$students['subject_name']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
                   <td><?php if($students['marks'] == "0.00" || $students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
                   <td><?php if ($students['marks'] > 0) {
