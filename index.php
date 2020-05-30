@@ -8,7 +8,11 @@ if(!isset($_SESSION['user'])){
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
+$countAllUsers = new User();
+$users = $countAllUsers->countAllUsers();
 
+$getNotices = new Staff();
+$notice = $getNotices->getNotices();
 
 
 ?>
@@ -17,7 +21,7 @@ $students = $getStudents->getStudents();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dashboard | Lilongwe private School</title>
+  <title>Lilongwe Private School| Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -31,6 +35,16 @@ $students = $getStudents->getStudents();
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="bower_components/jvectormap/jquery-jvectormap.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -45,83 +59,184 @@ $students = $getStudents->getStudents();
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    <?php include_once("header.html"); ?>
+  <?php include_once("header.html"); ?>
+  
   <!-- Left side column. contains the logo and sidebar -->
-   <?php include_once('sidebar.html'); ?>
+  <?php include_once('sidebar.html'); ?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        News and Updates
-       
+        Dashboard
+        <small>Control panel</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="add-news.php">News & Updates</a></li>
-       
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
-	<!-- form start -->
-            <form role="form" action="add-news.php" method="POST" enctype="multipart/form-data">
-			<?php
-                            if(isset($_SESSION["news-added"]) && $_SESSION["news-added"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully added news";
-                                unset($_SESSION["news-added"]);
-                                echo "</div>";
-								 header('Refresh: 5; URL= index.php');
-                            }
-							?>
-      <div class="row box box-primary">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- general form elements -->
-              <div class="box-body">
-             <table class="table">
-			 <?php
-						if(isset($news) && count($news)>0){
-							foreach($news as $new){ ?>
-							<tr>
-								<td><img src="<?php echo $new['image_url']; ?>" height="70px" width="70px;" /></td>
-								<td><?php echo $new['title']; ?></td>
-								<td><?php echo $new['news']; ?></td>
-								<td><a href="edit-news.php?id=<?php echo $new['id']; ?>"><i class="fa fa-pencil"></i> Edit News</a></td>
-							</tr>
-							<?php
-							}
-							
-						}else{
-							echo "No news and Updates found";
-	
-						}?>
-				
-			 </table>
-              
-                
-              </div>
-			  
-              
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>0</h3>
 
-        
-
+              <p>Students with Fees Balance</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-bag"></i>
+            </div>
+            <a href="fees-balances.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
         </div>
-        <!--/.col (left) -->
-        
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>53<sup style="font-size: 20px">%</sup></h3>
+
+              <p>Average Attendance</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3><?php if(isset($students)){echo count($students);}else{echo "0";} ?></h3>
+
+              <p>Registered Students</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3><?php if(isset($users)){echo count($users);}else{echo "0";} ?></h3>
+
+              <p>System Users</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
       </div>
       <!-- /.row -->
-	  </form>
+      <!-- Main row -->
+      <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-7 connectedSortable">
+        
+
+          <!-- TO DO List -->
+          
+          <!-- /.box -->
+
+          <!-- quick email widget -->
+          <div class="box box-info">
+            <div class="box-header">
+              <i class="fa fa-envelope"></i>
+
+              <h3 class="box-title">Message To All Students</h3>
+              
+            </div>
+            <div class="box-body">
+              <form action="index.php" method="post">
+               
+                <div class="form-group">
+                  <input type="text" class="form-control" name="subject" placeholder="Subject">
+                </div>
+                <div>
+                  <textarea class="textarea" name="message" placeholder="Message" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                </div>
+             
+            </div>
+            <div class="box-footer clearfix">
+              <button type="submit" class="pull-right btn btn-default" name="contact">Send
+                <i class="fa fa-arrow-circle-right"></i></button>
+            </div>
+       </form>
+          </div>
+
+        </section>
+        <!-- /.Left col -->
+        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+        <section class="col-lg-5 connectedSortable">
+
+          <div class="box box-primary">
+            
+           <div class="box-header">
+              <h3 class="box-title">Notice Board</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Notice</th>
+                  <th>Deadline</th>
+                  
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        if(isset($notice) && count($notice)>0){
+          foreach($notice as $notices){ ?>
+            <tr>
+              <td><?php echo $notices['notice']; ?></td>
+              <td><?php echo $notices['deadline']; ?>
+              </td>
+               
+            </tr>
+          <?php
+            
+          }
+        }
+        ?>
+                
+        
+                </tbody>
+               
+              </table>
+            </div>
+            <!-- /.box-body -->
+            
+        </div>
+          <!-- /.box -->
+
+
+        </section>
+        <!-- right col -->
+      </div>
+      <!-- /.row (main row) -->
+
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <?php include_once("footer.html"); ?>
+<?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">

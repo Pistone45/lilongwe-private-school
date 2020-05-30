@@ -223,6 +223,25 @@ class User{
 
 	} //end of getting users
 	
+
+	public function countAllUsers(){
+		//get all users
+		try{
+			$countAllUsers = $this->dbCon->prepare("SELECT username, firstname FROM users");
+			$countAllUsers->execute();
+			if($countAllUsers->rowCount()>0){
+				$rows = $countAllUsers->fetchAll();
+				return $rows;
+			}else{
+				return null;
+			}
+		}catch(PDOException $e){
+			echo $e->getMessage();
+		}
+
+
+	} //end of getting users
+
 		public function getAllUsers(){
 		//get all users
 		try{
@@ -1518,6 +1537,18 @@ public function deleteStudentAssignment($id, $assignment_url){
 			return $row;
 		}
 	} //end of getting Assignment URL
+
+
+	public function getNotices(){
+		$getNotices = $this->dbCon->Prepare("SELECT id, notice, deadline FROM notices");
+		//$getNotices->bindParam(1,$id);
+		$getNotices->execute();
+		
+		if($getNotices->rowCount()>0){
+			$rows = $getNotices->fetchAll();
+			return $rows;
+		}
+	} //end of getting Sub Classes
 
 
 	public function getSpecificStudentAssignmentURL($id){

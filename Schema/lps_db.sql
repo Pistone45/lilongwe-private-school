@@ -36,7 +36,7 @@ CREATE TABLE `assignment_type` (
 
 LOCK TABLES `assignment_type` WRITE;
 /*!40000 ALTER TABLE `assignment_type` DISABLE KEYS */;
-INSERT INTO `assignment_type` VALUES (1,'CE1','first assignment'),(2,'CE2','second assignment'),(3,'FN','final Exam'),(4,'FN Seniors','exam for seniors');
+INSERT INTO `assignment_type` VALUES (1,'CE1','first assignment'),(2,'CE2','second assignment');
 /*!40000 ALTER TABLE `assignment_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -65,7 +65,7 @@ CREATE TABLE `assignments` (
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,8 +74,39 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (17,'First ICT assignment','null.docx','2020-05-30',2020,1,'0212463690',10,1),(18,'Second Assignment','volunteer-form.docx','2020-05-31',2020,1,'0212463690',10,1),(19,'Bonjour','Mitra Services.docx','2020-05-30',2020,1,'0212463690',7,1),(21,'New Assignment','services (1).docx','2020-05-13',2020,1,'0212463690',7,1);
+INSERT INTO `assignments` VALUES (25,'Triangles','null (1).docx','2020-06-27',2020,1,'0212463690',3,1),(26,'Triangles Part 2','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-27',2020,1,'0212463690',3,2);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `attendance`
+--
+
+DROP TABLE IF EXISTS `attendance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `attendance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `academic_year` year(4) NOT NULL,
+  `date_recorded` datetime NOT NULL,
+  `attendance` int(11) NOT NULL DEFAULT 1,
+  `students_student_no` varchar(45) NOT NULL,
+  `sub_classes_id` int(11) NOT NULL,
+  `terms_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `students_student_no` (`students_student_no`),
+  KEY `sub_classes_id` (`sub_classes_id`),
+  KEY `terms_id` (`terms_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `attendance`
+--
+
+LOCK TABLES `attendance` WRITE;
+/*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
+/*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -236,7 +267,7 @@ CREATE TABLE `exam_results` (
   CONSTRAINT `fk_exam_results_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_students1` FOREIGN KEY (`students_student_no`) REFERENCES `students` (`student_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,6 +276,7 @@ CREATE TABLE `exam_results` (
 
 LOCK TABLES `exam_results` WRITE;
 /*!40000 ALTER TABLE `exam_results` DISABLE KEYS */;
+INSERT INTO `exam_results` VALUES (25,'LPS/S/1',1,1,2020,50.00,'0212463690',1,1,3);
 /*!40000 ALTER TABLE `exam_results` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,6 +300,7 @@ CREATE TABLE `exam_status` (
 
 LOCK TABLES `exam_status` WRITE;
 /*!40000 ALTER TABLE `exam_status` DISABLE KEYS */;
+INSERT INTO `exam_status` VALUES (1,'Not Verified'),(2,'Verified');
 /*!40000 ALTER TABLE `exam_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -281,6 +314,7 @@ DROP TABLE IF EXISTS `exam_type`;
 CREATE TABLE `exam_type` (
   `id` int(11) NOT NULL,
   `name` varchar(45) NOT NULL,
+  `description` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -291,6 +325,7 @@ CREATE TABLE `exam_type` (
 
 LOCK TABLES `exam_type` WRITE;
 /*!40000 ALTER TABLE `exam_type` DISABLE KEYS */;
+INSERT INTO `exam_type` VALUES (1,'FN','Final Exam'),(2,'FN Seniors','Exam for Seniors'),(3,'General','General Exam Type');
 /*!40000 ALTER TABLE `exam_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,6 +435,7 @@ CREATE TABLE `notices` (
 
 LOCK TABLES `notices` WRITE;
 /*!40000 ALTER TABLE `notices` DISABLE KEYS */;
+INSERT INTO `notices` VALUES (1,'Pay School Fees','2020-06-28','2020-05-30');
 /*!40000 ALTER TABLE `notices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -720,7 +756,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_assignments` VALUES (1,19),(1,21),(5,17),(5,18);
+INSERT INTO `sub_classes_has_assignments` VALUES (1,25),(1,26);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -751,7 +787,7 @@ CREATE TABLE `sub_classes_has_subjects` (
 
 LOCK TABLES `sub_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_subjects` VALUES (1,15,'01823567'),(1,7,'0212463690'),(5,10,'0212463690'),(7,10,'0212463690'),(1,6,'0777777777'),(1,8,'0777777777'),(1,10,'0777777777'),(3,1,'0777777777'),(3,2,'0777777777'),(3,6,'0777777777');
+INSERT INTO `sub_classes_has_subjects` VALUES (1,3,'0212463690'),(1,7,'0212463690');
 /*!40000 ALTER TABLE `sub_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -806,7 +842,7 @@ CREATE TABLE `submissions` (
 
 LOCK TABLES `submissions` WRITE;
 /*!40000 ALTER TABLE `submissions` DISABLE KEYS */;
-INSERT INTO `submissions` VALUES ('LPS/S/1',19,70.00,'services.docx','2020-05-22'),('LPS/S/2',19,84.00,'null.docx','2020-05-24'),('LPS/S/6',17,0.00,'services.docx','2020-05-21');
+INSERT INTO `submissions` VALUES ('LPS/S/1',25,12.00,'services.docx','2020-05-28'),('LPS/S/1',26,10.00,'Mo&Mic for the Website.doc','2020-05-28');
 /*!40000 ALTER TABLE `submissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -901,4 +937,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-25 15:17:21
+-- Dump completed on 2020-05-30 19:11:59
