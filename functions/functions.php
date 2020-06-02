@@ -357,8 +357,8 @@ class Students{
 	} //end of getting students
 	
 	public function getSpecificStudent($id){
-		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender,place_of_birth,country_of_birth,nationality,home_language,
-		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type,
+		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender, gender_id, place_of_birth,country_of_birth,nationality,home_language,
+		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type, blood_type_id,
 		student_status.name as student_status,sub_classes.name as sub_class, sub_classes.id as sub_class_id
 		FROM students INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
 		ON (student_status.id=students.student_status_id) INNER JOIN gender ON (gender.id=students.gender_id) WHERE student_no=?");
@@ -506,15 +506,33 @@ public function getLoginStatus($id){
 	
 	
 	
-	public function editStudent($bannerpath,$title,$news,$news_id){
-		$editStudent = $this->dbCon->PREPARE("UPDATE news SET title=?, news=?, image_url=? WHERE id=?");
-		$editStudent->bindParam(1,$title);
-		$editStudent->bindParam(2,$news);
-		$editStudent->bindParam(3,$bannerpath);
-		$editStudent->bindParam(4,$news_id);
+	public function editStudent($student_no,$sub_class, $student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date){
+		$editStudent = $this->dbCon->PREPARE("UPDATE students SET sub_classes_id=?, student_picture=?, firstname=?, middlename=?, lastname=?, gender_id=?, blood_type_id=?, dob=?, place_of_birth=?, country_of_birth=?, nationality=?, home_language=?, year_of_entry=?, sporting_interests=?, musical_interests=?, other_interests=?, medical_information=?, other_schools_attended=?, home_doctor=?, admission_date=?  WHERE student_no=?");
+		$editStudent->bindParam(1,$sub_class);
+		$editStudent->bindParam(2,$student_picture);
+		$editStudent->bindParam(3,$firstname);
+		$editStudent->bindParam(4,$middlename);
+		$editStudent->bindParam(5,$lastname);
+		$editStudent->bindParam(6,$gender);
+		$editStudent->bindParam(7,$blood_type);
+		$editStudent->bindParam(8,$dob);
+		$editStudent->bindParam(9,$place_of_birth);
+		$editStudent->bindParam(10,$country_of_birth);
+		$editStudent->bindParam(11,$nationality);
+		$editStudent->bindParam(12,$home_language);
+		$editStudent->bindParam(13,$year_of_entry);
+		$editStudent->bindParam(14,$sporting_interests);
+		$editStudent->bindParam(15,$musical_interests);
+		$editStudent->bindParam(16,$other_interests);
+		$editStudent->bindParam(17,$medical_information);
+		$editStudent->bindParam(18,$other_schools_attended);
+		$editStudent->bindParam(19,$home_doctor);
+		$editStudent->bindParam(20,$admission_date);
+		$editStudent->bindParam(21,$student_no);
 		$editStudent->execute();
 		$_SESSION['student-edited'] = true;
 	}
+
 	
     public function getStudentCount(){
 		$id = 10; //default id for current studentt count

@@ -89,11 +89,23 @@ if(isset($_GET['id'])){
                 <li class="list-group-item">
                   <b>Gender</b> <a class="pull-right"><?php echo $details['gender']; ?></a>
                 </li>
+                <li class="list-group-item">
+                  <b>Date of Birth</b> <a class="pull-right"><?php echo $details['dob']; ?></a>
+                </li>
+                <li class="list-group-item">
+                  <b>Country of Birth</b> <a class="pull-right"><?php echo $details['country_of_birth']; ?></a>
+                </li>
+                <li class="list-group-item">
+                  <b>Nationality</b> <a class="pull-right"><?php echo $details['nationality']; ?></a>
+                </li>
+                <li class="list-group-item">
+                  <b>Home Language</b> <a class="pull-right"><?php echo $details['home_language']; ?></a>
+                </li>
                
               </ul>
 			<div class="row">
 				<div class="col-lg-6">
-					<a href="approve-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-success btn-block"><b>Edit Student</b></a>
+					<a href="edit-student.php?id=<?php echo $details['student_no']; ?>" class="btn btn-success btn-block"><b>Edit Student</b></a>
 				</div>
 				<div class="col-lg-6">
 <?phP
@@ -128,8 +140,8 @@ if ($loginstatus['user_status_id'] == 0) { ?>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <strong><i class="fa fa-book margin-r-5"></i> Date of Birth</strong>
-				<p class="text-muted"><?php echo $details['dob']; ?></p>
+              <strong><i class="fa fa-book margin-r-5"></i> Other Interests</strong>
+				<p class="text-muted"><?php echo $details['other_interests']; ?></p>
               
               <hr>
 
@@ -139,9 +151,9 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 
               <hr>
 
-              <strong><i class="fa fa-pencil margin-r-5"></i> Nationality</strong>
+              <strong><i class="fa fa-pencil margin-r-5"></i> Medical Information</strong>
 
-               <p class="text-muted"><?php echo $details['nationality']; ?></p>
+               <p class="text-muted"><?php echo $details['medical_information']; ?></p>
 
               <hr>
 
@@ -149,6 +161,22 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 
               <p class="text-muted"><?php echo $details['sporting_interests']; ?></p>
 
+              <hr>
+
+              <strong><i class="fa fa-file-text-o margin-r-5"></i> Year of Entry</strong>
+
+              <p class="text-muted"><?php echo $details['year_of_entry']; ?></p>
+
+              <hr>
+
+              <strong><i class="fa fa-tint" aria-hidden="true"></i> Blood Group Type</strong>
+
+              <p class="text-muted"><?php echo $details['blood_type']; ?></p>
+              <hr>
+
+              <strong><i class="fa fa-graduation-cap" aria-hidden="true"></i> Other Schools Attended</strong>
+
+              <p class="text-muted"><?php echo $details['other_schools_attended']; ?></p>
             </div>
             <!-- /.box-body -->
           </div>
