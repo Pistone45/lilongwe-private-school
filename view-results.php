@@ -8,6 +8,7 @@ if (isset($_POST['submit'])) {
   $academic_year = $_POST['academic_year']. "aca year left";
   $settings_id = $_POST['term'];
 
+
 $getAllExamsPerClassSubject = new Staff();
 $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub_class_id, $subject_id, $settings_id);
 

@@ -7,6 +7,8 @@ if (isset($_POST['submit'])) {
   $exam_type_id = $_POST['exam_type_id'];
   $academic_year = $_POST['academic_year'];
 
+
+
 $getStudentsPerExamType = new Staff();
 $student = $getStudentsPerExamType->getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year);
 

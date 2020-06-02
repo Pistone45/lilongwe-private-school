@@ -2,8 +2,8 @@
 include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
-  echo$subject_id = $_POST['subject_id'];
-  echo$sub_class_id = $_POST['sub_class_id'];
+	$subject_id = $_POST['subject_id'];
+	$sub_class_id = $_POST['sub_class_id'];
 
 $getAllStudentsPerClassSubject = new Staff();
 $student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
@@ -18,6 +18,23 @@ $classes_has_subjects_subjects_id = $classsubject['subjects_id'];
 }
 
 
+if (isset($_POST['addMarks'])) {
+
+  $marks = $_POST['marks'];
+  $academic_year = (int)$_POST['academic_year'];
+  $term = (int)$_POST['term'];
+  $students_student_no = $_POST['student_no'];
+  $exam_type_id = 1;
+  $sub_class_id = (int)$_POST['sub_class_id'];
+  $subject_id = (int)$_POST['subject_id'];
+
+    $recordStudentsExams = new Staff();
+  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $sub_class_id, $subject_id);
+  
+}
+
+
+
 $status = 1;
 $getCurrentSettings = new settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
@@ -25,8 +42,6 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
 $getExamTypes = new Staff();
 $exam_type = $getExamTypes->getExamTypes();
 
-$getUserUsingUsername = new Staff();
-$singleUser = $getUserUsingUsername->getUserUsingUsername();
 
 
 ?>
@@ -91,6 +106,17 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
         <div class="col-md-12">
           <!-- general form elements -->
           <div class="box box-primary">
+		  <?php
+                            if(isset($_SESSION["marks-added"]) && $_SESSION["marks-added"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully Added Marks";
+                                unset($_SESSION["marks-added"]);
+                                echo "</div>";
+								 header('Refresh: 5; URL= record-exams.php');
+                            }
+							?>
 
       <?php
       $i = 0;
@@ -118,100 +144,28 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
                   <td><?php echo $students['student_no']; ?></td>
                   <td><?php echo $students['firstname']; ?></td>
                   <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo$students['subject_name']; ?></td>
+                  <td><?php echo $students['subject']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
-                  <td><?php if($students['marks'] == "0.00" || $students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td><?php if ($students['marks'] > 0) {
-                    
-                  } else { ?><td>
-<form action="confirm-exam-type.php?id=<?php echo $students['student_no']; ?>" method="POST">
-<!-- Start of the variables to passed on to the next page -->
-<input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-<input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
+				   <form role="form" action="record-exams.php" method="POST">
+                  <td>
+					<input type="hidden" id="academic_year"  value="<?php echo $settings['academic_year']; ?>" name="academic_year">	
+					<input type="hidden" id="term"  value="<?php echo $settings['term']; ?>" name="term">
+					<input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no">	
+					<input type="hidden" id="subject_id" value="<?php echo $subject_id; ?>" name="subject_id">	
+					<input type="hidden" id="sub_class_id"  value="<?php echo $sub_class_id; ?>" name="sub_class_id">						
+					<input type="number" name="marks"  placeholder="Enter Marks" class="form-control"/>	 			 
+				  </td>
+				  <td>				 
+					<button type="submit" name="addMarks" class="btn btn-info">Add Marks</button>	
+					
+				  </td>
+				   </form>
+               
+      </tr>
 
-<input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
-<input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
-<input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
-<input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
-<input type="text" hidden="" name="sub_class_id" value="<?php echo$_POST['sub_class_id']; ?>">
-<input type="text" hidden="" name="subject_id" value="<?php echo$_POST['subject_id']; ?>">
-<!-- End of the variables to passed on to the next page -->
+
+
           
-<td><button type="submit" name="variables" class="btn btn-info">Edit Mark</button></td>
-</form></td>
-
-  <!-- Start of Modal -->
-<!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body">
-
-  <form id="myForm" method="post">
-    <div class="form-group">
-    <label for="exampleInputEmail1">Final Exam Mark for <?php echo $students['firstname']." ".$students['lastname'];?> </label>
-
-    <input type="number" max="15" required="" name="mark" class="form-control" id="mark" aria-describedby="emailHelp" placeholder="Enter New Mark">
-  </div>
-
-  <div class="form-group">
-        <label style="color: red;">Select Exam Type </label>
-        <select required="" name="exam_type_id" class="form-control" id="exam_type_id">
-          <option VALUE="">Select Exam Type</option>
-<?php
-  if(isset($exam_type) && count($exam_type)>0){
-    foreach($exam_type as $exam_types){ ?>
-      <option value="<?php echo $exam_types['id']; ?>"><?php echo $exam_types['name']; ?></option>
-    <?php
-      
-    }
-  }
-?>
-
-        </select>
-</div>
-
-  <input type="text" id="academic_year" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-  <input type="text" id="term" hidden="" value="<?php echo $settings['term']; ?>" name="term">
-
-  <input type="text" id="students_student_no" hidden="" value="<?php echo $students['student_no']; ?>" name="students_student_no">
-  <input type="text" id="staff_id" hidden="" value="<?php echo $singleUser['id']; ?>" name="staff_id">
-  <input type="text" hidden="" id="classes_has_subjects_classes_id" value="<?php echo $classsubject['linked_classes_id']; ?>" name="classes_has_subjects_classes_id">
-  <input type="text" hidden="" id="classes_has_subjects_subjects_id" value="<?php echo $classsubject['subjects_id']; ?>" name="classes_has_subjects_subjects_id">
-
-
-  <input type="button" name="submitFormData" class="btn btn-primary" id="submitFormData" onclick="RecordExams();" value="Submit" />
-   </form>
-
-   <br>
-   <br>
-
-
-    <div id="results">
-  
-</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- End of Modal -->
-  <?php
-                  }
-                   ?>            <!-- Button trigger modal -->
-</td>
-
-
-                </tr>
-
 
 
           <?php
@@ -241,7 +195,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
            
             <!-- form start -->
 
-          </div>
+      
           <!-- /.box -->
 
         
