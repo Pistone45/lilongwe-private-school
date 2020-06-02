@@ -957,6 +957,20 @@ class Guardian{
 			return $row;
 		}
 	} //end of getting guardians
+
+
+	public function getSpecificGuardian($id){
+		
+		$getSpecificGuardian = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,primary_phone,secondary_phone,address,email,occupation,employer FROM guardians WHERE id=?");
+		$getSpecificGuardian->bindParam(1,$id);
+		$getSpecificGuardian->execute();
+		
+		if($getSpecificGuardian->rowCount()>0){
+			$row = $getSpecificGuardian->fetch();
+			return $row;
+		}
+	} //end of getting Specific guardians
+
 	
 		//add Partner
 	public function addGuardian($firstname,$middlename,$lastname,$primaryPhone,$secondaryPhone,$address,$email,$occupation,$employer){
@@ -991,6 +1005,7 @@ class Guardian{
 		$editGuardian->bindParam(7,$email);
 		$editGuardian->bindParam(8,$occupation);
 		$editGuardian->bindParam(9,$employer);
+		$editGuardian->bindParam(10,$id);
 		$editGuardian->execute();
 		
 		 $_SESSION['guardian-updated']=true;
@@ -1141,7 +1156,7 @@ class Staff{
 
 	
 	public function getSpecificTeacher($teacher_id){
-		$getSpecificTeacher = $this->dbCon->Prepare("SELECT id, CONCAT(firstname, ' ',middlename,' ',lastname) as name,
+		$getSpecificTeacher = $this->dbCon->Prepare("SELECT id, CONCAT(firstname, ' ',middlename,' ',lastname) as name, firstname, lastname, middlename,
 		dob,phone,email,address,qualifications,no_of_years_experience,date_joined,marital_status,name_of_spouse,number_of_children
 		FROM staff WHERE id=?");
 		$getSpecificTeacher->bindParam(1,$teacher_id);
@@ -1153,6 +1168,29 @@ class Staff{
 		}
 	} //end of getting teacher details
 
+
+
+	public function editTeacher($id,$firstname,$middlename,$lastname,$phone,$email,$address,$dob,$qualifications,$no_of_years_experience,$date_joined,$marital_status,$name_of_spouse,$number_of_children){
+		$editTeacher =$this->dbCon->PREPARE("UPDATE staff SET firstname=?, middlename=?, lastname=?, phone=?, email=?, address=?, dob=?, qualifications=?, no_of_years_experience=?, date_joined=?, marital_status=?, name_of_spouse=?, number_of_children=? WHERE id=? ");
+		$editTeacher->bindParam(1,$firstname);
+		$editTeacher->bindParam(2,$middlename);
+		$editTeacher->bindParam(3,$lastname);
+		$editTeacher->bindParam(4,$phone);
+		$editTeacher->bindParam(5,$email);
+		$editTeacher->bindParam(6,$address);
+		$editTeacher->bindParam(7,$dob);
+		$editTeacher->bindParam(8,$qualifications);
+		$editTeacher->bindParam(9,$no_of_years_experience);
+		$editTeacher->bindParam(10,$date_joined);
+		$editTeacher->bindParam(11,$marital_status);
+		$editTeacher->bindParam(12,$name_of_spouse);
+		$editTeacher->bindParam(13,$number_of_children);
+		$editTeacher->bindParam(14,$id);
+		$editTeacher->execute();
+		
+		 $_SESSION['teacher-updated']=true;
+		
+	}
 
 
 	public function getTeacherSublassID(){

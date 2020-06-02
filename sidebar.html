@@ -25,9 +25,9 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
-		<?php
-			if(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==10){ //admin ?>
-				 <li>                    
+    <?php
+      if(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==10){ //admin ?>
+         <li>                    
             <li class="active"><a href="index.php"><i class="fa fa-circle-o"></i> Dashboard</a></li>
                     
         </li>
@@ -41,7 +41,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="view-teachers.php"><i class="fa fa-circle-o"></i> Assign Subjects to Teachers</a></li>
-			<li><a href="view-banners.php"><i class="fa fa-circle-o"></i> View/Delete Banners</a></li>
+      <li><a href="view-banners.php"><i class="fa fa-circle-o"></i> View/Delete Banners</a></li>
             
           </ul>
         </li>        
@@ -54,7 +54,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="view-guardians.php"><i class="fa fa-circle-o"></i> Add Student</a></li>
-			<li><a href="view-students.php"><i class="fa fa-circle-o"></i> View Students</a></li>
+      <li><a href="view-students.php"><i class="fa fa-circle-o"></i> View Students</a></li>
             
           </ul>
         </li>
@@ -69,12 +69,12 @@
           </a>
           <ul class="treeview-menu">              
             
-			<li><a href="filter-admin-exam-results.php"><i class="fa fa-circle-o"></i> View Exams Results</a></li>
+      <li><a href="filter-admin-exam-results.php"><i class="fa fa-circle-o"></i> View Exams Results</a></li>
       <li><a href="filter-approved-results.php"><i class="fa fa-circle-o"></i> Approve Results</a></li>   
           </ul>
-        </li>		
-		
-		<li class="treeview">
+        </li>   
+    
+    <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i> <span>Assigment Management</span>
             <span class="pull-right-container">
@@ -82,11 +82,11 @@
             </span>
           </a>
           <ul class="treeview-menu">
-			<li><a href="filter-students-assignments.php"><i class="fa fa-circle-o"></i> View Submitted Assignments</a></li>
+      <li><a href="filter-students-assignments.php"><i class="fa fa-circle-o"></i> View Submitted Assignments</a></li>
             
           </ul>
         </li>
-		
+    
         <li class="treeview">
           <a href="#">
             <i class="fa fa-share"></i> <span>Administration</span>
@@ -107,61 +107,84 @@
                 <li><a href="#"><i class="fa fa-circle-o"></i> Edit User</a></li>
               </ul>
             </li>
-			
-			
-			
+      
+            <li class="treeview">
+              <a href="#"><i class="fa fa-circle-o"></i> Guardians
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="add-guardian.php"><i class="fa fa-circle-o"></i> Add Guardian</a></li>
+                <li><a href="view-guardian.php"><i class="fa fa-circle-o"></i> View/Edit Guardian</a></li>
+              </ul>
+            </li>
+
+            <li class="treeview">
+              <a href="#"><i class="fa fa-circle-o"></i> Teachers
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="add-teacher.php"><i class="fa fa-circle-o"></i> Add Teacher</a></li>
+                <li><a href="view-teacher.php"><i class="fa fa-circle-o"></i> View/Edit Teacher</a></li>
+              </ul>
+            </li>
+      
+      
           </ul>
         </li>
-			
-			<?php
-			
-			
-			}elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==20){ //Teacher ?>
-				<li class="treeview">
-				  <a href="#">
-					<i class="fa fa-folder"></i> <span>Exams Management</span>
-					<span class="pull-right-container">
-					  <i class="fa fa-angle-left pull-right"></i>
-					</span>
-				  </a>
-				  <ul class="treeview-menu">                
-					<li><a href="select-exam-class.php"><i class="fa fa-circle-o"></i> Record Exams</a></li>
-					<li><a href="filter-exam-results.php"><i class="fa fa-circle-o"></i> View Exams Results</a></li>        
-				  </ul>
-				</li>		
-				
-				<li class="treeview">
-				  <a href="#">
-					<i class="fa fa-edit"></i> <span>Assigment Management</span>
-					<span class="pull-right-container">
-					  <i class="fa fa-angle-left pull-right"></i>
-					</span>
-				  </a>
-				  <ul class="treeview-menu">
-					<li><a href="add-assignment.php"><i class="fa fa-circle-o"></i> Add Assignment</a></li>
-					<li><a href="view-assignments.php"><i class="fa fa-circle-o"></i> View/Delete Assignments</a></li>
+      
+      <?php
+      
+      
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==20){ //Teacher ?>
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-folder"></i> <span>Exams Management</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">                
+          <li><a href="select-exam-class.php"><i class="fa fa-circle-o"></i> Record Exams</a></li>
+          <li><a href="filter-exam-results.php"><i class="fa fa-circle-o"></i> View Exams Results</a></li>        
+          </ul>
+        </li>   
+        
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-edit"></i> <span>Assigment Management</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">
+          <li><a href="add-assignment.php"><i class="fa fa-circle-o"></i> Add Assignment</a></li>
+          <li><a href="view-assignments.php"><i class="fa fa-circle-o"></i> View/Delete Assignments</a></li>
           <li><a href="select-class.php"><i class="fa fa-circle-o"></i> View Submitted Assignments</a></li>
-					
-				  </ul>
-				</li>
+          
+          </ul>
+        </li>
 
-			<?php
-			
-			
-			}elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==30){ //Student ?>
-				<li class="treeview">
-				  <a href="#">
-					<i class="fa fa-edit"></i> <span>Assigment Management</span>
-					<span class="pull-right-container">
-					  <i class="fa fa-angle-left pull-right"></i>
-					</span>
-				  </a>
-				  <ul class="treeview-menu">
-					<li><a href="view-student-assignment.php"><i class="fa fa-circle-o"></i> View Assignment</a></li>
-					
-				  </ul>
-				</li>
-			
+      <?php
+      
+      
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==30){ //Student ?>
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-edit"></i> <span>Assigment Management</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">
+          <li><a href="view-student-assignment.php"><i class="fa fa-circle-o"></i> View Assignment</a></li>
+          
+          </ul>
+        </li>
+      
 
         <li class="treeview">
           <a href="#">
@@ -175,14 +198,14 @@
           
           </ul>
         </li>
-			<?php
-			
-			
-			}
-			
-			
-			
-		?>
+      <?php
+      
+      
+      }
+      
+      
+      
+    ?>
        
         
       </ul>
