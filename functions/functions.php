@@ -1830,7 +1830,7 @@ public function getUser(){
 		$checkExamResult->execute();
 		if($checkExamResult->rowCount()>0){
 
-			echo "<script>alert('You have already Recorded Exams for this Student'); window.location = 'select-exam-class.php';</script>";
+			echo "<script>alert('You have already Recorded Exams for this Student');</script>";
 		}else{
 			
 				$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results (marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id, exam_status_id)

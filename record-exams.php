@@ -18,22 +18,6 @@ $classes_has_subjects_subjects_id = $classsubject['subjects_id'];
 }
 
 
-if (isset($_POST['addMarks'])) {
-
-  $marks = $_POST['marks'];
-  $academic_year = (int)$_POST['academic_year'];
-  $term = (int)$_POST['term'];
-  $students_student_no = $_POST['student_no'];
-  $exam_type_id = 1;
-  $sub_class_id = (int)$_POST['sub_class_id'];
-  $subject_id = (int)$_POST['subject_id'];
-
-    $recordStudentsExams = new Staff();
-  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $sub_class_id, $subject_id);
-  
-}
-
-
 
 $status = 1;
 $getCurrentSettings = new settings();
@@ -73,6 +57,8 @@ $exam_type = $getExamTypes->getExamTypes();
   <![endif]-->
 
   <!-- Google Font -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <script src="http://code.jquery.com/jquery-latest.js"></script>
   <script src="submit.js"></script>
@@ -92,6 +78,8 @@ $exam_type = $getExamTypes->getExamTypes();
         Display Assignments
        
       </h1>
+    <div class="result">
+    </div>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
@@ -146,14 +134,14 @@ $exam_type = $getExamTypes->getExamTypes();
                   <td><?php echo $students['lastname']; ?></td>
                   <td><?php echo $students['subject']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
-				   <form role="form" action="record-exams.php" method="POST">
+				   <form role="form" action="" id="recordexams" method="POST">
                   <td>
 					<input type="hidden" id="academic_year"  value="<?php echo $settings['academic_year']; ?>" name="academic_year">	
 					<input type="hidden" id="term"  value="<?php echo $settings['term']; ?>" name="term">
 					<input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no">	
 					<input type="hidden" id="subject_id" value="<?php echo $subject_id; ?>" name="subject_id">	
 					<input type="hidden" id="sub_class_id"  value="<?php echo $sub_class_id; ?>" name="sub_class_id">						
-					<input type="number" name="marks"  placeholder="Enter Marks" class="form-control"/>	 			 
+					<input type="number" id="marks" name="marks"  placeholder="Enter Marks" class="form-control"/>	 			 
 				  </td>
 				  <td>				 
 					<button type="submit" name="addMarks" class="btn btn-info">Add Marks</button>	
@@ -209,6 +197,31 @@ $exam_type = $getExamTypes->getExamTypes();
     </section>
     <!-- /.content -->
   </div>
+
+<script>
+  $(document).ready(function () {
+    $('.btn-info').click(function (e) {
+      e.preventDefault();
+      var academic_year = $('#academic_year').val();
+      var term = $('#term').val();
+      var student_no = $('#student_no').val();
+      var subject_id = $('#subject_id').val();
+      var sub_class_id = $('#sub_class_id').val();
+      var marks = $('#marks').val();
+      $.ajax
+        ({
+          type: "POST",
+          url: "record-exam.php",
+          data: { "academic_year": academic_year, "term": term, "student_no": student_no , "subject_id": subject_id, "sub_class_id": sub_class_id, "marks": marks},
+          success: function (data) {
+            $('.result').html(data);
+            $('#recordexams')[0].reset();
+          }
+        });
+    });
+  });
+</script>
+
   <!-- /.content-wrapper -->
   <script type="text/javascript">
     function RecordExams() {
