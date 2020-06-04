@@ -1647,8 +1647,8 @@ public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
 		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE(" SELECT  student_no,firstname,middlename,lastname,subjects.name as subject, subjects.id as subject_id
 		FROM students INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) 
 		INNER JOIN sub_classes_has_subjects ON (sub_classes_has_subjects.sub_classes_id=sub_classes.id) 
-		INNER JOIN subjects ON (subjects.id=sub_classes_has_subjects.subjects_id) RIGHT JOIN exam_results ON(exam_results.students_student_no=students.student_no)
-		WHERE students.sub_classes_id =? AND sub_classes_has_subjects.subjects_id=? AND exam_results.marked='yes'");
+		INNER JOIN subjects ON (subjects.id=sub_classes_has_subjects.subjects_id)
+		WHERE students.sub_classes_id =? AND sub_classes_has_subjects.subjects_id=?");
 		$getAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
 		$getAllStudentsPerClassSubject->bindParam(2,$subjects_id);
 		$getAllStudentsPerClassSubject->execute();
