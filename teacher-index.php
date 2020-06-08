@@ -1,47 +1,15 @@
 <?php
 include_once("functions/functions.php");
+if(!isset($_SESSION['user'])){
+		header("Location: login.php");
+		exit;
+	}
+		
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
 
-if (isset($_POST['submit'])) {
-  $subject_id = $_POST['subject_id'];
-  $sub_class_id = $_POST['sub_class_id'];
-
-$getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
-
-$getSubjectById = new Staff();
-$subject = $getSubjectById->getSubjectById($subject_id);
-
-$getClassesWithSubjects = new Staff();
-$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
-$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
-$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
-}
-
-
-if (isset($_POST['addMarks'])) {
-
-  $marks = $_POST['marks'];
-  $academic_year = (int)$_POST['academic_year'];
-  $term = (int)$_POST['term'];
-  $students_student_no = $_POST['student_no'];
-  $exam_type_id = 1;
-  $sub_class_id = (int)$_POST['sub_class_id'];
-  $subject_id = (int)$_POST['subject_id'];
-
-    $recordStudentsExams = new Staff();
-  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $sub_class_id, $subject_id);
-  
-}
-
-
-
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
-
-$getExamTypes = new Staff();
-$exam_type = $getExamTypes->getExamTypes();
-
+$getNotices = new Staff();
+$notice = $getNotices->getNotices();
 
 
 ?>
@@ -50,7 +18,7 @@ $exam_type = $getExamTypes->getExamTypes();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Students| Lilongwe Private School</title>
+  <title>Lilongwe Private School| Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -64,6 +32,16 @@ $exam_type = $getExamTypes->getExamTypes();
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="bower_components/jvectormap/jquery-jvectormap.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -74,161 +52,106 @@ $exam_type = $getExamTypes->getExamTypes();
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    <?php include_once("header.html"); ?>
+  <?php include_once("header.html"); ?>
+  
   <!-- Left side column. contains the logo and sidebar -->
-   <?php include_once('sidebar.html'); ?>
+  <?php include_once('sidebar.html'); ?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Display Assignments
-       
+      <h1 style="text-transform: uppercase;">
+        Welcome <?php echo $user_details['firstname'].' '.$user_details['middlename'].' '.$user_details['lastname']; ?>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
-       
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
+      <!-- Small boxes (Stat box) -->
       <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- general form elements -->
-          <div class="box box-primary">
-      <?php
-                            if(isset($_SESSION["marks-added"]) && $_SESSION["marks-added"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully Added Marks";
-                                unset($_SESSION["marks-added"]);
-                                echo "</div>";
-                 header('Refresh: 5; URL= record-exams.php');
-                            }
-              ?>
-
-      <?php
-      $i = 0;
-        if(isset($student) && count($student)>0){ 
+        <div class="col-lg-6 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h4>You are Assigned to:</h4>
+            <?php
+            if(isset($levels) && count($levels)>0){
+              foreach($levels as $level){ ?>
+              <h5><?php echo $level['class_name']; ?></h5>
+                <?php
+                
+              }
+            }else{
+              echo "You are not Assigned to any class. Contact the Admin";
+            }
           ?>
-
+          <p class="small-box-footer"><i>If you dont see your class contact the admin</i> <i class="fa fa-arrow-circle-right"></i>
+            </div>
+            <div class="icon">
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-xs-6">
+                    <div class="box box-primary">
+            
+           <div class="box-header">
+              <h3 class="box-title">Notice Board</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
+                  <th>Notice</th>
+                  <th>Deadline</th>
+                  
                 </tr>
                 </thead>
                 <tbody>
-                  <?php
-
-          foreach($student as $students){ 
-            $i++;  ?>
-          <tr>
-                  <td><?php echo $students['student_no']; ?></td>
-                  <td><?php echo $students['firstname']; ?></td>
-                  <td><?php echo $students['lastname']; ?></td>
-                  <td><?php echo $students['subject']; ?></td>
-                  <td><?php echo "Final Exam"; ?></td>
-           <form role="form" action="record-exams.php" method="POST">
-                  <td>
-          <input type="hidden" id="academic_year"  value="<?php echo $settings['academic_year']; ?>" name="academic_year">  
-          <input type="hidden" id="term"  value="<?php echo $settings['term']; ?>" name="term">
-          <input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no"> 
-          <input type="hidden" id="subject_id" value="<?php echo $subject_id; ?>" name="subject_id">  
-          <input type="hidden" id="sub_class_id"  value="<?php echo $sub_class_id; ?>" name="sub_class_id">           
-          <input type="number" name="marks"  placeholder="Enter Marks" class="form-control"/>        
-          </td>
-          <td>         
-          <button type="submit" name="addMarks" class="btn btn-info">Add Marks</button> 
-          
-          </td>
-           </form>
+        <?php
+        if(isset($notice) && count($notice)>0){
+          foreach($notice as $notices){ ?>
+            <tr>
+              <td><?php echo $notices['notice']; ?></td>
+              <td><?php echo $notices['deadline']; ?>
+              </td>
                
-      </tr>
-
-
-
-          
-
-
+            </tr>
           <?php
             
-          } ?>
-
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Students Available to record Exams";
-                      }
+          }
+        }
         ?>
-
-
-           
-            <!-- form start -->
-
-      
-          <!-- /.box -->
-
+                
+        
+                </tbody>
+               
+              </table>
+            </div>
+        </div>
         
 
-        </div>
-        <!--/.col (left) -->
-        <!-- right column -->
+        <!-- ./col -->
+      </div>
 
       </div>
-      <!-- /.row -->
+      <!-- /.row (main row) -->
+
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
-  <?php include_once("footer.html"); ?>
+<?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">

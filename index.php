@@ -4,7 +4,27 @@ if(!isset($_SESSION['user'])){
 		header("Location: login.php");
 		exit;
 	}
-		
+
+
+if (isset($_POST['submit'])) {
+$notice = $_POST['notice'];
+$deadline = $_POST['deadline'];
+  
+$AddNotice = new Staff();
+$AddNotice = $AddNotice->AddNotice($notice, $deadline);
+
+}
+
+if (isset($_GET['id'])) {
+$id = $_GET['id'];
+
+$deleteNotice = new Staff();
+$deleteNotice = $deleteNotice->deleteNotice($id);
+
+
+}
+
+
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
@@ -184,19 +204,20 @@ $notice = $getNotices->getNotices();
         <!-- /.Left col -->
         <!-- right col (We are only adding the ID to make the widgets sortable)-->
         <section class="col-lg-5 connectedSortable">
-
+        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal">Add Notice</button>
           <div class="box box-primary">
-            
            <div class="box-header">
               <h3 class="box-title">Notice Board</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
                   <th>Notice</th>
                   <th>Deadline</th>
+                  <th>Action</th>
                   
                 </tr>
                 </thead>
@@ -206,7 +227,8 @@ $notice = $getNotices->getNotices();
           foreach($notice as $notices){ ?>
             <tr>
               <td><?php echo $notices['notice']; ?></td>
-              <td><?php echo $notices['deadline']; ?>
+              <td><?php echo $notices['deadline']; ?></td>
+              <td><a href="index.php?id=<?php echo $notices['id']; ?>"><button class="btn btn-danger">Delete</button></a></td>
               </td>
                
             </tr>
@@ -225,6 +247,38 @@ $notice = $getNotices->getNotices();
             
         </div>
           <!-- /.box -->
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Notice</h4>
+      </div>
+      <div class="modal-body">
+
+        <form role="form" action="index.php" method="POST">
+          <div class="form-group">
+            <label for="notice">Notice:</label>
+            <textarea placeholder="Type Notice here" name="notice" class="form-control" rows="5" id="notice" required=""></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pwd">Due Date:</label>
+            <input type="date" required="" name="deadline" class="form-control" id="deadline">
+          </div>
+          <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 
         </section>

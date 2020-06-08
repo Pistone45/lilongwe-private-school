@@ -94,13 +94,24 @@ class User{
 					
 				$row = $login_query -> fetch();
 				$hash_pass =trim($row['password']);
+				$roles_id =$row['roles_id'];
 				//verify password
 				if (password_verify($password, $hash_pass)) {
 					
 					// Success!
 					$_SESSION['user'] = $row;
-				
-					header("Location: index.php");
+					if ($roles_id == 10) {
+						header("Location: index.php");
+
+					} elseif ($roles_id == 20) {
+						header("Location: teacher-index.php");
+
+					}elseif ($roles_id == 30) {
+						header("Location: student-index.php");
+					}else{
+						$_SESSION['invalidRole']=true;
+					}
+					
 					//die();
 				}else {
 					
@@ -1254,6 +1265,19 @@ class Staff{
 		
 	}
 	
+
+	public function AddNotice($notice, $deadline){
+				$AddNotice = $this->dbCon->prepare("INSERT INTO notices (notice,deadline)
+				VALUES (:notice,:deadline)" );
+				$AddNotice->execute(array(
+						  ':notice'=>($notice),
+						  ':deadline'=>($deadline) 
+						  ));
+						 		
+	}
+
+
+
 	public function getClassesPerTeacher(){
 		$getClassesPerTeacher = $this->dbCon->PREPARE("SELECT DISTINCT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
 		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
@@ -1451,7 +1475,7 @@ public function getAllSubclassSubjects($sub_class_id){
 
 
 	public function getTrialMark($subject_id, $term){		
-		$getTrialMark = $this->dbCon->Prepare("SELECT SUM(submissions.marks) as final_mark, exam_results.marks as exam_mark, exam_results.academic_year as academic_year, terms.name as term_name, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN terms ON (exam_results.terms_id=terms.id) WHERE submissions.students_student_no=? AND exam_results.students_student_no=? ");
+		$getTrialMark = $this->dbCon->Prepare("SELECT SUM(submissions.marks) as final_mark, exam_results.marks as exam_mark, exam_results.academic_year as academic_year, terms.name as term_name, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN terms ON (exam_results.terms_id=terms.id) WHERE submissions.students_student_no=? AND exam_results.students_student_no=? ");
 		$getTrialMark->bindParam(1,$_SESSION['user']['username']);
 		$getTrialMark->bindParam(2,$_SESSION['user']['username']);
 		$getTrialMark->execute();
@@ -1553,6 +1577,14 @@ echo '</script>';
 	}
 
 
+
+	public function deleteNotice($id){
+
+		$deleteNotice =$this->dbCon->PREPARE("DELETE FROM notices WHERE id='$id'");
+		$deleteNotice->bindParam(1,$id);
+		$deleteNotice->execute();
+		
+	}//End od deleting Notices
 
 
 
