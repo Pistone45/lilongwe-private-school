@@ -10,6 +10,16 @@ if(isset($_GET['id'])){
   $loginstatus = $getLoginStatus->getLoginStatus($id);
 }
 
+if (isset($_POST['send_message'])) {
+$subject = $_POST['subject'];
+$message = $_POST['message'];
+$student_no = $_POST['student_no'];
+  
+$sendMessage = new Staff();
+$sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
+
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,7 +63,8 @@ if(isset($_GET['id'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Student Details
+        Student Details <!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> Contact Student</button>
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -62,6 +73,38 @@ if(isset($_GET['id'])){
       </ol>
     </section>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Contact Student</h4>
+      </div>
+      <div class="modal-body">
+            <form action="student-details.php?id=<?php if(isset($_GET['id'])){ echo $_GET['id']; } ?>" method="post">
+                <div class="form-group">
+                  <input type="text" hidden="" name="student_no" value="<?php if(isset($_GET['id'])){ echo $_GET['id']; } ?>">
+                  <input type="text" name="subject" class="form-control" name="subject" placeholder="Subject" required="">
+                </div>
+                <div>
+                  <textarea class="textarea" name="message" placeholder="Message" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required=""></textarea>
+                </div>
+                    <div class="box-footer clearfix">
+              <button type="submit" class="pull-right btn btn-default" name="send_message">Send
+                <i class="fa fa-arrow-circle-right"></i></button>
+            </div>
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
     <!-- Main content -->
     <section class="content">
 	
@@ -70,7 +113,16 @@ if(isset($_GET['id'])){
 		
       <div class="row">
         <div class="col-md-5">
-
+              <?php
+                  if(isset($_SESSION["message-sent"]) && $_SESSION["message-sent"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> You have successfully sent a Message
+            </div>  <?php
+            unset($_SESSION["message-sent"]);
+                      }
+              ?>
           <!-- Profile Image -->
           <div class="box box-primary">
             <div class="box-body box-profile">
@@ -119,6 +171,7 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 
           
           ?>
+
 				</div>
 			</div>
               
@@ -195,6 +248,14 @@ if ($loginstatus['user_status_id'] == 0) { ?>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+    <script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
+
    <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

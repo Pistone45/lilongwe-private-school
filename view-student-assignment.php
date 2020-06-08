@@ -64,7 +64,7 @@ $students = $getStudents->getStudents();
         Assignments       
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><a href="view-assignments.php">Assignments</a></li>
        
       </ol>

@@ -675,6 +675,19 @@ public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id
 		}
 	} //end of getting assignments per student on the admin side
 
+
+
+	public function getMessages(){
+		$getMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=?");
+		$getMessages->bindParam(1,$_SESSION['user']['username']);
+		$getMessages->execute();
+		
+		if($getMessages->rowCount()>0){
+			$rows = $getMessages->fetchAll();
+			return $rows;
+		}
+	} //end of getting Messages
+
 	
 	
 }
@@ -1278,6 +1291,21 @@ class Staff{
 
 
 
+	public function sendMessage($subject, $message, $student_no){
+				$sendMessage = $this->dbCon->prepare("INSERT INTO messages (subject, message, student_no)
+				VALUES (:subject, :message, :student_no)" );
+				$sendMessage->execute(array(
+						  ':subject'=>($subject),
+						  ':message'=>($message),
+						  ':student_no'=>($student_no),
+						  ));
+
+				$_SESSION['message-sent']=true;
+						 		
+	}
+
+
+
 	public function getClassesPerTeacher(){
 		$getClassesPerTeacher = $this->dbCon->PREPARE("SELECT DISTINCT sub_classes_id as class_id, sub_classes.name as class_name FROM sub_classes_has_subjects
 		INNER JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
@@ -1286,6 +1314,22 @@ class Staff{
 		
 		if($getClassesPerTeacher->rowCount()>0){
 			$rows = $getClassesPerTeacher->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+
+	public function getSubjectsPerTeacher(){
+		$getSubjectsPerTeacher = $this->dbCon->PREPARE("SELECT subjects.name as subject_name FROM subjects INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes_has_subjects.staff_id=?");
+		$getSubjectsPerTeacher->bindParam(1,$_SESSION['user']['username']);
+		$getSubjectsPerTeacher->execute();
+		
+		if($getSubjectsPerTeacher->rowCount()>0){
+			$rows = $getSubjectsPerTeacher->fetchAll();
 			
 			return $rows;
 			
@@ -1636,7 +1680,8 @@ public function deleteStudentAssignment($id, $assignment_url){
 			$rows = $getNotices->fetchAll();
 			return $rows;
 		}
-	} //end of getting Sub Classes
+	} //end of getting Notices
+
 
 
 	public function getSpecificStudentAssignmentURL($id){
@@ -1952,30 +1997,6 @@ class Contact{
 						  $_SESSION['numbers-added']=true;
 	}
 	
-	public function sendMessage($subject,$message){
-		
-		//get all Contacts
-		$status = 1;
-		$getContacts = $this->dbCon->PREPARE("SELECT email FROM customer WHERE status =?");
-		$getContacts->bindParam(1,$status);
-		$getContacts->execute();
-		
-		if($getContacts->rowCount()>0){
-			
-			$rows = $getContacts->fetchAll();
-			$name ="Travel Options";
-			$email ="traveloptions@globemw.net";
-			foreach($rows as $row){
-				$recipient = $row['email'];	
-				$headers  = "From: $recipient\r\n"; 
-				$headers .= "Content-type: text/html\r\n";
-				
-				$mailBody ="$message";
-				mail($recipient, $subject, $mailBody, $headers);
-			}
-			
-		}
-	}
 	
 	public function getCustomers(){
 		$getCustomers = $this->dbCon->PREPARE("SELECT name, phone, email, address FROM customer");

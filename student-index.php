@@ -4,6 +4,14 @@ if(!isset($_SESSION['user'])){
 		header("Location: login.php");
 		exit;
 	}
+
+$getStudentDetails = new Students();
+$details = $getStudentDetails->getStudentDetails();
+$sub_class_id = $details['sub_class_id'];//form 2 west = 5 
+
+
+$getStudentAssignment = new Students();
+$assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
 		
 $getStudents = new Students();
 $students = $getStudents->getStudents();
@@ -14,6 +22,8 @@ $users = $countAllUsers->countAllUsers();
 $getNotices = new Staff();
 $notice = $getNotices->getNotices();
 
+$getMessages = new Students();
+$messages = $getMessages->getMessages();
 
 ?>
 <!DOCTYPE html>
@@ -72,7 +82,7 @@ $notice = $getNotices->getNotices();
         Welcome <?php echo $user_details['firstname'].' '.$user_details['middlename'].' '.$user_details['lastname']; ?>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active">Dashboard</li>
       </ol>
     </section>
@@ -81,7 +91,7 @@ $notice = $getNotices->getNotices();
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-lg-6 col-xs-6">
+        <div class="col-lg-5 col-xs-5">
                     <div class="box box-primary">
             
            <div class="box-header">
@@ -122,7 +132,7 @@ $notice = $getNotices->getNotices();
             
         </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-7 col-xs-7">
                     <div class="box box-primary">
             
            <div class="box-header">
@@ -135,10 +145,25 @@ $notice = $getNotices->getNotices();
                 <tr>
                   <th>Subject</th>
                   <th>Message</th>
-                  
+                  <th>Date Sent</th>
                 </tr>
                 </thead>
                 <tbody>
+        <?php
+        if(isset($messages) && count($messages)>0){
+          foreach($messages as $message){ ?>
+            <tr>
+              <td><?php echo $message['subject']; ?></td>
+              <td><?php echo $message['message']; ?>
+              <td><?php $date = date_create($message['date_sent']); echo date_format($date,"d, M Y"); ?>
+              </td>
+               
+            </tr>
+          <?php
+            
+          }
+        }
+        ?>
                 
         
                 </tbody>
@@ -151,6 +176,55 @@ $notice = $getNotices->getNotices();
         </div>
         
         <!-- ./col -->
+      </div>
+
+      <div class="row">
+               <div class="col-lg-8">
+                    <div class="box box-primary">
+            
+           <div class="box-header">
+              <h3 class="box-title">Assignment Deadlines:</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                      <?php
+        if(isset($assignments) && count($assignments)>0){ ?>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Due Date</th>
+                  <th>Subject</th>
+                  <th>Assignment Type</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <?php
+          foreach($assignments as $assignment){ ?>
+          <tr>
+                  <td><?php echo $assignment['title']; ?></td>
+                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
+                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
+                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
+          <td><?php echo $assignment['subject_name']; ?> </td>
+          <td><?php echo $assignment['assignment_type_name']; ?> </td>
+          </tr>
+          <?php
+            
+          } ?>
+
+                
+                </tbody>
+              </table> <?php
+                      }else{
+                        echo "No assignments Available at the moment";
+                      }
+        ?>
+            </div>
+            <!-- /.box-body -->
+            
+        </div>
+        </div>
       </div>
 
 

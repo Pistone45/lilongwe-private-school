@@ -71,7 +71,7 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><a href="view-final-results.php">Final Results</a></li>
        
       </ol>

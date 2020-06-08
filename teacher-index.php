@@ -8,6 +8,9 @@ if(!isset($_SESSION['user'])){
 $getClassesPerTeacher = new Staff();
 $levels = $getClassesPerTeacher->getClassesPerTeacher();
 
+$getSubjectsPerTeacher = new Staff();
+$subjects = $getSubjectsPerTeacher->getSubjectsPerTeacher();
+
 $getNotices = new Staff();
 $notice = $getNotices->getNotices();
 
@@ -101,48 +104,30 @@ $notice = $getNotices->getNotices();
             </div>
           </div>
         </div>
-        <div class="col-lg-6 col-xs-6">
-                    <div class="box box-primary">
-            
-           <div class="box-header">
-              <h3 class="box-title">Notice Board</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Notice</th>
-                  <th>Deadline</th>
-                  
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-        if(isset($notice) && count($notice)>0){
-          foreach($notice as $notices){ ?>
-            <tr>
-              <td><?php echo $notices['notice']; ?></td>
-              <td><?php echo $notices['deadline']; ?>
-              </td>
-               
-            </tr>
-          <?php
-            
-          }
-        }
-        ?>
-                
-        
-                </tbody>
-               
-              </table>
-            </div>
-        </div>
-        
 
-        <!-- ./col -->
-      </div>
+        <div class="col-lg-6 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h4>You are Assigned these Subjects:</h4>
+            <?php
+            if(isset($subjects) && count($subjects)>0){
+              foreach($subjects as $subject){ ?>
+              <h5><?php echo $subject['subject_name']; ?></h5>
+                <?php
+                
+              }
+            }else{
+              echo "You are not Assigned any Subjects. Contact the Admin";
+            }
+          ?>
+          <p class="small-box-footer"><i>If you dont see your Subjects contact the admin</i> <i class="fa fa-arrow-circle-right"></i>
+            </div>
+            <div class="icon">
+              
+            </div>
+          </div>
+        </div>
 
       </div>
       <!-- /.row (main row) -->

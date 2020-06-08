@@ -15,6 +15,7 @@ $AddNotice = $AddNotice->AddNotice($notice, $deadline);
 
 }
 
+
 if (isset($_GET['id'])) {
 $id = $_GET['id'];
 
@@ -167,40 +168,7 @@ $notice = $getNotices->getNotices();
       <!-- Main row -->
       <div class="row">
         <!-- Left col -->
-        <section class="col-lg-7 connectedSortable">
         
-
-          <!-- TO DO List -->
-          
-          <!-- /.box -->
-
-          <!-- quick email widget -->
-          <div class="box box-info">
-            <div class="box-header">
-              <i class="fa fa-envelope"></i>
-
-              <h3 class="box-title">Message To All Students</h3>
-              
-            </div>
-            <div class="box-body">
-              <form action="index.php" method="post">
-               
-                <div class="form-group">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject">
-                </div>
-                <div>
-                  <textarea class="textarea" name="message" placeholder="Message" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                </div>
-             
-            </div>
-            <div class="box-footer clearfix">
-              <button type="submit" class="pull-right btn btn-default" name="contact">Send
-                <i class="fa fa-arrow-circle-right"></i></button>
-            </div>
-       </form>
-          </div>
-
-        </section>
         <!-- /.Left col -->
         <!-- right col (We are only adding the ID to make the widgets sortable)-->
         <section class="col-lg-5 connectedSortable">
