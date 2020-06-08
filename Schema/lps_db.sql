@@ -65,7 +65,7 @@ CREATE TABLE `assignments` (
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,7 +74,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (25,'Triangles','null (1).docx','2020-06-27',2020,1,'0212463690',3,1),(26,'Triangles Part 2','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-27',2020,1,'0212463690',3,2);
+INSERT INTO `assignments` VALUES (25,'Triangles','null (1).docx','2020-06-27',2020,1,'0212463690',3,1),(26,'Triangles Part 2','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-27',2020,1,'0212463690',3,2),(27,'Bonjour','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-07-11',2020,1,'0212463690',7,1),(28,'Bonjour 2','Mo&Mic for the Website.doc','2020-07-10',2020,1,'0212463690',7,2);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,7 +267,7 @@ CREATE TABLE `exam_results` (
   CONSTRAINT `fk_exam_results_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_students1` FOREIGN KEY (`students_student_no`) REFERENCES `students` (`student_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,7 +276,7 @@ CREATE TABLE `exam_results` (
 
 LOCK TABLES `exam_results` WRITE;
 /*!40000 ALTER TABLE `exam_results` DISABLE KEYS */;
-INSERT INTO `exam_results` VALUES (25,'LPS/S/1',1,1,2020,50.00,'0212463690',1,1,3);
+INSERT INTO `exam_results` VALUES (33,'LPS/S/1',1,1,2020,50.00,'0212463690',1,1,3),(34,'LPS/S/1',1,1,2020,60.00,'0212463690',1,1,7);
 /*!40000 ALTER TABLE `exam_results` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -381,7 +381,7 @@ CREATE TABLE `guardians` (
 
 LOCK TABLES `guardians` WRITE;
 /*!40000 ALTER TABLE `guardians` DISABLE KEYS */;
-INSERT INTO `guardians` VALUES ('0886449677','Blena','','Chisenga','0886449677','Box 1294, Blantyre','0881201773','indo@virtualtechmalawi.com','Businessman','Virtual Tech'),('0999999999','Lebron','','James','0999999999','Box1294, Blantyre','','lbj@gmail.com','Businessman','Virtual Tech');
+INSERT INTO `guardians` VALUES ('0886449677','Blena','BSC','Chisenga','0886449677','Box 1294, Blantyre','0881201773','indo@virtualtechmalawi.com','Businessman','Virtual Tech'),('0999999999','Lebron','','James','0999999999','Box1294, Blantyre','','lbj@gmail.com','Businessman','Virtual Tech');
 /*!40000 ALTER TABLE `guardians` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -393,15 +393,14 @@ DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `messages` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` text NOT NULL,
-  `date_sent` date NOT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `date_sent` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `status` int(11) DEFAULT 0 COMMENT '0 - not read\n1 - read',
-  `staff_id` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_messages_staff1_idx` (`staff_id`),
-  CONSTRAINT `fk_messages_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `student_no` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -410,6 +409,7 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-08 13:32:24',0,'LPS/S/1'),(5,'message','Subject','2020-06-08 13:37:01',0,'LPS/S/1'),(6,'message','Subject','2020-06-08 13:37:41',0,'LPS/S/1');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -421,12 +421,12 @@ DROP TABLE IF EXISTS `notices`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notices` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `notice` text NOT NULL,
   `deadline` date DEFAULT NULL,
-  `date_added` date NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -435,7 +435,7 @@ CREATE TABLE `notices` (
 
 LOCK TABLES `notices` WRITE;
 /*!40000 ALTER TABLE `notices` DISABLE KEYS */;
-INSERT INTO `notices` VALUES (1,'Pay School Fees','2020-06-28','2020-05-30');
+INSERT INTO `notices` VALUES (2,'Notice Here','2020-06-30','2020-06-08 09:17:52');
 /*!40000 ALTER TABLE `notices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -756,7 +756,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_assignments` VALUES (1,25),(1,26);
+INSERT INTO `sub_classes_has_assignments` VALUES (1,25),(1,26),(1,27),(1,28);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -842,7 +842,7 @@ CREATE TABLE `submissions` (
 
 LOCK TABLES `submissions` WRITE;
 /*!40000 ALTER TABLE `submissions` DISABLE KEYS */;
-INSERT INTO `submissions` VALUES ('LPS/S/1',25,12.00,'services.docx','2020-05-28'),('LPS/S/1',26,10.00,'Mo&Mic for the Website.doc','2020-05-28');
+INSERT INTO `submissions` VALUES ('LPS/S/1',25,12.00,'services.docx','2020-05-28'),('LPS/S/1',26,10.00,'Mo&Mic for the Website.doc','2020-05-28'),('LPS/S/1',27,11.00,'IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-04'),('LPS/S/1',28,11.00,'Mitra Services.docx','2020-06-04');
 /*!40000 ALTER TABLE `submissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -937,4 +937,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-30 19:11:59
+-- Dump completed on 2020-06-08 15:58:45
