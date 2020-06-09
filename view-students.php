@@ -4,6 +4,15 @@ include_once("functions/functions.php");
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
+if (isset($_POST['send_message'])) {
+$subject = $_POST['subject'];
+$message = $_POST['message'];
+$student_no = $_POST['student_no'];
+  
+$sendMessage = new Staff();
+$sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
+
+}
 
 
 ?>
@@ -68,7 +77,16 @@ $students = $getStudents->getStudents();
         <div class="col-xs-12">
          
           <div class="box">
-            
+                <?php
+                  if(isset($_SESSION["message-sent"]) && $_SESSION["message-sent"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> You have successfully sent a Message
+            </div>  <?php
+            unset($_SESSION["message-sent"]);
+                      }
+              ?>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
@@ -81,21 +99,59 @@ $students = $getStudents->getStudents();
                   <th>Current Level</th>
 				  <th>Status</th>
 				  <th>Action</th>
+          <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
+        $i = 0;
 				if(isset($students) && count($students)>0){
-					foreach($students as $student){ ?>
+					foreach($students as $student){ 
+            $i++;   ?>
+          
 					<tr>
-                  <td><?php echo $student['student_no']; ?></td>
+                  <td><?php echo $student_no = $student['student_no']; ?></td>
                   <td><?php echo $student['firstname']; ?></td>
                   <td><?php echo $student['middlename']; ?></td>
                   <td> <?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class']; ?></td>
 				  <td><?php echo $student['student_status']; ?> </td>
 				  <td><a href="student-details.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-edit"></i> View Details</a></td>
+          <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Contact Student</button></td>
                 </tr>
+
+                            <!-- Modal -->
+<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Contact Student</h4>
+      </div>
+      <div class="modal-body">
+            <form action="view-students.php" method="post">
+                <div class="form-group">
+                  <input type="text" hidden="" name="student_no" value="<?php echo $student_no?>">
+                  <input type="text" name="subject" class="form-control" name="subject" placeholder="Subject" required="">
+                </div>
+                <div>
+                  <textarea class="textarea" name="message" placeholder="Message" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required=""></textarea>
+                </div>
+                    <div class="box-footer clearfix">
+              <button type="submit" class="pull-right btn btn-default" name="send_message">Send
+                <i class="fa fa-arrow-circle-right"></i></button>
+            </div>
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 					<?php
 						
 					}
@@ -109,11 +165,15 @@ $students = $getStudents->getStudents();
                   <th>Firstname</th>
                   <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Current Class</th>
+                  <th>Current Level</th>
+          <th>Status</th>
+          <th>Action</th>
+          <th>Action</th>
                 </tr>
                 </tfoot>
               </table>
             </div>
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -124,6 +184,13 @@ $students = $getStudents->getStudents();
     </section>
     <!-- /.content -->
   </div>
+      <script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
   <!-- /.content-wrapper -->
    <?php include_once("footer.html"); ?>
 

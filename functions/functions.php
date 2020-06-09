@@ -678,7 +678,7 @@ public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id
 
 
 	public function getMessages(){
-		$getMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=?");
+		$getMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? ORDER BY date_sent DESC");
 		$getMessages->bindParam(1,$_SESSION['user']['username']);
 		$getMessages->execute();
 		
@@ -1672,7 +1672,7 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 	public function getNotices(){
-		$getNotices = $this->dbCon->Prepare("SELECT id, notice, deadline FROM notices");
+		$getNotices = $this->dbCon->Prepare("SELECT id, notice, deadline FROM notices ORDER BY date_added DESC");
 		//$getNotices->bindParam(1,$id);
 		$getNotices->execute();
 		
