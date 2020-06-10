@@ -195,7 +195,7 @@ DROP TABLE IF EXISTS `borrowed_books`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borrowed_books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date_borrowed` timestamp NULL DEFAULT NULL,
+  `date_borrowed` date DEFAULT NULL,
   `date_returned` date DEFAULT NULL,
   `books_id` varchar(45) NOT NULL,
   `students_student_no` varchar(45) NOT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE `borrowed_books` (
   PRIMARY KEY (`id`),
   KEY `students_student_no` (`students_student_no`),
   KEY `books_id` (`books_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,7 +212,7 @@ CREATE TABLE `borrowed_books` (
 
 LOCK TABLES `borrowed_books` WRITE;
 /*!40000 ALTER TABLE `borrowed_books` DISABLE KEYS */;
-INSERT INTO `borrowed_books` VALUES (1,NULL,NULL,'001','LPS/S/1','1');
+INSERT INTO `borrowed_books` VALUES (1,'2020-05-19',NULL,'001','LPS/S/1','1'),(2,NULL,NULL,'001','LPS/S/2','1'),(3,'2020-06-10',NULL,'001','LPS/S/5','1');
 /*!40000 ALTER TABLE `borrowed_books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -969,4 +969,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-10 17:25:57
+-- Dump completed on 2020-06-10 19:44:37

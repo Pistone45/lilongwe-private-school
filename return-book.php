@@ -5,28 +5,17 @@ if(!isset($_SESSION['user'])){
 		exit;
 	}
 
-$getStudentDetails = new Students();
-$details = $getStudentDetails->getStudentDetails();
-$sub_class_id = $details['sub_class_id'];//form 2 west = 5 
+if (isset($_GET['id'])) {
+  $id = $_GET['id'];
+
+$returnBook = new Staff();
+$returnBook = $returnBook->returnBook($id);
+
+}
 
 
-$getStudentAssignment = new Students();
-$assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
-		
-$getStudents = new Students();
-$students = $getStudents->getStudents();
-
-$countAllUsers = new User();
-$users = $countAllUsers->countAllUsers();
-
-$getNotices = new Staff();
-$notice = $getNotices->getNotices();
-
-$getMessages = new Students();
-$messages = $getMessages->getMessages();
-
-$getBorrowedBookPerStudent = new Staff();
-$books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
+$getBorrowedBooks = new Staff();
+$books = $getBorrowedBooks->getBorrowedBooks();
 
 ?>
 <!DOCTYPE html>
@@ -81,11 +70,11 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1 style="text-transform: uppercase;">
-        Welcome <?php echo $user_details['firstname'].' '.$user_details['middlename'].' '.$user_details['lastname']; ?>
+      <h1>
+        Return a Book
       </h1>
       <ol class="breadcrumb">
-        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Return Book</a></li>
         <li class="active">Dashboard</li>
       </ol>
     </section>
@@ -94,72 +83,47 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-lg-5 col-xs-5">
-                    <div class="box box-primary">
-            
+        <div class="col-lg-12 col-xs-12">
+        <div class="box box-primary">
+          <?php
+                  if(isset($_SESSION["book-returned"]) && $_SESSION["book-returned"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> You have successfully returned a Book
+            </div>  <?php
+            unset($_SESSION["book-returned"]);
+                      }
+              ?>
            <div class="box-header">
-              <h3 class="box-title">Notice Board</h3>
+              <h3 class="box-title">All Borrowed Books</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Notice</th>
-                  <th>Deadline</th>
+                  <th>Book ID</th>
+                  <th>Book Title</th>
+                  <th>Student Name</th>
+                  <th>Class Name</th>
+                  <th>Date Borrowed</th>
+                  <th>Action</th>
                   
                 </tr>
                 </thead>
                 <tbody>
         <?php
-        if(isset($notice) && count($notice)>0){
-          foreach($notice as $notices){ ?>
+        if(isset($books) && count($books)>0){
+          foreach($books as $book){ ?>
             <tr>
-              <td><?php echo $notices['notice']; ?></td>
-              <td><?php echo $notices['deadline']; ?>
+              <td><?php echo $book['book_id']; ?></td>
+              <td><?php echo $book['title']; ?>
+              <td><?php echo $book['student_name']; ?>
+              <td><?php echo $book['sub_class_name']; ?>
+              <td><button class="btn"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button>
               </td>
-               
-            </tr>
-          <?php
-            
-          }
-        }
-        ?>
-                
-        
-                </tbody>
-               
-              </table>
-            </div>
-            <!-- /.box-body -->
-            
-        </div>
-        </div>
-        <div class="col-lg-7 col-xs-7">
-                    <div class="box box-primary">
-            
-           <div class="box-header">
-              <h3 class="box-title">Messages</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Subject</th>
-                  <th>Message</th>
-                  <th>Date Sent</th>
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-        if(isset($messages) && count($messages)>0){
-          foreach($messages as $message){ ?>
-            <tr>
-              <td><?php echo $message['subject']; ?></td>
-              <td><?php echo $message['message']; ?>
-              <td><?php $date = date_create($message['date_sent']); echo date_format($date,"d, M Y"); ?>
-              </td>
+              <td><a href="return-book.php?id=<?php echo $book['id']; ?>"><button class="btn btn-primary">Return</button> </a></td>
                
             </tr>
           <?php
@@ -181,106 +145,18 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
         <!-- ./col -->
       </div>
 
-      <div class="row">
-               <div class="col-lg-6">
-                    <div class="box box-primary">
-            
-           <div class="box-header">
-              <h3 class="box-title">Assignment Deadlines:</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                      <?php
-        if(isset($assignments) && count($assignments)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-          foreach($assignments as $assignment){ ?>
-          <tr>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
-                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
-                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
-          <td><?php echo $assignment['subject_name']; ?> </td>
-          <td><?php echo $assignment['assignment_type_name']; ?> </td>
-          </tr>
-          <?php
-            
-          } ?>
-
-                
-                </tbody>
-              </table> <?php
-                      }else{
-                        echo "No assignments Available at the moment";
-                      }
-        ?>
-            </div>
-            <!-- /.box-body -->
-            
-        </div>
-        </div>
-        <div class="col-lg-6">
-                              <div class="box box-primary">
-            
-           <div class="box-header">
-              <h3 class="box-title">Borrowed Books</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                      <?php
-        if(isset($books) && count($books)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Book ID</th>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Date Borrowed</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-          foreach($books as $book){ ?>
-          <tr>
-                  <td><?php echo $book['book_id']; ?></td>
-                  <td><?php echo $book['title']; ?></td>
-                  <td><?php echo $book['author']; ?></td>
-                  <td><button class="btn btn-info"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button>
-              </td>
-
-          </tr>
-          <?php
-            
-          } ?>
-
-                
-                </tbody>
-              </table> <?php
-                      }else{
-                        echo "No Borrowed Books Available at the moment";
-                      }
-        ?>
-            </div>
-            <!-- /.box-body -->
-            
-        </div>
-        </div>
-      </div>
-
 
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
 <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

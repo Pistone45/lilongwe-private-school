@@ -19,8 +19,8 @@ $students = $getStudents->getStudents();
 $countAllUsers = new User();
 $users = $countAllUsers->countAllUsers();
 
-$getNotices = new Staff();
-$notice = $getNotices->getNotices();
+$getBorrowedBooks = new Staff();
+$books = $getBorrowedBooks->getBorrowedBooks();
 
 $getMessages = new Students();
 $messages = $getMessages->getMessages();
@@ -95,30 +95,31 @@ $messages = $getMessages->getMessages();
                     <div class="box box-primary">
             
            <div class="box-header">
-              <h3 class="box-title">Expired Books</h3>
+              <h3 class="box-title">All Borrowed Books</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Book Name</th>
                   <th>Book ID</th>
+                  <th>Book Title</th>
                   <th>Student Name</th>
                   <th>Class Name</th>
+                  <th>Date Borrowed</th>
                   
                 </tr>
                 </thead>
                 <tbody>
         <?php
-        if(isset($notice) && count($notice)>0){
-          foreach($notice as $notices){ ?>
+        if(isset($books) && count($books)>0){
+          foreach($books as $book){ ?>
             <tr>
-              <td><?php echo $notices['notice']; ?></td>
-              <td><?php echo $notices['deadline']; ?>
-              <td><?php echo $notices['deadline']; ?>
-              <td><?php echo $notices['deadline']; ?>
-              
+              <td><?php echo $book['book_id']; ?></td>
+              <td><?php echo $book['title']; ?>
+              <td><?php echo $book['student_name']; ?>
+              <td><?php echo $book['sub_class_name']; ?>
+              <td><button class="btn btn-info"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button>
               </td>
                
             </tr>
