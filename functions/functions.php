@@ -1981,6 +1981,48 @@ public function getUser(){
 	} //end of getting Notices
 
 
+	public function getAllStudentsPerSubclass($level){		
+		$getAllStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getAllStudentsPerSubclass->bindParam(1,$level);
+		$getAllStudentsPerSubclass->execute();
+		
+		if($getAllStudentsPerSubclass->rowCount()>0){
+			$rows = $getAllStudentsPerSubclass->fetchAll();
+			return $rows;
+		}
+	} //end of getting Assignments Results
+
+
+
+	public function lendBook($book_id, $student_no){
+
+		$checkIfAlreadyBorrowed = $this->dbCon->PREPARE("SELECT books_id FROM borrowed_books WHERE books_id=? AND students_student_no=? ");
+		$checkIfAlreadyBorrowed->bindValue(1, $book_id);
+		$checkIfAlreadyBorrowed->bindValue(2, $student_no);
+		$checkIfAlreadyBorrowed->execute();
+
+		if ($checkIfAlreadyBorrowed->rowCount()>0) {
+			
+			echo ("<script LANGUAGE='JavaScript'>window.alert('This Student already has the Book');
+    window.location.href='view-books.php';
+    </script>");
+
+		} else {
+			
+			$lendBook = $this->dbCon->prepare("INSERT INTO borrowed_books (books_id, students_student_no)
+				VALUES (:books_id, :students_student_no)" );
+				$lendBook->execute(array(
+					      ':books_id'=>($book_id),
+						  ':students_student_no'=>($student_no)
+						  ));
+				$_SESSION['book-borrowed']=true;
+		}
+
+						 		
+	}//End of Adding a BOOK
+
+
+
 
 }
 

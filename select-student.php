@@ -4,8 +4,24 @@ include_once("functions/functions.php");
 $getAllBooks = new Staff();
 $books = $getAllBooks->getAllBooks();
 
-$getSubClasses = new Classes();
-$levels = $getSubClasses->getSubClasses();
+if (isset($_POST['submit'])) {
+$book_id = $_POST['book_id'];
+$level = $_POST['level'];
+
+$getAllStudentsPerSubclass = new Staff();
+$students = $getAllStudentsPerSubclass->getAllStudentsPerSubclass($level);
+  
+}
+
+
+if (isset($_POST['lend'])) {
+$book_id = $_POST['book_id'];
+$student_no = $_POST['student_no'];
+
+$lendBook = new Staff();
+$students = $lendBook->lendBook($book_id, $student_no);
+  
+}
 
 ?>
 <!DOCTYPE html>
@@ -13,7 +29,7 @@ $levels = $getSubClasses->getSubClasses();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Books | Lilongwe Private School</title>
+  <title>Select Student| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -53,12 +69,12 @@ $levels = $getSubClasses->getSubClasses();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        View Books
+        Select Student
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">View Books</a></li>
+        <li class="active"><a href="#">Select Student</a></li>
        
       </ol>
     </section>
@@ -69,98 +85,63 @@ $levels = $getSubClasses->getSubClasses();
         <div class="col-xs-12">
          
           <div class="box">
-            
+        <?php
+                  if(isset($_SESSION["book-borrowed"]) && $_SESSION["book-borrowed"]==true)
+                  {
+                      echo "<div class='alert alert-success'>";
+                      echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                      echo "<strong>Success! </strong>"; echo "You have successfully Borrowed a Book for a Student";
+                      unset($_SESSION["book-borrowed"]);
+                      echo "</div>";
+       header('Refresh: 5; URL= view-books.php');
+                  }
+    ?>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Publication Year</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
         $i = 0;
-				if(isset($books) && count($books)>0){
-					foreach($books as $book){ 
+				if(isset($students) && count($students)>0){
+					foreach($students as $student){ 
             $i++;   ?>
 					<tr>
-                  <td><?php echo $book['book_id']; ?></td>
-                  <td><?php echo $book['title']; ?></td>
-                  <td><?php echo $book['author']; ?></td>
-                  <td><?php echo $book['year_of_publication']; ?></td>
-                  <td><?php echo $book['status_name']; ?></td>
-                  <td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?php echo $i; ?>">Lend Book</button></td>
-          <td><a href="delete-book.php?book_id=<?php echo $book['book_id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
+                  <td><?php echo $student['student_no']; ?></td>
+                  <td><?php echo $student['firstname']; ?></td>
+                  <td><?php echo $student['lastname']; ?></td>
+                  <td><?php echo $student['sub_class_name']; ?></td>
+                  <td>
+                  <form action="select-student.php" method="POST">
+                    <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>" name="">
+                    <input type="text" hidden="" name="book_id" value="<?php echo $book_id; ?>" name="">
+                  <button type="submit" name="lend" class="btn btn-success">Lend Book</button>
 
-                        <!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Choose Class</h4>
-      </div>
-      <div class="modal-body">
-                          <!-- form start -->
-            <form role="form" action="select-student.php" method="POST">
-      
-              <div class="box-body">
-                <input hidden="" type="text" name="book_id" value="<?php echo $book['book_id']; ?>">
-           <div class="form-group">
-                  <label>Choose Class </label>
-                  <select name="level" class="form-control">
-                  <option selected="">Select Class.....</option>
-          <?php
-            if(isset($levels) && count($levels)>0){
-              foreach($levels as $level){ ?>
-                <option value="<?php echo $level['id']; ?>"><?php echo $level['name']; ?></option>
-              <?php
-                
-              }
-            }
-          ?>
-        
-                  </select>
-                </div>
-
-                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
-            </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
+                  </form></td>
                 </tr>
 					<?php
 						
 					}
-				}
+				}else{
+          echo "No Students for this particular Class found";
+        }
 				?>
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Publication Year</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
                 </tr>
                 </tfoot>
               </table>
