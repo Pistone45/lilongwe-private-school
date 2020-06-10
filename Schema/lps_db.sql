@@ -153,6 +153,7 @@ CREATE TABLE `book_status` (
 
 LOCK TABLES `book_status` WRITE;
 /*!40000 ALTER TABLE `book_status` DISABLE KEYS */;
+INSERT INTO `book_status` VALUES (1,'Available'),(2,'Taken');
 /*!40000 ALTER TABLE `book_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,7 +169,7 @@ CREATE TABLE `books` (
   `title` varchar(145) NOT NULL,
   `author` varchar(245) NOT NULL,
   `year_of_publication` year(4) NOT NULL,
-  `book_status_id` int(11) NOT NULL,
+  `book_status_id` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `fk_books_book_status1_idx` (`book_status_id`),
   CONSTRAINT `fk_books_book_status1` FOREIGN KEY (`book_status_id`) REFERENCES `book_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -181,7 +182,38 @@ CREATE TABLE `books` (
 
 LOCK TABLES `books` WRITE;
 /*!40000 ALTER TABLE `books` DISABLE KEYS */;
+INSERT INTO `books` VALUES ('001','Effects of RSI','Pistone Junior Sanjama',2020,1);
 /*!40000 ALTER TABLE `books` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `borrowed_books`
+--
+
+DROP TABLE IF EXISTS `borrowed_books`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borrowed_books` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_borrowed` timestamp NULL DEFAULT NULL,
+  `date_returned` date DEFAULT NULL,
+  `books_id` varchar(45) NOT NULL,
+  `students_student_no` varchar(45) NOT NULL,
+  `status` varchar(45) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `students_student_no` (`students_student_no`),
+  KEY `books_id` (`books_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `borrowed_books`
+--
+
+LOCK TABLES `borrowed_books` WRITE;
+/*!40000 ALTER TABLE `borrowed_books` DISABLE KEYS */;
+INSERT INTO `borrowed_books` VALUES (1,NULL,NULL,'001','LPS/S/1','1');
+/*!40000 ALTER TABLE `borrowed_books` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -400,7 +432,7 @@ CREATE TABLE `messages` (
   `status` int(11) DEFAULT 0 COMMENT '0 - not read\n1 - read',
   `student_no` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,7 +441,7 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-08 13:32:24',0,'LPS/S/1'),(5,'message','Subject','2020-06-08 13:37:01',0,'LPS/S/1'),(6,'message','Subject','2020-06-08 13:37:41',0,'LPS/S/1');
+INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-08 13:32:24',0,'LPS/S/1'),(5,'message','Subject','2020-06-08 13:37:01',0,'LPS/S/1'),(6,'message','Subject','2020-06-08 13:37:41',0,'LPS/S/1'),(7,'message','subject','2020-06-09 10:23:34',0,'LPS/S/1');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -505,7 +537,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students');
+INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -924,7 +956,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -937,4 +969,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-08 15:58:45
+-- Dump completed on 2020-06-10 17:25:57
