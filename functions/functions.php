@@ -108,6 +108,9 @@ class User{
 
 					}elseif ($roles_id == 30) {
 						header("Location: student-index.php");
+					}elseif ($roles_id == 40) {
+						header("Location: librarian-index.php");
+					
 					}else{
 						$_SESSION['invalidRole']=true;
 					}
@@ -1939,6 +1942,43 @@ public function getUser(){
 				
 	}
 
+
+	public function addBook($id, $title,$author,$year_of_publication){
+
+		$checkBookAvailability = $this->dbCon->PREPARE("SELECT id FROM books WHERE id=?" );
+		$checkBookAvailability->bindValue(1, $id);
+		$checkBookAvailability->execute();
+
+		if ($checkBookAvailability->rowCount()>0) {
+			
+			echo "<script>alert('This Book already Exists');</script>";
+		} else {
+			
+			$addBook = $this->dbCon->prepare("INSERT INTO books (id, title, author, year_of_publication)
+				VALUES (:id, :title, :author, :year_of_publication)" );
+				$addBook->execute(array(
+					      ':id'=>($id),
+						  ':title'=>($title),
+						  ':author'=>($author),
+						  ':year_of_publication'=>($year_of_publication) 
+						  ));
+				$_SESSION['book-added']=true;
+		}
+
+						 		
+	}//End of Adding a BOOK
+
+
+	public function getAllBooks(){
+		$getAllBooks = $this->dbCon->Prepare("SELECT books.id as book_id, title, author, year_of_publication, book_status_id, book_status.name as status_name FROM books INNER JOIN book_status ON(books.book_status_id=book_status.id) ");
+		//$getNotices->bindParam(1,$id);
+		$getAllBooks->execute();
+		
+		if($getAllBooks->rowCount()>0){
+			$rows = $getAllBooks->fetchAll();
+			return $rows;
+		}
+	} //end of getting Notices
 
 
 

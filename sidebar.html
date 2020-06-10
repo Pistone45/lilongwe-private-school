@@ -201,9 +201,22 @@
       <?php
       
       
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==40){ //Librarian ?>
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-folder"></i> <span>Book Management</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">                
+          <li><a href="add-book.php"><i class="fa fa-circle-o"></i> Add Book</a></li>
+          <li><a href="view-books.php"><i class="fa fa-circle-o"></i> View Books</a></li>        
+          </ul>
+        </li>
+<?php
+      
       }
-      
-      
       
     ?>
        
