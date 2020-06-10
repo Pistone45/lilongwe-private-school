@@ -75,7 +75,7 @@ $singleUser = $getUserUsingUsername->getUserUsingUsername();
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
        
       </ol>

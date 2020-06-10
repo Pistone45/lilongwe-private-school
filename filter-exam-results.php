@@ -59,7 +59,7 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><a href="select-exam-class.php">Exam Level</a></li>
        
       </ol>
