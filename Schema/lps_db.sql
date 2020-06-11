@@ -169,6 +169,7 @@ CREATE TABLE `books` (
   `title` varchar(145) NOT NULL,
   `author` varchar(245) NOT NULL,
   `year_of_publication` year(4) NOT NULL,
+  `count` int(11) DEFAULT NULL,
   `book_status_id` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `fk_books_book_status1_idx` (`book_status_id`),
@@ -182,7 +183,7 @@ CREATE TABLE `books` (
 
 LOCK TABLES `books` WRITE;
 /*!40000 ALTER TABLE `books` DISABLE KEYS */;
-INSERT INTO `books` VALUES ('001','Effects of RSI','Pistone Junior Sanjama',2020,1);
+INSERT INTO `books` VALUES ('001','Effects of RSI','Pistone Junior Sanjama',2020,9,1),('002','Data Structures and Algorithms','Blena Chisenga',2018,14,1);
 /*!40000 ALTER TABLE `books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -200,10 +201,11 @@ CREATE TABLE `borrowed_books` (
   `books_id` varchar(45) NOT NULL,
   `students_student_no` varchar(45) NOT NULL,
   `status` varchar(45) NOT NULL DEFAULT '1',
+  `due_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `students_student_no` (`students_student_no`),
   KEY `books_id` (`books_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,7 +214,7 @@ CREATE TABLE `borrowed_books` (
 
 LOCK TABLES `borrowed_books` WRITE;
 /*!40000 ALTER TABLE `borrowed_books` DISABLE KEYS */;
-INSERT INTO `borrowed_books` VALUES (1,'2020-05-19',NULL,'001','LPS/S/1','1'),(2,NULL,NULL,'001','LPS/S/2','1'),(3,'2020-06-10',NULL,'001','LPS/S/5','1');
+INSERT INTO `borrowed_books` VALUES (8,'2020-06-11',NULL,'002','LPS/S/1','1','2020-07-11'),(7,'2020-06-11',NULL,'001','LPS/S/1','1','2020-07-11'),(6,'2020-06-11',NULL,'001','LPS/S/1','0','2020-06-11');
 /*!40000 ALTER TABLE `borrowed_books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -441,7 +443,7 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-08 13:32:24',0,'LPS/S/1'),(5,'message','Subject','2020-06-08 13:37:01',0,'LPS/S/1'),(6,'message','Subject','2020-06-08 13:37:41',0,'LPS/S/1'),(7,'message','subject','2020-06-09 10:23:34',0,'LPS/S/1');
+INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-11 08:55:39',1,'LPS/S/1'),(5,'message 1','Subject 1','2020-06-11 08:55:37',1,'LPS/S/1'),(6,'message 2','Subject 2','2020-06-11 08:58:45',1,'LPS/S/1'),(7,'message 3','subject 3','2020-06-11 08:58:42',1,'LPS/S/1');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -969,4 +971,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-10 19:44:37
+-- Dump completed on 2020-06-11 13:57:48

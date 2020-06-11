@@ -107,6 +107,7 @@ $messages = $getMessages->getMessages();
                   <th>Student Name</th>
                   <th>Class Name</th>
                   <th>Date Borrowed</th>
+                  <th>Days Remaining</th>
                   
                 </tr>
                 </thead>
@@ -121,6 +122,17 @@ $messages = $getMessages->getMessages();
               <td><?php echo $book['sub_class_name']; ?>
               <td><button class="btn btn-info"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button>
               </td>
+                            <td><?php  $date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); if($date <= 0){  ?>
+                  <button class="btn btn-danger">0 Days. Due Date Passed!</button>
+                <?php
+
+            }else{  ?>
+                <p style="font-size: 20px;"><span class="label label-default">
+                <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); ?></span> Days</p><?php
+            } ?>
+
+                  
+                </td>
                
             </tr>
           <?php

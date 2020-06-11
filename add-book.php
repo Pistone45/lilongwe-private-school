@@ -11,9 +11,10 @@ if(isset($_POST['submit'])){
 	  $title = $_POST['title'];
 	  $author = $_POST['author'];
     $year_of_publication = $_POST['year_of_publication'];
+    $count = $_POST['count'];
 
 	 $addBook = new Staff();
-	 $addBook->addBook($id, $title,$author,$year_of_publication);
+	 $addBook->addBook($id, $title,$author,$year_of_publication,$count);
 	
 
 	
@@ -110,6 +111,10 @@ if(isset($_POST['submit'])){
 				        <div class="form-group">
                   <label for="fatherName">Year of Publication</label>
                   <input type="number" min="1900" placeholder="Example 2014" max="3000" class="form-control" name="year_of_publication" required>
+                </div>
+                <div class="form-group">
+                  <label for="fatherName">Book Count</label>
+                  <input type="number" placeholder="Example 5" class="form-control" name="count" required>
                 </div>
               
                 

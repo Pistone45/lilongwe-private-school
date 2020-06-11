@@ -681,8 +681,10 @@ public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id
 
 
 	public function getMessages(){
-		$getMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? ORDER BY date_sent DESC");
+		$status = 0;
+		$getMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? AND status=0 ORDER BY date_sent DESC");
 		$getMessages->bindParam(1,$_SESSION['user']['username']);
+		//$getMessages->bindParam(2,$status);
 		$getMessages->execute();
 		
 		if($getMessages->rowCount()>0){
@@ -690,6 +692,31 @@ public function getAllSubmittedAssignments($class_id, $sub_class_id, $subject_id
 			return $rows;
 		}
 	} //end of getting Messages
+
+
+	public function getReadMessages(){
+		$status = 1;
+		$getReadMessages = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? AND status=1 ORDER BY date_sent DESC");
+		$getReadMessages->bindParam(1,$_SESSION['user']['username']);
+		//$getReadMessages->bindParam(2,$status);
+		$getReadMessages->execute();
+		
+		if($getReadMessages->rowCount()>0){
+			$rows = $getReadMessages->fetchAll();
+			return $rows;
+		}
+	} //end of getting Messages
+
+
+
+public function updateReadMessage($id){
+		$status = 1;
+		$updateReadMessage = $this->dbCon->PREPARE("UPDATE messages SET status=? WHERE student_no=? AND id=?");
+		$updateReadMessage->bindParam(1,$status);
+		$updateReadMessage->bindParam(2,$_SESSION['user']['username']);
+		$updateReadMessage->bindParam(3,$id);
+		$updateReadMessage->execute();
+	}//End of updating Read Messages
 
 	
 	
@@ -1943,7 +1970,7 @@ public function getUser(){
 	}
 
 
-	public function addBook($id, $title,$author,$year_of_publication){
+	public function addBook($id, $title,$author,$year_of_publication, $count){
 
 		$checkBookAvailability = $this->dbCon->PREPARE("SELECT id FROM books WHERE id=?" );
 		$checkBookAvailability->bindValue(1, $id);
@@ -1954,13 +1981,14 @@ public function getUser(){
 			echo "<script>alert('This Book already Exists');</script>";
 		} else {
 			
-			$addBook = $this->dbCon->prepare("INSERT INTO books (id, title, author, year_of_publication)
-				VALUES (:id, :title, :author, :year_of_publication)" );
+			$addBook = $this->dbCon->prepare("INSERT INTO books (id, title, author, year_of_publication, count)
+				VALUES (:id, :title, :author, :year_of_publication, :count)" );
 				$addBook->execute(array(
 					      ':id'=>($id),
 						  ':title'=>($title),
 						  ':author'=>($author),
-						  ':year_of_publication'=>($year_of_publication) 
+						  ':year_of_publication'=>($year_of_publication),
+						  ':count'=>($count)
 						  ));
 				$_SESSION['book-added']=true;
 		}
@@ -1970,7 +1998,7 @@ public function getUser(){
 
 
 	public function getAllBooks(){
-		$getAllBooks = $this->dbCon->Prepare("SELECT books.id as book_id, title, author, year_of_publication, book_status_id, book_status.name as status_name FROM books INNER JOIN book_status ON(books.book_status_id=book_status.id) ");
+		$getAllBooks = $this->dbCon->Prepare("SELECT books.id as book_id, count, title, author, year_of_publication, book_status_id, book_status.name as status_name FROM books INNER JOIN book_status ON(books.book_status_id=book_status.id) ");
 		//$getNotices->bindParam(1,$id);
 		$getAllBooks->execute();
 		
@@ -1982,7 +2010,7 @@ public function getUser(){
 
 
 	public function getBorrowedBooks(){
-		$getBorrowedBooks = $this->dbCon->Prepare("SELECT borrowed_books.id as id, books.id as book_id, books.title as title, students_student_no, date_borrowed, CONCAT(firstname, ' ', lastname) as student_name, sub_classes.name as sub_class_name FROM borrowed_books INNER JOIN books ON(borrowed_books.books_id=books.id) INNER JOIN students ON(borrowed_books.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE status=1 ");
+		$getBorrowedBooks = $this->dbCon->Prepare("SELECT borrowed_books.id as id, books.id as book_id, books.title as title, due_date, students_student_no, date_borrowed, CONCAT(firstname, ' ', lastname) as student_name, sub_classes.name as sub_class_name FROM borrowed_books INNER JOIN books ON(borrowed_books.books_id=books.id) INNER JOIN students ON(borrowed_books.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE status=1 ");
 		//$getBorrowedBooks->bindParam(1 ,1);
 		$getBorrowedBooks->execute();
 		
@@ -1996,7 +2024,7 @@ public function getUser(){
 
 
 	public function getBorrowedBookPerStudent(){
-		$getBorrowedBookPerStudent = $this->dbCon->Prepare("SELECT books.id as book_id, books.title as title, students_student_no, date_borrowed, CONCAT(firstname, ' ', lastname) as student_name, books.author as author, sub_classes.name as sub_class_name FROM borrowed_books INNER JOIN books ON(borrowed_books.books_id=books.id) INNER JOIN students ON(borrowed_books.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE students_student_no=? AND status=1");
+		$getBorrowedBookPerStudent = $this->dbCon->Prepare("SELECT books.id as book_id, books.title as title, due_date, students_student_no, date_borrowed, CONCAT(firstname, ' ', lastname) as student_name, books.author as author, sub_classes.name as sub_class_name FROM borrowed_books INNER JOIN books ON(borrowed_books.books_id=books.id) INNER JOIN students ON(borrowed_books.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE students_student_no=? AND status=1");
 		$getBorrowedBookPerStudent->bindParam(1 ,$_SESSION['user']['username']);
 		$getBorrowedBookPerStudent->execute();
 		
@@ -2005,6 +2033,19 @@ public function getUser(){
 			return $rows;
 		}
 	} //end of getting Borrowed Books
+
+
+public function getBookCount($book_id){
+
+		$getBookCount = $this->dbCon->Prepare("SELECT count FROM books WHERE id =?");
+		$getBookCount->bindParam(1,$book_id);
+		$getBookCount->execute();
+		
+		if($getBookCount->rowCount()>0){
+			$row = $getBookCount->fetch();
+			return $row;
+		}
+}
 
 
 
@@ -2021,8 +2062,12 @@ public function getUser(){
 
 
 
-	public function lendBook($book_id, $student_no){
+	public function lendBook($book_id, $student_no, $current_count){
 		$date = DATE("Y-m-d h:i");
+
+		$dt2 = new DateTime("+1 month"); // Add +1 day to increment the date by 1 day from today
+		$due_date = $dt2->format("Y-m-d");
+
 		$checkIfAlreadyBorrowed = $this->dbCon->PREPARE("SELECT books_id FROM borrowed_books WHERE books_id=? AND students_student_no=? AND status=?");
 		$checkIfAlreadyBorrowed->bindValue(1, $book_id);
 		$checkIfAlreadyBorrowed->bindValue(2, $student_no);
@@ -2036,13 +2081,21 @@ public function getUser(){
     </script>");
 
 		} else {
+
+		$new_count = $current_count - 1;
+
+		$updateBookCount =$this->dbCon->PREPARE("UPDATE books SET count =? WHERE id=? ");
+		$updateBookCount->bindParam(1,$new_count);
+		$updateBookCount->bindParam(2,$book_id);
+		$updateBookCount->execute();
 			
-			$lendBook = $this->dbCon->prepare("INSERT INTO borrowed_books (date_borrowed, books_id, students_student_no)
-				VALUES (:date_borrowed, :books_id, :students_student_no)" );
+			$lendBook = $this->dbCon->prepare("INSERT INTO borrowed_books (date_borrowed, books_id, students_student_no, due_date)
+				VALUES (:date_borrowed, :books_id, :students_student_no, :due_date)" );
 				$lendBook->execute(array(
 						  ':date_borrowed'=>($date),
 					      ':books_id'=>($book_id),
-						  ':students_student_no'=>($student_no)
+						  ':students_student_no'=>($student_no),
+						  ':due_date'=>($due_date),
 						  ));
 				$_SESSION['book-borrowed']=true;
 		}
@@ -2052,7 +2105,15 @@ public function getUser(){
 
 
 
-	public function returnBook($id){
+	public function returnBook($id,$current_count, $book_id){
+
+		$new_count = $current_count + 1;
+
+		$incrementBookCount =$this->dbCon->PREPARE("UPDATE books SET count =? WHERE id=? ");
+		$incrementBookCount->bindParam(1,$new_count);
+		$incrementBookCount->bindParam(2,$book_id);
+		$incrementBookCount->execute();
+
 		$returnBook =$this->dbCon->PREPARE("UPDATE borrowed_books SET status =0 WHERE id=? ");
 		$returnBook->bindParam(1,$id);
 		$returnBook->execute();

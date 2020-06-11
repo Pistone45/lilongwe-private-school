@@ -6,10 +6,15 @@ if(!isset($_SESSION['user'])){
 	}
 
 if (isset($_GET['id'])) {
-  $id = $_GET['id'];
+$id = $_GET['id'];
+$book_id = $_GET['book_id'];
+
+$getBookCount = new Staff();
+$getBookCount = $getBookCount->getBookCount($book_id);
+$current_count = $getBookCount['count'];
 
 $returnBook = new Staff();
-$returnBook = $returnBook->returnBook($id);
+$returnBook = $returnBook->returnBook($id, $current_count, $book_id);
 
 }
 
@@ -108,6 +113,7 @@ $books = $getBorrowedBooks->getBorrowedBooks();
                   <th>Student Name</th>
                   <th>Class Name</th>
                   <th>Date Borrowed</th>
+                  <th>Days Remaining</th>
                   <th>Action</th>
                   
                 </tr>
@@ -118,12 +124,23 @@ $books = $getBorrowedBooks->getBorrowedBooks();
           foreach($books as $book){ ?>
             <tr>
               <td><?php echo $book['book_id']; ?></td>
-              <td><?php echo $book['title']; ?>
-              <td><?php echo $book['student_name']; ?>
-              <td><?php echo $book['sub_class_name']; ?>
+              <td><?php echo $book['title']; ?></td>
+              <td><?php echo $book['student_name']; ?></td>
+              <td><?php echo $book['sub_class_name']; ?></td>
               <td><button class="btn"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button>
               </td>
-              <td><a href="return-book.php?id=<?php echo $book['id']; ?>"><button class="btn btn-primary">Return</button> </a></td>
+              <td><?php  $date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); if($date <= 0){  ?>
+                  <button class="btn btn-danger">0 Days. Due Date Passed!</button>
+                <?php
+
+            }else{  ?>
+                <p style="font-size: 20px;"><span class="label label-default">
+                <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); ?></span> Days</p><?php
+            } ?>
+
+                  
+                </td>
+              <td><a href="return-book.php?id=<?php echo $book['id']; ?>&book_id=<?php echo $book['book_id'];  ?>"><button class="btn btn-primary">Return</button> </a></td>
                
             </tr>
           <?php

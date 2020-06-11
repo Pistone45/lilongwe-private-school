@@ -1,34 +1,25 @@
 <?php
 include_once("functions/functions.php");
+if(!isset($_SESSION['user'])){
+		header("Location: login.php");
+		exit;
+	}
 
-$getAllBooks = new Staff();
-$books = $getAllBooks->getAllBooks();
+if (isset($_GET['id'])) {
+$id = $_GET['id'];
 
-if (isset($_POST['submit'])) {
-$book_id = $_POST['book_id'];
-$level = $_POST['level'];
-
-
-
-$getAllStudentsPerSubclass = new Staff();
-$students = $getAllStudentsPerSubclass->getAllStudentsPerSubclass($level);
-  
+$updateReadMessage = new Students();
+$readMessage = $updateReadMessage->updateReadMessage($id);
 }
 
+$getMessages = new Students();
+$messages = $getMessages->getMessages();
 
-if (isset($_POST['lend'])) {
-$book_id = $_POST['book_id'];
-$student_no = $_POST['student_no'];
+$getReadMessages = new Students();
+$readmessages = $getReadMessages->getReadMessages();
 
-$getBookCount = new Staff();
-$bookCount = $getBookCount->getBookCount($book_id);
-
-$current_count = $bookCount['count'];
-
-$lendBook = new Staff();
-$students = $lendBook->lendBook($book_id, $student_no, $current_count);
-  
-}
+$getBorrowedBookPerStudent = new Staff();
+$books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
 
 ?>
 <!DOCTYPE html>
@@ -36,7 +27,7 @@ $students = $lendBook->lendBook($book_id, $student_no, $current_count);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Student| Lilongwe Private School</title>
+  <title>Lilongwe Private School| Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -45,13 +36,21 @@ $students = $lendBook->lendBook($book_id, $student_no, $current_count);
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="bower_components/jvectormap/jquery-jvectormap.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -61,111 +60,145 @@ $students = $lendBook->lendBook($book_id, $student_no, $current_count);
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    <?php include_once("header.html"); ?>
+  <?php include_once("header.html"); ?>
+  
   <!-- Left side column. contains the logo and sidebar -->
-   <?php include_once('sidebar.html'); ?>
-   
+  <?php include_once('sidebar.html'); ?>
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Select Student
-       
+        Messages
       </h1>
       <ol class="breadcrumb">
-        <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Select Student</a></li>
-       
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Messages</li>
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
+      <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
+        <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary">
+            
+           <div class="box-header">
+            <ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home">READ MESSAGES</a></li>
+  <li><a data-toggle="tab" href="#menu1">UNREAD MESSAGES</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="home" class="tab-pane fade in active">
+    <h3>READ MESSAGES</h3>
+                <div class="box-body">
         <?php
-                  if(isset($_SESSION["book-borrowed"]) && $_SESSION["book-borrowed"]==true)
-                  {
-                      echo "<div class='alert alert-success'>";
-                      echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                      echo "<strong>Success! </strong>"; echo "You have successfully Borrowed a Book for a Student";
-                      unset($_SESSION["book-borrowed"]);
-                      echo "</div>";
-       header('Refresh: 5; URL= view-books.php');
-                  }
-    ?>
-            <!-- /.box-header -->
-            <div class="box-body">
+        if(isset($readmessages) && count($readmessages)>0){   ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Date Sent</th>
+                </tr>
+                </thead>
+                <tbody>
+          <?php
+          foreach($readmessages as $readmessage){ ?>
+            <tr>
+              <td><?php echo $readmessage['subject']; ?></td>
+              <td><?php echo $readmessage['message']; ?>
+              <td><?php $date = date_create($readmessage['date_sent']); echo date_format($date,"d, M Y"); ?>
+              </td>
+               
+            </tr>
+          <?php
+            
+          }
+        }else{
+            ?>
+          <div class="alert alert-info">
+            <strong>No Messages!</strong> You dont have any messages at the moment.
+          </div><?php
+        }
+        ?>
+                
+        
+                </tbody>
+               
+              </table>
+            </div>
+            <!-- /.box-body -->
+  </div>
+  <div id="menu1" class="tab-pane fade">
+    <h3>UNREAD MESSAGES</h3>
+                <div class="box-body">
+                      <?php
+        if(isset($messages) && count($messages)>0){   ?>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Date Sent</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-        $i = 0;
-				if(isset($students) && count($students)>0){
-					foreach($students as $student){ 
-            $i++;   ?>
-					<tr>
-                  <td><?php echo $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class_name']; ?></td>
-                  <td>
-                  <form action="select-student.php" method="POST">
-                    <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>" name="">
-                    <input type="text" hidden="" name="book_id" value="<?php echo $book_id; ?>" name="">
-                  <button type="submit" name="lend" class="btn btn-success">Lend Book</button>
-
-                  </form></td>
-                </tr>
-					<?php
-						
-					}
-				}else{
-          echo "No Students for this particular Class found";
+          <?php
+          foreach($messages as $message){ ?>
+            <tr>
+              <td><?php echo $message['subject']; ?></td>
+              <td><?php echo $message['message']; ?>
+              <td><?php $date = date_create($message['date_sent']); echo date_format($date,"d, M Y"); ?>
+              </td>
+              <td><a href="more-messages.php?id=<?php echo $message['id']; ?>"><button class="btn btn-info btn-xs">Mard Read</button></a></td>
+               
+            </tr>
+          <?php
+            
+          }
+        }else{  ?>
+          <div class="alert alert-info">
+            <strong>No Messages!</strong> You dont have any messages at the moment.
+          </div><?php
         }
-				?>
+        ?>
                 
+        
                 </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                </tr>
-                </tfoot>
+               
               </table>
             </div>
             <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
+  </div>
+</div>
+            </div>
+            <!-- /.box-header -->
+
+            
         </div>
-        <!-- /.col -->
+        </div>
+        
+        <!-- ./col -->
       </div>
-      <!-- /.row -->
+
+
+
+
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
-
+<?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -367,30 +400,11 @@ $students = $lendBook->lendBook($book_id, $student_no, $current_count);
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

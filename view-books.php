@@ -95,8 +95,9 @@ $levels = $getSubClasses->getSubClasses();
                   <td><?php echo $book['title']; ?></td>
                   <td><?php echo $book['author']; ?></td>
                   <td><?php echo $book['year_of_publication']; ?></td>
-                  <td><?php echo $book['status_name']; ?></td>
-                  <td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?php echo $i; ?>">Lend Book</button></td>
+                  <td><button type="button" class="btn btn-primary"> <span class="badge"><?php echo $book['count'];?> </span> Available</td></button>
+
+                  <td><?php if($book['count'] == 0 ){  ?><button class="btn btn-danger">Out of Stock</button> <?php } else{  ?><button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?php echo $i; ?>">Lend Book</button> <?php } ?></td>
           <td><a href="delete-book.php?book_id=<?php echo $book['book_id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
 
                         <!-- Modal -->
