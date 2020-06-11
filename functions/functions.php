@@ -1702,8 +1702,9 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 	public function getNotices(){
-		$getNotices = $this->dbCon->Prepare("SELECT id, notice, deadline FROM notices ORDER BY date_added DESC");
-		//$getNotices->bindParam(1,$id);
+		$status = 0;
+		$getNotices = $this->dbCon->Prepare("SELECT id, notice, deadline FROM notices WHERE status=? ORDER BY date_added DESC");
+		$getNotices->bindParam(1,$status);
 		$getNotices->execute();
 		
 		if($getNotices->rowCount()>0){

@@ -102,34 +102,60 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
       <!-- Small boxes (Stat box) -->
       <div class="row">
         <div class="col-lg-6 col-xs-6">
-                    <div class="box box-primary">
+          <div class="box box-primary">
             
            <div class="box-header">
               <h3 class="box-title">Notice Board</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+                      <?php
+        $i = 0;
+        if(isset($notice) && count($notice)>0){  ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
                   <th>Notice</th>
-                  <th>Deadline</th>
-                  
+                  <th>Dealine</th>
                 </tr>
                 </thead>
                 <tbody>
-        <?php
-        if(isset($notice) && count($notice)>0){
-          foreach($notice as $notices){ ?>
+<?php
+          foreach($notice as $notices){ 
+            $i++;   ?>
             <tr>
-              <td><?php echo $notices['notice']; ?></td>
-              <td><?php echo $notices['deadline']; ?>
-              </td>
+              <td><?php echo substr($notices['notice'],0, 50); ?>....</td>
+              <td><?php echo $notices['deadline']; ?>.....<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#<?php echo $i; ?>">Read More</button></td>
                
+               <!-- Modal -->
+<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Read More</h4>
+      </div>
+      <div class="modal-body">
+        <div class="well well-sm"><h5><?php echo $notices['notice']; ?></h5></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
             </tr>
           <?php
             
           }
+        }else{  ?>
+          <div class="alert alert-info">
+            <strong>No Notifications!</strong> You dont have any notifications at the moment.
+          </div><?php
         }
         ?>
                 
@@ -143,69 +169,7 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
         </div>
         </div>
 
-        <div class="col-lg-6">
-                              <div class="box box-primary">
-            
-           <div class="box-header">
-              <h3 class="box-title">Borrowed Books</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                      <?php
-        if(isset($books) && count($books)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Book ID</th>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Date Borrowed</th>
-                  <th>Days Remaining</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-          foreach($books as $book){ ?>
-          <tr>
-                  <td><?php echo $book['book_id']; ?></td>
-                  <td><?php echo $book['title']; ?></td>
-                  <td><?php echo $book['author']; ?></td>
-                  <td><button class="btn btn-default"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button></td>
-                <td><?php  $date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); if($date <= 0){  ?>
-                  <button class="btn btn-danger">0 Days. Please Retun Book!</button>
-                <?php
-
-            }else{  ?>
-                <p style="font-size: 20px;"><span class="label label-default">
-                <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); ?></span> Days</p><?php
-            } ?>
-
-                  
-                </td>
-
-          </tr>
-          <?php
-            
-          } ?>
-
-                
-                </tbody>
-              </table> <?php
-                      }else{
-                        echo "No Borrowed Books Available at the moment";
-                      }
-        ?>
-            </div>
-            <!-- /.box-body -->
-            
-        </div>
-        </div>
-        
-        <!-- ./col -->
-      </div>
-
-      <div class="row">
-        <div class="col-lg-7 col-xs-7">
+      <div class="col-lg-6 col-xs-6">
           <div class="box box-primary">
             
            <div class="box-header">
@@ -275,11 +239,14 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
               <a href="more-messages.php"><button type="submit" class=" btn btn-default" name="send_message">See Read Messages
                 <i class="fa fa-arrow-circle-right"></i></button></a>
             </div>
-            <!-- /.box-body -->
-            
-        </div>
-        </div>
-          <div class="col-lg-5">
+      </div>
+    </div>        
+
+</div>
+<!-- ./col -->
+
+      <div class="row">
+          <div class="col-lg-6">
                     <div class="box box-primary">
             
            <div class="box-header">
@@ -325,6 +292,66 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
             
         </div>
         </div>
+
+      <div class="col-lg-6">
+        <div class="box box-primary">
+          
+         <div class="box-header">
+            <h3 class="box-title">Borrowed Books</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+                    <?php
+      if(isset($books) && count($books)>0){ ?>
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Date Borrowed</th>
+                <th>Days Remaining</th>
+              </tr>
+              </thead>
+              <tbody>
+                <?php
+        foreach($books as $book){ ?>
+        <tr>
+                <td><?php echo $book['book_id']; ?></td>
+                <td><?php echo $book['title']; ?></td>
+                <td><?php echo $book['author']; ?></td>
+                <td><button class="btn btn-default"><?php $date = date_create($book['date_borrowed']); echo date_format($date,"d, M Y") ?></button></td>
+              <td><?php  $date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); if($date <= 0){  ?>
+                <button class="btn btn-danger">0 Days. Please Retun Book!</button>
+              <?php
+
+          }else{  ?>
+              <p style="font-size: 20px;"><span class="label label-default">
+              <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); ?></span> Days</p><?php
+          } ?>
+
+                
+              </td>
+
+        </tr>
+        <?php
+          
+        } ?>
+
+              
+              </tbody>
+            </table> <?php
+                    }else{
+                      echo "No Borrowed Books Available at the moment";
+                    }
+      ?>
+          </div>
+          <!-- /.box-body -->
+          
+      </div>
+      </div>
+
+
       </div>
 
 
