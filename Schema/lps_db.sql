@@ -443,7 +443,7 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-11 08:55:39',1,'LPS/S/1'),(5,'message 1','Subject 1','2020-06-11 08:55:37',1,'LPS/S/1'),(6,'message 2','Subject 2','2020-06-11 08:58:45',1,'LPS/S/1'),(7,'message 3','subject 3','2020-06-11 08:58:42',1,'LPS/S/1');
+INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-12 08:43:27',0,'LPS/S/1'),(5,'message 1','Subject 1','2020-06-12 08:43:27',0,'LPS/S/1'),(6,'message 2','Subject 2','2020-06-12 08:43:27',0,'LPS/S/1'),(7,'message 3','subject 3','2020-06-11 08:58:42',1,'LPS/S/1');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -459,6 +459,7 @@ CREATE TABLE `notices` (
   `notice` text NOT NULL,
   `deadline` date DEFAULT NULL,
   `date_added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` varchar(45) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -469,7 +470,7 @@ CREATE TABLE `notices` (
 
 LOCK TABLES `notices` WRITE;
 /*!40000 ALTER TABLE `notices` DISABLE KEYS */;
-INSERT INTO `notices` VALUES (2,'Notice Here','2020-06-30','2020-06-08 09:17:52');
+INSERT INTO `notices` VALUES (2,'Notice Here','2020-06-30','2020-06-08 09:17:52','0');
 /*!40000 ALTER TABLE `notices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -539,7 +540,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian');
+INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian'),(50,'Guardian');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -958,7 +959,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('0886449677','Blena','BSC','Chisenga',1,50,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -971,4 +972,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-11 13:57:48
+-- Dump completed on 2020-06-12 11:05:44

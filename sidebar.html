@@ -217,6 +217,19 @@
         </li>
 <?php
       
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==50){ //Guardian ?>
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-folder"></i> <span>Your Students</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">                
+          <li><a href="guardian-select-student.php"><i class="fa fa-circle-o"></i> View Students</a></li>
+          </ul>
+        </li> <?php
+
       }
       
     ?>

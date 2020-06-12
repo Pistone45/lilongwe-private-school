@@ -22,7 +22,11 @@ $user_details = $getUserProfile-> getUserProfile();
       ?>
       <a href="librarian-index.php" class="logo">
         <?php
-    }   ?>
+    }elseif (isset($_SESSION['user']) && $_SESSION['user']['roles_id']==50) {
+       ?>
+      <a href="guardian-index.php" class="logo">
+        <?php
+    }  ?>
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>L</b>PS</span>
       <!-- logo for regular state and mobile devices -->

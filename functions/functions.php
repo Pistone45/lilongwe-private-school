@@ -111,8 +111,11 @@ class User{
 					}elseif ($roles_id == 40) {
 						header("Location: librarian-index.php");
 					
-					}else{
-						$_SESSION['invalidRole']=true;
+					}elseif ($roles_id == 50) {
+						header("Location: guardian-index.php");
+					}
+					else{
+						$_SESSION['invalidUser']=true;
 					}
 					
 					//die();
@@ -1065,6 +1068,66 @@ class Guardian{
 		 $_SESSION['guardian-updated']=true;
 		
 	}
+
+
+	public function getMessagesPerGuardian($id){
+		$status = 0;
+		$getMessagesPerGuardian = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? AND status=0 ORDER BY date_sent DESC");
+		$getMessagesPerGuardian->bindParam(1,$id);
+		//$getMessagesPerGuardian->bindParam(2,$status);
+		$getMessagesPerGuardian->execute();
+		
+		if($getMessagesPerGuardian->rowCount()>0){
+			$rows = $getMessagesPerGuardian->fetchAll();
+			return $rows;
+		}
+	} //end of getting Messages by Guardian
+
+
+
+	public function getReadMessagesPerGuardian($id){
+		$status = 1;
+		$getReadMessagesPerGuardian = $this->dbCon->Prepare("SELECT id, message, subject, date_sent, status FROM messages WHERE student_no=? AND status=0 ORDER BY date_sent DESC");
+		$getReadMessagesPerGuardian->bindParam(1,$id);
+		//$getMessagesPerGuardian->bindParam(2,$status);
+		$getReadMessagesPerGuardian->execute();
+		
+		if($getReadMessagesPerGuardian->rowCount()>0){
+			$rows = $getReadMessagesPerGuardian->fetchAll();
+			return $rows;
+		}
+	} //end of getting Messages
+
+
+public function getStudentDetailsPerGuardian($id){
+		$getStudentDetailsPerGuardian = $this->dbCon->PREPARE("SELECT student_no, CONCAT(firstname, ' ' ,lastname) as name FROM students WHERE student_no=?");
+		$getStudentDetailsPerGuardian->bindParam(1,$id);
+		$getStudentDetailsPerGuardian->execute();
+		
+		if($getStudentDetailsPerGuardian->rowCount()>0){
+			$rows = $getStudentDetailsPerGuardian->fetch();
+			
+			return $rows;
+			
+		}
+		
+	}
+
+
+public function getStudentCountPerGuardian(){
+		$getStudentCountPerGuardian = $this->dbCon->PREPARE("SELECT student_no, CONCAT(firstname, ' ' ,lastname) as name FROM students WHERE guardians_id=?");
+		$getStudentCountPerGuardian->bindParam(1,$_SESSION['user']['username']);
+		$getStudentCountPerGuardian->execute();
+		
+		if($getStudentCountPerGuardian->rowCount()>0){
+			$rows = $getStudentCountPerGuardian->fetchAll();
+			
+			return $rows;
+			
+		}
+		
+	}
+
 
 }
 
@@ -2063,6 +2126,19 @@ public function getBookCount($book_id){
 
 
 
+	public function getAllStudentsPerGuardian(){		
+		$getAllStudentsPerGuardian = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE guardians_id=? ORDER BY student_no ASC");
+		$getAllStudentsPerGuardian->bindParam(1,$_SESSION['user']['username']);
+		$getAllStudentsPerGuardian->execute();
+		
+		if($getAllStudentsPerGuardian->rowCount()>0){
+			$rows = $getAllStudentsPerGuardian->fetchAll();
+			return $rows;
+		}
+	} //end of getting Assignments Results
+
+
+
 	public function lendBook($book_id, $student_no, $current_count){
 		$date = DATE("Y-m-d h:i");
 
@@ -2193,6 +2269,8 @@ class Contact{
 		
 	}
 }
+
+
 
 
 ?>
