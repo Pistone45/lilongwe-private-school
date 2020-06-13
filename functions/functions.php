@@ -108,13 +108,17 @@ class User{
 
 					}elseif ($roles_id == 30) {
 						header("Location: student-index.php");
+
 					}elseif ($roles_id == 40) {
 						header("Location: librarian-index.php");
 					
 					}elseif ($roles_id == 50) {
 						header("Location: guardian-index.php");
-					}
-					else{
+
+					}elseif($roles_id == 60){
+						header("Location: accountant-index.php");
+
+					}else{
 						$_SESSION['invalidUser']=true;
 					}
 					
@@ -2113,6 +2117,7 @@ public function getBookCount($book_id){
 
 
 
+
 	public function getAllStudentsPerSubclass($level){		
 		$getAllStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
 		$getAllStudentsPerSubclass->bindParam(1,$level);
@@ -2122,7 +2127,19 @@ public function getBookCount($book_id){
 			$rows = $getAllStudentsPerSubclass->fetchAll();
 			return $rows;
 		}
-	} //end of getting Assignments Results
+	} //end of getting Students Per Class
+
+
+	public function getAllStudentsPerClassPerPayment($level){		
+		$getAllStudentsPerClassPerPayment = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name, payments.amount as amount FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) LEFT JOIN payments ON(payments.students_student_no=students.student_no) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getAllStudentsPerClassPerPayment->bindParam(1,$level);
+		$getAllStudentsPerClassPerPayment->execute();
+		
+		if($getAllStudentsPerClassPerPayment->rowCount()>0){
+			$rows = $getAllStudentsPerClassPerPayment->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class and Payment
 
 
 
@@ -2199,6 +2216,83 @@ public function getBookCount($book_id){
 				
 	}//End of Returning a BOOK
 
+
+
+	public function getAllStudentsPerMissingBook(){	
+		$payment_type_id = 2;	
+		$getAllStudentsPerMissingBook = $this->dbCon->Prepare("SELECT students_student_no, amount, date_paid, books_id, CONCAT(students.firstname, ' ',students.lastname) as student_name, books.title as book_title, books.author as author, sub_classes.name as sub_class_name, books.year_of_publication as year_of_publication FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN books ON(payments.books_id=books.id) WHERE payment_type_id=?");
+		$getAllStudentsPerMissingBook->bindParam(1,$payment_type_id);
+		$getAllStudentsPerMissingBook->execute();
+		
+		if($getAllStudentsPerMissingBook->rowCount()>0){
+			$rows = $getAllStudentsPerMissingBook->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Missing Book Payment
+
+
+
+
+	public function getStudentsFees($level, $academic_year, $term){	
+		$payment_type_id = 1;	
+		$getStudentsFees = $this->dbCon->Prepare("SELECT students_student_no, amount, date_paid, CONCAT(students.firstname, ' ',students.lastname) as student_name, sub_classes.name as sub_class_name, academic_year, ref_num FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND sub_classes.id=? AND academic_year=? AND term=?");
+		$getStudentsFees->bindParam(1,$payment_type_id);
+		$getStudentsFees->bindParam(2,$level);
+		$getStudentsFees->bindParam(3,$academic_year);
+		$getStudentsFees->bindParam(4,$term);
+		$getStudentsFees->execute();
+		
+		if($getStudentsFees->rowCount()>0){
+			$rows = $getStudentsFees->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Who Paid Fees
+
+
+
+	public function RecordFees($fees, $student_no, $academic_year, $term, $remarks, $ref_num){
+
+		$date = DATE("Y-m-d h:i");
+		$payment_type_id = 1;
+		$RecordFees = $this->dbCon->prepare("INSERT INTO payments (amount, students_student_no, academic_year, term, remarks, ref_num, payment_type_id, date_paid)
+		VALUES (:amount, :students_student_no, :academic_year, :term, :remarks, :ref_num, :payment_type_id, :date_paid)" );
+		$RecordFees->execute(array(
+				  ':amount'=>($fees),
+				  ':students_student_no'=>($student_no),
+				  ':academic_year'=>($academic_year),
+				  ':term'=>($term),
+				  ':remarks'=>($remarks),
+				  ':ref_num'=>($ref_num),
+				  ':payment_type_id'=>($payment_type_id),
+				  ':date_paid'=>($date)
+				  ));
+
+			$_SESSION['fees-recorded']=true;
+						 		
+	}
+
+
+
+	public function recordMissingBookFee($fees, $student_no, $academic_year, $term, $ref_num, $book_id){
+
+		$date = DATE("Y-m-d h:i");
+		$payment_type_id = 2;
+		$recordMissingBookFee = $this->dbCon->prepare("INSERT INTO payments (amount, students_student_no, academic_year, term, ref_num, payment_type_id, date_paid, books_id)
+		VALUES (:amount, :students_student_no, :academic_year, :term, :ref_num, :payment_type_id, :date_paid, :books_id)" );
+		$recordMissingBookFee->execute(array(
+				  ':amount'=>($fees),
+				  ':students_student_no'=>($student_no),
+				  ':academic_year'=>($academic_year),
+				  ':term'=>($term),
+				  ':ref_num'=>($ref_num),
+				  ':payment_type_id'=>($payment_type_id),
+				  ':date_paid'=>($date),
+				  ':books_id'=>($book_id)
+				  ));
+
+			$_SESSION['book-fee']=true;
+						 		
+	}
 
 
 

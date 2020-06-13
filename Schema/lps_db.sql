@@ -521,6 +521,65 @@ INSERT INTO `numberstwo` VALUES ('088855619155'),('088879168569'),('099908454789
 UNLOCK TABLES;
 
 --
+-- Table structure for table `payment_type`
+--
+
+DROP TABLE IF EXISTS `payment_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment_type` (
+  `id` int(11) NOT NULL,
+  `name` varchar(145) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment_type`
+--
+
+LOCK TABLES `payment_type` WRITE;
+/*!40000 ALTER TABLE `payment_type` DISABLE KEYS */;
+INSERT INTO `payment_type` VALUES (1,'Fees'),(2,'Lost Book');
+/*!40000 ALTER TABLE `payment_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payments`
+--
+
+DROP TABLE IF EXISTS `payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `amount` decimal(50,2) NOT NULL,
+  `date_paid` date NOT NULL,
+  `ref_num` varchar(145) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `payment_type_id` int(11) NOT NULL,
+  `students_student_no` varchar(255) NOT NULL,
+  `academic_year` year(4) NOT NULL,
+  `term` int(11) DEFAULT NULL,
+  `books_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `payment_type_id` (`payment_type_id`),
+  KEY `students_student_no` (`students_student_no`),
+  KEY `FK_book_id` (`books_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payments`
+--
+
+LOCK TABLES `payments` WRITE;
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+INSERT INTO `payments` VALUES (1,100000.00,'2020-06-13','2tnzYhqeVM9KQ6HPkx3dJUk8ioTH8SsVscw2WYUX','Fees paid in time',1,'LPS/S/1',2020,1,NULL),(7,1000.00,'2020-06-13','ohQee0YoJB',NULL,2,'LPS/S/1',2020,1,1),(8,800.00,'2020-06-13','Ycz0eoI0Hg',NULL,2,'LPS/S/5',2020,1,1),(9,50000.00,'2020-06-13','vMq0DbiHm7cIcXZ9imx5EWdwqPkEgmhYW1BTL0iH','Pain after anouncement',1,'LPS/S/6',2020,1,NULL);
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `roles`
 --
 
@@ -540,7 +599,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian'),(50,'Guardian');
+INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian'),(50,'Guardian'),(60,'Accountant');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -959,7 +1018,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('0886449677','Blena','BSC','Chisenga',1,50,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
+INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('0886449677','Blena','BSC','Chisenga',1,50,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('accountant','accountant',NULL,'accountant',1,60,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -972,4 +1031,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-12 11:05:44
+-- Dump completed on 2020-06-13 16:35:28

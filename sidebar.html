@@ -67,7 +67,7 @@
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu">              
+          <ul class="treeview-menu">          
             
       <li><a href="filter-admin-exam-results.php"><i class="fa fa-circle-o"></i> View Exams Results</a></li>
       <li><a href="filter-approved-results.php"><i class="fa fa-circle-o"></i> Approve Results</a></li>   
@@ -230,7 +230,37 @@
           </ul>
         </li> <?php
 
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==60){ //Guardian ?>
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-folder"></i> <span> School Fees Management</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">                
+          <li><a href="accountant-select-class.php"><i class="fa fa-circle-o"></i> Record Fees</a></li>
+          <li><a href="filter-fees.php"><i class="fa fa-circle-o"></i> View Paid School Fees</a></li>
+          </ul>
+        </li>
+
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-folder"></i> <span>Missing Books</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+          </a>
+          <ul class="treeview-menu">                
+          <li><a href="book-select-class.php"><i class="fa fa-circle-o"></i>Record Missing Book</a></li>
+          <li><a href="missing-books.php"><i class="fa fa-circle-o"></i>View Book Payments</a></li>
+          </ul>
+        </li>
+        <?php
+
       }
+      
+    ?>
       
     ?>
        
