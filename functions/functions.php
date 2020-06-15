@@ -2131,7 +2131,7 @@ public function getBookCount($book_id){
 
 
 	public function getAllStudentsPerClassPerPayment($level){		
-		$getAllStudentsPerClassPerPayment = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name, payments.amount as amount FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) LEFT JOIN payments ON(payments.students_student_no=students.student_no) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getAllStudentsPerClassPerPayment = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
 		$getAllStudentsPerClassPerPayment->bindParam(1,$level);
 		$getAllStudentsPerClassPerPayment->execute();
 		
@@ -2141,6 +2141,20 @@ public function getBookCount($book_id){
 		}
 	} //end of getting Students Per Class and Payment
 
+
+
+	public function getSpecificFeesPerStudent($student_no){	
+		$payment_type_id = 1;	
+		$getSpecificFeesPerStudent = $this->dbCon->Prepare("SELECT students_student_no, amount, ref_num, term, students.firstname as firstname, students.lastname as lastname, sub_classes.name as sub_class_name, date_paid, academic_year FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE students_student_no=? AND payment_type_id=? ORDER BY student_no ASC");
+		$getSpecificFeesPerStudent->bindParam(1,$student_no);
+		$getSpecificFeesPerStudent->bindParam(2,$payment_type_id);
+		$getSpecificFeesPerStudent->execute();
+		
+		if($getSpecificFeesPerStudent->rowCount()>0){
+			$rows = $getSpecificFeesPerStudent->fetchAll();
+			return $rows;
+		}
+	} //end of getting Payments per Specific Student
 
 
 	public function getAllStudentsPerGuardian(){		

@@ -1,13 +1,49 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-$level = $_POST['level'];
+if (isset($_GET['id'])) {
+$id = $_GET['id'];
 
-$getAllStudentsPerClassPerPayment = new Staff();
-$students = $getAllStudentsPerClassPerPayment->getAllStudentsPerClassPerPayment($level);
+$getSpecificStudent = new Students();
+$student = $getSpecificStudent->getSpecificStudent($id);
 
 }
+
+
+
+if (isset($_POST['record'])) {
+$fees = $_POST['fees'];
+$student_no = $_POST['student_no'];
+$academic_year = $_POST['academic_year'];
+$term = $_POST['term'];
+$remarks = $_POST['remarks'];
+
+function generateRandomString($length = 25) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+//usage 
+$ref_num = generateRandomString(40);
+
+$RecordFees = new Staff();
+$RecordFees = $RecordFees->RecordFees($fees, $student_no, $academic_year, $term, $remarks, $ref_num);
+  
+}
+$student_no = $_GET['id'];
+$getSpecificFeesPerStudent = new Staff();
+$payments = $getSpecificFeesPerStudent->getSpecificFeesPerStudent($student_no);
+
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+$settings['academic_year'];
+$settings['term'];
+
 
 ?>
 <!DOCTYPE html>
@@ -15,7 +51,7 @@ $students = $getAllStudentsPerClassPerPayment->getAllStudentsPerClassPerPayment(
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Student| Lilongwe Private School</title>
+  <title>Track Payment| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -54,115 +90,114 @@ $students = $getAllStudentsPerClassPerPayment->getAllStudentsPerClassPerPayment(
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Select Student to record Fees
+      <h1 style="text-transform: uppercase;">
+        Payment Details for <?php echo $student['firstname']." ".$student['lastname']; ?>
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="accountant-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Select Student</a></li>
+        <li class="active"><a href="#">Track Payment</a></li>
        
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
+          <div class="row">
+          <div class="col-md-5 col-xs-12">
+            <div class="box">
         <?php
-                  if(isset($_SESSION["fees-recorded"]) && $_SESSION["fees-recorded"]==true)
-                  {
-                      echo "<div class='alert alert-success'>";
-                      echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                      echo "<strong>Success! </strong>"; echo "You have successfully Recorded Fees for a Student";
-                      unset($_SESSION["fees-recorded"]);
-                      echo "</div>";
-       //header('Refresh: 5; URL= view-books.php');
-                  }
-    ?>
-            <!-- /.box-header -->
+          if(isset($_SESSION["fees-recorded"]) && $_SESSION["fees-recorded"]==true)
+          {
+              echo "<div class='alert alert-success'>";
+              echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+              echo "<strong>Success! </strong>"; echo "You have successfully Recorded Fees for a Student";
+              unset($_SESSION["fees-recorded"]);
+              echo "</div>";
+          //header('Refresh: 5; URL= view-books.php');
+          }
+        ?>
             <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
+            <h4>Record Payment:</h4>
+              <form role="form" action="track-payments.php?id=<?php echo$_GET['id']; ?>" method="POST">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Fees</label>
+                <input type="number" name="fees" class="form-control" placeholder="Enter Fees E.g 10000" required="">
+                <small id="emailHelp" class="form-text text-muted">Do not put commas.</small>
+              </div>
+
+                <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Remarks</label>
+                  <textarea name="remarks" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+
+                <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>">
+                <input type="text" hidden="" name="academic_year" value="<?php echo $settings['academic_year']; ?>">
+                <input type="text" hidden="" name="term" value="<?php echo $settings['term']; ?>">
+                
+                <button type="submit" name="record" class="btn btn-primary">Record Fees</button>
+            </form>
+            </div>
+            </div>
+          </div>
+          <div class="col-md-7 col-xs-12">
+            <div class="box">
+            <div class="box-body">
+            <h4>Payments for <?php echo $student['student_no']; ?></h4>
+        <?php
+        $i = 0;
+        if(isset($payments) && count($payments)>0){
+          foreach($payments as $payment){ 
+            $i++;   ?>
+            <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
                   <th>Class Name</th>
-                  <th>Action</th>
+                  <th>Amount</th>
+                  <th>Date Paid</th>
+                  <th>Year</th>
+                  <th>Term</th>
+                  <th>Reference</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-        $i = 0;
-				if(isset($students) && count($students)>0){
-					foreach($students as $student){ 
-            $i++;   ?>
-					<tr>
-                  <td><?php echo $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class_name']; ?></td>
-                  <td><a href="track-payments.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Record/Track Payment</a></td>
+          <tr>
+                  <td><?php echo $payment['sub_class_name']; ?></td>
+                  <td><?php echo $payment['amount']; ?></td>
+                  <td><?php echo $payment['date_paid'];?></td>
+                  <td><?php echo $payment['academic_year'];?></td>
+                  <td><?php echo $payment['term'];?></td>
+                  <td><?php echo $payment['ref_num'];?></td>
+
                 </tr>
 
 
-					<?php
-						
-					}
-				}else{
-          echo "No Students for this particular Class found";
+          <?php
+            
+          }
+        }else{
+          echo "No Payments Found";
         }
-				?>
+        ?>
                 
                 </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
               </table>
             </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
+            </div>
         </div>
-        <!-- /.col -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
 
-  <script>
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover({
-        placement : 'top',
-        trigger : 'hover'
-    });
-});
-</script>
-<style>
-  .bs-example{
-      margin: 150px 50px;
-    }
-</style>
-
-    <script type="text/javascript">
+<script type="text/javascript">
     window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
         $(this).remove(); 
     });
 }, 4000);
   </script>
-
-
   <!-- /.content-wrapper -->
    <?php include_once("footer.html"); ?>
 
@@ -379,18 +414,5 @@ $(document).ready(function(){
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
 <!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>
