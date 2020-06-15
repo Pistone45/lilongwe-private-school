@@ -1035,6 +1035,7 @@ class Guardian{
 	
 		//add Partner
 	public function addGuardian($firstname,$middlename,$lastname,$primaryPhone,$secondaryPhone,$address,$email,$occupation,$employer){
+
 				$addGuardian = $this->dbCon->prepare("INSERT INTO guardians (id,firstname,middlename,lastname,primary_phone,secondary_phone,address,email,occupation,employer)
 				VALUES (:id,:firstname,:middlename,:lastname,:primary_phone,:secondary_phone,:address,:email,:occupation,:employer)" );
 				$addGuardian->execute(array(
@@ -1051,9 +1052,19 @@ class Guardian{
 						  
 						  ));
 						  
-						  $_SESSION['guardian-added']=true;
+			//add the Guardian to users table for logins
+			$role =50; //teacher role id
+			$status = 1; //active status
+			$username = $primaryPhone;
+			$password = password_hash($primaryPhone, PASSWORD_DEFAULT)."\n"; 
+			$addUser = new User();
+			$addUser->addUser($username,$firstname,$middlename, $lastname, $role,$password,$status);
+
+			$_SESSION['guardian-added']=true;
 		
 	}
+
+
 	
 	public function editGuardian($id,$firstname,$middlename,$lastname,$primary_phone,$secondary_phone,$address,$email,$occupation,$employer){
 		$editGuardian =$this->dbCon->PREPARE("UPDATE guardians SET firstname =?,middlename=?,lastname=?,primary_phone=?,secondary_phone=?,address=?,email=?,occupation=?,employer=? WHERE id=?");
@@ -1599,6 +1610,18 @@ public function getAllSubclassSubjects($sub_class_id){
 	} //end of getting Assignments Results
 
 
+	public function getFinalAssignmentMarkPerGuardian($subject_id, $term, $student_no){		
+		$getFinalAssignmentMarkPerGuardian = $this->dbCon->Prepare("SELECT students_student_no as student_no, marks as mark, subjects.name as subject_name, assignments.academic_year as academic_year, students.firstname as firstname, assignments.terms_id as term, assignment_type.name as assignment_type_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) WHERE students_student_no=? AND assignments.terms_id=? ");
+		$getFinalAssignmentMarkPerGuardian->bindParam(1,$student_no);
+		$getFinalAssignmentMarkPerGuardian->bindParam(2,$term);
+		$getFinalAssignmentMarkPerGuardian->execute();
+		
+		if($getFinalAssignmentMarkPerGuardian->rowCount()>0){
+			$rows = $getFinalAssignmentMarkPerGuardian->fetchAll();
+			return $rows;
+		}
+	} //end of getting Assignments Results
+
 
 	public function getStudentsPerSubclass($sub_class_id, $subject_id, $term){		
 		$getStudentsPerSubclass = $this->dbCon->Prepare("SELECT student_no, exam_results.academic_year as academic_year, terms.name as term_name, firstname, lastname FROM students LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) LEFT OUTER JOIN terms ON (exam_results.terms_id=terms.id) WHERE sub_classes.id=? ORDER BY student_no ASC");
@@ -1623,6 +1646,19 @@ public function getAllSubclassSubjects($sub_class_id){
 		
 		if($getTrialMark->rowCount()>0){
 			$row = $getTrialMark->fetchAll();
+			return $row;
+		}
+	} //end of getting Assignments Results
+
+
+	public function getTrialMarkPerGuardian($subject_id, $term, $student_no){		
+		$getTrialMarkPerGuardian = $this->dbCon->Prepare("SELECT SUM(submissions.marks) as final_mark, exam_results.marks as exam_mark, exam_results.academic_year as academic_year, terms.name as term_name, subjects.name as subject_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) LEFT OUTER JOIN exam_results ON(exam_results.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN terms ON (exam_results.terms_id=terms.id) WHERE submissions.students_student_no=? AND exam_results.students_student_no=? ");
+		$getTrialMarkPerGuardian->bindParam(1,$student_no);
+		$getTrialMarkPerGuardian->bindParam(2,$student_no);
+		$getTrialMarkPerGuardian->execute();
+		
+		if($getTrialMarkPerGuardian->rowCount()>0){
+			$row = $getTrialMarkPerGuardian->fetchAll();
 			return $row;
 		}
 	} //end of getting Assignments Results

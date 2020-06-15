@@ -1,17 +1,27 @@
 <?php
 include_once("functions/functions.php");
 
-$getAllStudentsPerGuardian = new Staff();
-$students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
-  
+  $id = $_GET['id'];
+
+  $getSpecificStudent = new Students();
+  $details = $getSpecificStudent->getSpecificStudent($id);
+  $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
+
+  $getStudentAssignment = new Students();
+  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+
+$id = $_GET['id'];
+$getStudentDetailsPerGuardian = new Guardian();
+$student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Student| Lilongwe Private School</title>
+  <title>View Assignments | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -51,12 +61,11 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Select Student
-       
+        Assignments for <?php echo $student['name']; ?>   
       </h1>
       <ol class="breadcrumb">
-        <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Select Student</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-assignments.php">Assignments</a></li>
        
       </ol>
     </section>
@@ -67,56 +76,59 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
         <div class="col-xs-12">
          
           <div class="box">
+            
             <!-- /.box-header -->
             <div class="box-body">
+                      <?php
+        if(isset($assignments) && count($assignments)>0){ ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Title</th>
+                  <th>Due Date</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Subject</th>
+                  <th>Assignment Type</th>
+                  <th>Marks</th>
                 </tr>
                 </thead>
                 <tbody>
-        <?php
-        $i = 0;
-        if(isset($students) && count($students)>0){
-          foreach($students as $student){ 
-            $i++;   ?>
-          <tr>
-                  <td><?php echo $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class_name']; ?></td>
-                  <td><a href="student-dashboard.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></td>
-                  <td><a href="filter-student-exams.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-book" aria-hidden="true"></i> Exams</a></td>
-                  <td><a href="student-assignment.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Assignments</a></td>
+                  <?php
+					foreach($assignments as $assignment){ ?>
+					<tr>
+                  <td><?php echo $assignment['title']; ?></td>
+                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
+                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
+                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
+                  <td><?php echo $assignment['academic_year']; ?></td>
+                  <td><?php echo $assignment['terms_id']; ?></td>
+				  <td><?php echo $assignment['subject_name']; ?> </td>
+          <td><?php echo $assignment['assignment_type_name']; ?></td>
+          <td><?php echo $assignment['marks']; ?></td>
                 </tr>
-          <?php
-            
-          }
-        }else{
-          echo "No students Assigned under you";
-        }
-        ?>
+					<?php
+						
+					} ?>
+
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Title</th>
+                  <th>Due Date</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Subject</th>
+                  <th>Assignment Type</th>
+                  <th>Marks</th>
                 </tr>
                 </tfoot>
-              </table>
+              </table> <?php
+                      }else{
+                        echo "No assignments Available for the Student";
+                      }
+        ?>
             </div>
             <!-- /.box-body -->
           </div>

@@ -119,6 +119,7 @@ if(isset($_POST['submit'])){
 				<div class="form-group">
                   <label for="exampleInputPassword1">Phone</label>
                   <input type="text" class="form-control" name="phone" id="phone" required>
+                  <small style="color: red;">This will be used as password</small>
                 </div>
 				
 				<div class="form-group">

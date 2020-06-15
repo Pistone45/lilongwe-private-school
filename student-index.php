@@ -125,10 +125,10 @@ $books = $getBorrowedBookPerStudent->getBorrowedBookPerStudent();
             $i++;   ?>
             <tr>
               <td><?php echo substr($notices['notice'],0, 50); ?>....</td>
-              <td><?php echo $notices['deadline']; ?>.....<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#<?php echo $i; ?>">Read More</button></td>
+              <td><?php echo $notices['deadline']; ?>.....<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#notice<?php echo $i; ?>">Read More</button></td>
                
                <!-- Modal -->
-<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
+<div id="notice<?php echo $i; ?>" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->

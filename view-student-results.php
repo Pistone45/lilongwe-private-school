@@ -1,17 +1,40 @@
 <?php
 include_once("functions/functions.php");
 
-$getAllStudentsPerGuardian = new Staff();
-$students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
-  
+if (isset($_POST['submit'])) {
+	
+	$academic_year = $_POST['academic_year'];
+	$term = $_POST['term'];
+  $student_no = $_POST['student_no'];
+
+
+$getFinalAssignmentMarkPerGuardian = new Staff();
+$FinamMarks = $getFinalAssignmentMarkPerGuardian->getFinalAssignmentMarkPerGuardian($academic_year, $term, $student_no);
+
+$getTrialMarkPerGuardian = new Staff();
+$mark = $getTrialMarkPerGuardian->getTrialMarkPerGuardian($academic_year, $term, $student_no);
+
+//$exam = $mark['final_mark'];
+//$sub = $mark['exam_mark'];
+//echo$answer = $exam + $sub;
+//echo$sub = $mark['subject_name'];
+
+
+//$getFinalExamPerTerm = new Staff();
+//$exammarks = $getFinalExamPerTerm->getFinalExamPerTerm($academic_year, $term);
+}
+$id = $student_no;
+$getStudentDetailsPerGuardian = new Guardian();
+$student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Student| Lilongwe Private School</title>
+  <title>Display Final Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -20,8 +43,6 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -36,8 +57,9 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -45,18 +67,18 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
     <?php include_once("header.html"); ?>
   <!-- Left side column. contains the logo and sidebar -->
    <?php include_once('sidebar.html'); ?>
-   
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Select Student
+        Final Results for <?php echo $student['name']; ?>
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Select Student</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-final-results.php">Final Results</a></li>
        
       </ol>
     </section>
@@ -64,73 +86,101 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
-            <!-- /.box-header -->
-            <div class="box-body">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="box box-primary">
+
+       <h3>Exam Result</h3>
+      <?php
+      $i = 0;
+        if(isset($mark) && count($mark)>0){ 
+          ?>
+
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Subject</th>
+                  <th>Grading Type</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Marks</th>
                 </tr>
                 </thead>
                 <tbody>
-        <?php
-        $i = 0;
-        if(isset($students) && count($students)>0){
-          foreach($students as $student){ 
-            $i++;   ?>
+                  <?php
+
+          foreach($mark as $marks){ 
+            $i++;  ?>
           <tr>
-                  <td><?php echo $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class_name']; ?></td>
-                  <td><a href="student-dashboard.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></td>
-                  <td><a href="filter-student-exams.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-book" aria-hidden="true"></i> Exams</a></td>
-                  <td><a href="student-assignment.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Assignments</a></td>
+                  <td><?php echo $marks['subject_name']; ?></td>
+                  <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
+                  <td><?php echo $marks['academic_year']; ?></td>
+                  <td><?php echo $marks['term_name']; ?></td>
+                  <td><?php if($marks['final_mark'] == 0 || $marks['exam_mark'] == 0){ echo"Not Marked"; }else {echo $marks['final_mark'] + $marks['exam_mark'];} ?> </td>
+                  <td></td>
+
                 </tr>
+
+
+
           <?php
-            
-          }
-        }else{
-          echo "No students Assigned under you";
-        }
-        ?>
+
+          } ?>
+
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Subject</th>
+                  <th>Grading Type</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Marks</th>
                 </tr>
                 </tfoot>
-              </table>
-            </div>
-            <!-- /.box-body -->
+              </table> <?php
+                      }else {
+                        echo "No Marked Subjects Available at the moment";
+                      }
+        ?>
+          
+            <!-- form start -->
+
           </div>
           <!-- /.box -->
+
+        
+
         </div>
-        <!-- /.col -->
+        <!--/.col (left) -->
+        <!-- right column -->
+
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
-
+  <script type="text/javascript">
+    function RecordExams() {
+    var mark = $("#mark").val();
+    var academic_year = $("#academic_year").val();
+    var term = $("#term").val();
+    var students_student_no = $("#students_student_no").val();
+    var exam_type_id = $("#exam_type_id").val();
+    var staff_id = $("#staff_id").val();
+    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
+    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
+    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
+     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
+    function(data) {
+   $('#results').html(data);
+   $('#myForm')[0].reset();
+    });
+}
+  </script>
+  <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -332,30 +382,11 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

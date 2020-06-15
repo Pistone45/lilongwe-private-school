@@ -1,9 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
-$getAllStudentsPerGuardian = new Staff();
-$students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
-  
+
+$getClassesPerTeacher = new Staff();
+$levels = $getClassesPerTeacher->getClassesPerTeacher();
+
+$getExamTypes = new Staff();
+$exam_type = $getExamTypes->getExamTypes();
+
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
 
 ?>
 <!DOCTYPE html>
@@ -11,7 +18,7 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Student| Lilongwe Private School</title>
+  <title>Filter Exam Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -20,8 +27,6 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -36,8 +41,7 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -45,18 +49,18 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
     <?php include_once("header.html"); ?>
   <!-- Left side column. contains the logo and sidebar -->
    <?php include_once('sidebar.html'); ?>
-   
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Select Student
+        Filter Exam Results
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Select Student</a></li>
+        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="filter-fina.php">Filter Exam Results</a></li>
        
       </ol>
     </section>
@@ -64,73 +68,71 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-        $i = 0;
-        if(isset($students) && count($students)>0){
-          foreach($students as $student){ 
-            $i++;   ?>
-          <tr>
-                  <td><?php echo $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class_name']; ?></td>
-                  <td><a href="student-dashboard.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></td>
-                  <td><a href="filter-student-exams.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-book" aria-hidden="true"></i> Exams</a></td>
-                  <td><a href="student-assignment.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Assignments</a></td>
-                </tr>
-          <?php
+        <!-- left column -->
+        <div class="col-md-6">
+          <!-- general form elements -->
+          <div class="box box-primary">
             
-          }
-        }else{
-          echo "No students Assigned under you";
-        }
-        ?>
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                  <th>Action</th>
-                </tr>
-                </tfoot>
-              </table>
-            </div>
-            <!-- /.box-body -->
+           
+            <!-- form start -->
+      <form role="form" action="view-student-results.php" method="POST">
+      
+      <div class="box-body">
+      <input type="text" hidden="" name="student_no" value="<?php echo $_GET['id']; ?>">
+    <div class="form-group">
+      <label>Select Academic Year </label>
+      <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+        <option VALUE="">Select Academic Year</option>
+      <option value="<?php echo $settings['id']; ?>"><?php echo $settings['academic_year']; ?></option>
+    </select>
+</div>
+      <label>Select Term </label>
+      <select class="form-control" required="" name="term" id="term">
+        <option VALUE="">Select Term</option>     
+      </select>
+        
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
+
+        
+
         </div>
-        <!-- /.col -->
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
+  <script type="text/javascript">
+function showTerm(val) {
+    // alert(val);
+    $.ajax({
+  type: "POST",
+  url: "results.php",
+  data:'academic_year='+val,
+  success: function(data){
+    // alert(data);
+    $("#term").html(data);
+  }
+  });
+  
+}
+</script>
 
+  <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -332,30 +334,11 @@ $students = $getAllStudentsPerGuardian->getAllStudentsPerGuardian();
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>
