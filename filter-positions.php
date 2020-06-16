@@ -1,34 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-	
-	$academic_year = $_POST['academic_year'];
-	$term = $_POST['term'];
+$getSubClasses = new Classes();
+$levels = $getSubClasses->getSubClasses();
 
-$getFinalAssignmentMark = new Staff();
-$FinamMarks = $getFinalAssignmentMark->getFinalAssignmentMark($academic_year, $term);
-
-$getTrialMark = new Staff();
-$mark = $getTrialMark->getTrialMark($academic_year, $term);
-
-//$exam = $mark['final_mark'];
-//$sub = $mark['exam_mark'];
-//echo$answer = $exam + $sub;
-//echo$sub = $mark['subject_name'];
-
-
-//$getFinalExamPerTerm = new Staff();
-//$exammarks = $getFinalExamPerTerm->getFinalExamPerTerm($academic_year, $term);
-}
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Final Results| Lilongwe Private School</title>
+  <title>Select Class| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -52,8 +34,6 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="submit.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -67,12 +47,12 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Final Results
+        Class Level
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-final-results.php">Final Results</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="select-level.php">Class Level</a></li>
        
       </ol>
     </section>
@@ -81,66 +61,38 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
     <section class="content">
       <div class="row">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="col-md-6">
           <!-- general form elements -->
           <div class="box box-primary">
-
-       <h3>Exam Result</h3>
-      <?php
-      $i = 0;
-        if(isset($mark) && count($mark)>0){ 
-          ?>
-
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Subject</th>
-                  <th>Grading Type</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Marks</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-
-          foreach($mark as $marks){ 
-            $i++;  ?>
-          <tr>
-                  <td><?php echo $marks['subject_name']; ?></td>
-                  <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
-                  <td><?php echo $marks['academic_year']; ?></td>
-                  <td><?php echo $marks['term_name']; ?></td>
-                  <td><?php if($marks['final_mark'] == 0 || $marks['exam_mark'] == 0){ echo"Not Marked"; }else {echo $marks['final_mark'];} ?> </td>
-                  <td></td>
-
-                </tr>
-
-
-
-          <?php
-
-          } ?>
-
-                
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Subject</th>
-                  <th>Grading Type</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Marks</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Marked Subjects Available at the moment";
-                      }
-        ?>
-          
+            
+           
             <!-- form start -->
+            <form role="form" action="view-positions.php" method="POST">
+			
+              <div class="box-body">
+			     <div class="form-group">
+                  <label>Select Level </label>
+                  <select name="level" class="form-control">
+					<?php
+						if(isset($levels) && count($levels)>0){
+							foreach($levels as $level){ ?>
+								<option value="<?php echo $level['id']; ?>"><?php echo $level['name']; ?></option>
+							<?php
+								
+							}
+						}
+					?>
+				
+                  </select>
+                </div>
+				
+              </div>
+              <!-- /.box-body -->
 
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
 
@@ -149,31 +101,16 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
         </div>
         <!--/.col (left) -->
         <!-- right column -->
-
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

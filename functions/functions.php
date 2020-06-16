@@ -44,6 +44,18 @@ class Settings{
 	}
 	
 
+	public function getCurrentTerm(){
+		$getCurrentTerm = $this->dbCon->PREPARE("SELECT id, name FROM terms ORDER BY id DESC LIMIT 1");
+		$getCurrentTerm->bindParam(1,$status);
+		$getCurrentTerm->execute();
+		
+		if($getCurrentTerm->rowCount()>0){
+			$rows = $getCurrentTerm->fetchAll();
+			
+			return $rows;
+		}
+	}	
+
 
 public function getSpecificCurrentSettings($settings_id){
 		$getSpecificCurrentSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE id=?");
@@ -56,6 +68,19 @@ public function getSpecificCurrentSettings($settings_id){
 			return $rows;
 		}
 	}
+
+	public function addTerm($id, $term){	
+			$addTerm = $this->dbCon->prepare("INSERT INTO terms (id, name)
+				VALUES (:id, :name)" );
+				$addTerm->execute(array(
+						':id'=>($id),
+					    ':name'=>($term)
+						  ));
+				$_SESSION['term-added']=true;
+
+						 		
+	}//End of adding a New Term
+
 
 
 } //end of class settings
@@ -579,8 +604,8 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
-	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=? " );
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
 		
@@ -2161,6 +2186,18 @@ public function getBookCount($book_id){
 		
 		if($getAllStudentsPerSubclass->rowCount()>0){
 			$rows = $getAllStudentsPerSubclass->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class
+
+
+	public function getAllStudentsPerSubclassPerExams($level){		
+		$getAllStudentsPerSubclassPerExams = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getAllStudentsPerSubclassPerExams->bindParam(1,$level);
+		$getAllStudentsPerSubclassPerExams->execute();
+		
+		if($getAllStudentsPerSubclassPerExams->rowCount()>0){
+			$rows = $getAllStudentsPerSubclassPerExams->fetchAll();
 			return $rows;
 		}
 	} //end of getting Students Per Class
