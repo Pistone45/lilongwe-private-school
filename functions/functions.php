@@ -1171,6 +1171,8 @@ public function getStudentCountPerGuardian(){
 
 }
 
+
+
 class Classes{
 	private $dbCon;
 
@@ -2452,6 +2454,204 @@ class Contact{
 }
 
 
+
+
+class Accountant{
+	private $dbCon;
+
+//private $username;
+
+	public function __construct(){
+
+		try{
+
+		$this->dbCon = new Connection();
+
+		$this->dbCon = $this->dbCon->dbConnection();
+		$this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		} catch (PDOException $e){
+			echo "Lost connection to the database";
+		}
+	}
+
+	public function getAccountants(){
+		
+		$getAccountants = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,phone,experience,address,email,date_joined,address FROM accountants");
+		$getAccountants->execute();
+		
+		if($getAccountants->rowCount()>0){
+			$row = $getAccountants->fetchAll();
+			return $row;
+		}
+	} //end of getting guardians
+
+
+	public function getSpecificAccountant($id){
+		
+		$getSpecificAccountant = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,phone,experience,address,email,date_joined,address, qualifications FROM accountants WHERE id=?");
+		$getSpecificAccountant->bindParam(1,$id);
+		$getSpecificAccountant->execute();
+		
+		if($getSpecificAccountant->rowCount()>0){
+			$row = $getSpecificAccountant->fetch();
+			return $row;
+		}
+	} //end of getting Specific guardians
+
+	
+		//add Partner
+	public function addAccountant($firstname,$middlename,$lastname,$phone,$address,$email,$qualifications,$experience,$date_joined){
+
+				$addAccountant = $this->dbCon->prepare("INSERT INTO accountants (phone,firstname,middlename,lastname,qualifications,address,email,experience,date_joined)
+				VALUES (:phone,:firstname,:middlename,:lastname,:qualifications,:address,:email,:experience,:date_joined)" );
+				$addAccountant->execute(array(
+						  ':phone'=>($phone),
+						  ':firstname'=>($firstname),
+						  ':middlename'=>($middlename),
+						  ':lastname'=>($lastname),
+						  ':qualifications'=>($qualifications),
+						  ':address'=>($address),
+						  ':email'=>($email),
+						  ':experience'=>($experience),
+						  ':date_joined'=>($date_joined)
+						  
+						  ));
+						  
+			//add the Accountant to users table for logins
+			$role =60; //teacher role id
+			$status = 1; //active status
+			$username = $phone;
+			$password = password_hash($phone, PASSWORD_DEFAULT)."\n"; 
+			$addUser = new User();
+			$addUser->addUser($username,$firstname,$middlename, $lastname, $role,$password,$status);
+
+			$_SESSION['accountant-added']=true;
+		
+	}
+
+
+	
+	public function editAccountant($id, $firstname,$middlename,$lastname,$phone,$address,$email,$qualifications,$date_joined,$experience){
+
+					$editAccountant = $this->dbCon->prepare("UPDATE accountants SET firstname=?,middlename=?, lastname=?, phone=?, address=?, email=?, qualifications=?, date_joined=?, experience=? WHERE id=?");
+					$editAccountant->bindParam(1,$firstname);
+					$editAccountant->bindParam(2,$middlename);
+					$editAccountant->bindParam(3,$lastname);
+					$editAccountant->bindParam(4,$phone);
+					$editAccountant->bindParam(5,$address);
+					$editAccountant->bindParam(6,$email);
+					$editAccountant->bindParam(7,$qualifications);
+					$editAccountant->bindParam(8,$date_joined);
+					$editAccountant->bindParam(9,$experience);
+					$editAccountant->bindParam(10,$id);
+					$editAccountant->execute();
+
+		  $_SESSION['accountant-edited']=true;
+		}
+
+
+
+}
+
+
+
+
+class Librarian{
+	private $dbCon;
+
+//private $username;
+
+	public function __construct(){
+
+		try{
+
+		$this->dbCon = new Connection();
+
+		$this->dbCon = $this->dbCon->dbConnection();
+		$this->dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		} catch (PDOException $e){
+			echo "Lost connection to the database";
+		}
+	}
+
+	public function getLibrarians(){
+		
+		$getLibrarians = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,phone,address,email,date_joined,address FROM librarians");
+		$getLibrarians->execute();
+		
+		if($getLibrarians->rowCount()>0){
+			$rows = $getLibrarians->fetchAll();
+			return $rows;
+		}
+	} //end of getting guardians
+
+
+	public function getSpecificLibrarian($id){
+		
+		$getSpecificLibrarian = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,phone,address,email,date_joined,address, qualifications FROM librarians WHERE id=?");
+		$getSpecificLibrarian->bindParam(1,$id);
+		$getSpecificLibrarian->execute();
+		
+		if($getSpecificLibrarian->rowCount()>0){
+			$row = $getSpecificLibrarian->fetch();
+			return $row;
+		}
+	} //end of getting Specific guardians
+
+	
+		//add Partner
+	public function addLibrarian($firstname,$middlename,$lastname,$phone,$address,$email,$qualifications,$date_joined){
+
+				$addLibrarian = $this->dbCon->prepare("INSERT INTO librarians (phone,firstname,middlename,lastname,qualifications,address,email,date_joined)
+				VALUES (:phone,:firstname,:middlename,:lastname,:qualifications,:address,:email,:date_joined)" );
+				$addLibrarian->execute(array(
+						  ':phone'=>($phone),
+						  ':firstname'=>($firstname),
+						  ':middlename'=>($middlename),
+						  ':lastname'=>($lastname),
+						  ':qualifications'=>($qualifications),
+						  ':address'=>($address),
+						  ':email'=>($email),
+						  ':date_joined'=>($date_joined)
+						  
+						  ));
+						  
+			//add the Accountant to users table for logins
+			$role =40; //teacher role id
+			$status = 1; //active status
+			$username = $phone;
+			$password = password_hash($phone, PASSWORD_DEFAULT)."\n"; 
+			$addUser = new User();
+			$addUser->addUser($username,$firstname,$middlename, $lastname, $role,$password,$status);
+
+			$_SESSION['librarian-added']=true;
+		
+	}
+
+
+	
+	public function editLibrarian($id, $firstname,$middlename,$lastname,$phone,$address,$email,$qualifications,$date_joined){
+
+					$editLibrarian = $this->dbCon->prepare("UPDATE librarians SET firstname=?,middlename=?, lastname=?, phone=?, address=?, email=?, qualifications=?, date_joined=? WHERE id=?");
+					$editLibrarian->bindParam(1,$firstname);
+					$editLibrarian->bindParam(2,$middlename);
+					$editLibrarian->bindParam(3,$lastname);
+					$editLibrarian->bindParam(4,$phone);
+					$editLibrarian->bindParam(5,$address);
+					$editLibrarian->bindParam(6,$email);
+					$editLibrarian->bindParam(7,$qualifications);
+					$editLibrarian->bindParam(8,$date_joined);
+					$editLibrarian->bindParam(9,$id);
+					$editLibrarian->execute();
+
+		  $_SESSION['librarian-edited']=true;
+		}
+
+
+
+}
 
 
 ?>

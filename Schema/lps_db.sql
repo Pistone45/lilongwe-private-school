@@ -16,6 +16,37 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `accountants`
+--
+
+DROP TABLE IF EXISTS `accountants`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `accountants` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(255) NOT NULL,
+  `middlename` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `phone` varchar(100) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `qualifications` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `experience` varchar(255) NOT NULL,
+  `date_joined` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `accountants`
+--
+
+LOCK TABLES `accountants` WRITE;
+/*!40000 ALTER TABLE `accountants` DISABLE KEYS */;
+/*!40000 ALTER TABLE `accountants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `assignment_type`
 --
 
@@ -420,6 +451,36 @@ INSERT INTO `guardians` VALUES ('0886449677','Blena','BSC','Chisenga','088644967
 UNLOCK TABLES;
 
 --
+-- Table structure for table `librarians`
+--
+
+DROP TABLE IF EXISTS `librarians`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `librarians` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(255) NOT NULL,
+  `middlename` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `qualifications` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `date_joined` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `librarians`
+--
+
+LOCK TABLES `librarians` WRITE;
+/*!40000 ALTER TABLE `librarians` DISABLE KEYS */;
+/*!40000 ALTER TABLE `librarians` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `messages`
 --
 
@@ -566,7 +627,7 @@ CREATE TABLE `payments` (
   KEY `payment_type_id` (`payment_type_id`),
   KEY `students_student_no` (`students_student_no`),
   KEY `FK_book_id` (`books_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,7 +636,7 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES (1,100000.00,'2020-06-13','2tnzYhqeVM9KQ6HPkx3dJUk8ioTH8SsVscw2WYUX','Fees paid in time',1,'LPS/S/1',2020,1,NULL),(7,1000.00,'2020-06-13','ohQee0YoJB',NULL,2,'LPS/S/1',2020,1,1),(8,800.00,'2020-06-13','Ycz0eoI0Hg',NULL,2,'LPS/S/5',2020,1,1),(9,50000.00,'2020-06-13','vMq0DbiHm7cIcXZ9imx5EWdwqPkEgmhYW1BTL0iH','Pain after anouncement',1,'LPS/S/6',2020,1,NULL);
+INSERT INTO `payments` VALUES (1,100000.00,'2020-06-13','2tnzYhqeVM9KQ6HPkx3dJUk8ioTH8SsVscw2WYUX','Fees paid in time',1,'LPS/S/1',2020,1,NULL),(7,1000.00,'2020-06-13','ohQee0YoJB',NULL,2,'LPS/S/1',2020,1,1),(8,800.00,'2020-06-13','Ycz0eoI0Hg',NULL,2,'LPS/S/5',2020,1,1),(9,50000.00,'2020-06-13','vMq0DbiHm7cIcXZ9imx5EWdwqPkEgmhYW1BTL0iH','Pain after anouncement',1,'LPS/S/6',2020,1,NULL),(10,40.00,'2020-06-15','RPSs4GMAFa3iAM5f126J5MfTQinkjsnZD7fL9B0D','test',1,'LPS/S/1',2020,1,NULL);
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -960,7 +1021,7 @@ CREATE TABLE `terms` (
 
 LOCK TABLES `terms` WRITE;
 /*!40000 ALTER TABLE `terms` DISABLE KEYS */;
-INSERT INTO `terms` VALUES (1,'Term 1');
+INSERT INTO `terms` VALUES (1,'Term 1'),(2,'Term 2');
 /*!40000 ALTER TABLE `terms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1031,4 +1092,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-13 16:35:28
+-- Dump completed on 2020-06-17 12:40:08
