@@ -101,6 +101,55 @@
           </ul>
         </li>
 
+      <li class="treeview">
+          <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Guardians Management
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="add-guardian.php"><i class="fa fa-circle-o"></i> Add Guardian</a></li>
+            <li><a href="view-guardian.php"><i class="fa fa-circle-o"></i> View/Edit Guardian</a></li>
+          </ul>
+        </li>
+
+
+        <li class="treeview">
+          <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Teacher Management
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="add-teacher.php"><i class="fa fa-circle-o"></i> Add Teacher</a></li>
+            <li><a href="view-teacher.php"><i class="fa fa-circle-o"></i> View/Edit Teacher</a></li>
+          </ul>
+        </li>
+
+        <li class="treeview">
+          <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Accountant Management
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="add-accountant.php"><i class="fa fa-circle-o"></i> Add Accountant</a></li>
+            <li><a href="view-accountant.php"><i class="fa fa-circle-o"></i> View/Edit Accountant</a></li>
+          </ul>
+        </li>
+
+        <li class="treeview">
+          <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Librarians Management
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="add-librarian.php"><i class="fa fa-circle-o"></i> Add Librarian</a></li>
+            <li><a href="view-librarian.php"><i class="fa fa-circle-o"></i> View/Edit Librarian</a></li>
+          </ul>
+        </li>
+
         <li class="treeview">
           <a href="#">
             <i class="fa fa-share"></i> <span>Administration</span>
@@ -111,7 +160,7 @@
           <ul class="treeview-menu">
             
             <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> User Management
+              <a href="#"><i class="fa fa-users" aria-hidden="true"></i> User Management
                 <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
@@ -121,63 +170,16 @@
                 <li><a href="#"><i class="fa fa-circle-o"></i> Edit User</a></li>
               </ul>
             </li>
+  
       
             <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> Guardians
+              <a href="#"><i class="fa fa-cog" aria-hidden="true"></i> Current Settings
                 <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
               </a>
               <ul class="treeview-menu">
-                <li><a href="add-guardian.php"><i class="fa fa-circle-o"></i> Add Guardian</a></li>
-                <li><a href="view-guardian.php"><i class="fa fa-circle-o"></i> View/Edit Guardian</a></li>
-              </ul>
-            </li>
-
-            <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> Teachers
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="add-teacher.php"><i class="fa fa-circle-o"></i> Add Teacher</a></li>
-                <li><a href="view-teacher.php"><i class="fa fa-circle-o"></i> View/Edit Teacher</a></li>
-              </ul>
-            </li>
-
-            <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> Accountant
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="add-accountant.php"><i class="fa fa-circle-o"></i> Add Accountant</a></li>
-                <li><a href="view-accountant.php"><i class="fa fa-circle-o"></i> View/Edit Accountant</a></li>
-              </ul>
-            </li>
-
-            <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> Librarian
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="add-librarian.php"><i class="fa fa-circle-o"></i> Add Librarian</a></li>
-                <li><a href="view-librarian.php"><i class="fa fa-circle-o"></i> View/Edit Librarian</a></li>
-              </ul>
-            </li>
-      
-            <li class="treeview">
-              <a href="#"><i class="fa fa-circle-o"></i> Term
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="terms.php"><i class="fa fa-circle-o"></i> Add/View Term</a></li>
+                <li><a href="terms.php"><i class="fa fa-circle-o"></i> View/Update Settings</a></li>
               </ul>
             </li>
       
@@ -268,7 +270,7 @@
       }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==50){ //Guardian ?>
         <li class="treeview">
           <a href="#">
-          <i class="fa fa-folder"></i> <span>Your Students</span>
+          <i class="fa fa-folder"></i> <span>Your Children</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
@@ -278,7 +280,7 @@
           </ul>
         </li> <?php
 
-      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==60){ //Guardian ?>
+      }elseif(isset($_SESSION['user']) && $_SESSION['user']['roles_id']==60){ //Accountant ?>
         <li class="treeview">
           <a href="#">
           <i class="fa fa-folder"></i> <span> School Fees Management</span>
@@ -287,7 +289,7 @@
           </span>
           </a>
           <ul class="treeview-menu">                
-          <li><a href="accountant-select-class.php"><i class="fa fa-circle-o"></i> Record/Track Fees</a></li>
+          <li><a href="accountant-select-student.php"><i class="fa fa-circle-o"></i> Record/Track Fees</a></li>
           <li><a href="filter-fees.php"><i class="fa fa-circle-o"></i> View Paid School Fees</a></li>
           </ul>
         </li>

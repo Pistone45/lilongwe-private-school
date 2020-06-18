@@ -102,7 +102,7 @@ $assignments = $getAssignments->getAssignments();
                   <td><?php echo $assignment['term_name']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>
 				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
+          <td><a class="btn disabled" href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
                 </tr>
 					<?php
 						

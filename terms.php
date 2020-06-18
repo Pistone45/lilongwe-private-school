@@ -2,16 +2,35 @@
 include_once("functions/functions.php");
 
 if(isset($_POST['submit'])){
-$id = $_POST['id'];
+$academic_year = $_POST['academic_year'];
 $term = $_POST['term'];
+$fees = $_POST['fees'];
 
-$addTerm = new Settings();
-$term = $addTerm->addTerm($id, $term);
+$status=1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+$current_id = $settings['id'];
+$current_academic_year = $settings['academic_year'];
+$current_term = $settings['term'];
+$current_fees = $settings['fees'];
+$current_status = $settings['status'];
+
+$UpdateSettingsTrail = new Settings();
+$UpdateSettingsTrail = $UpdateSettingsTrail->UpdateSettingsTrail($current_id, $current_academic_year, $current_term, $current_fees, $current_status);
+
+
+$updateSettings = new Settings();
+$updateSettings = $updateSettings->updateSettings($academic_year, $term, $fees);
 	
 }
 
-$getCurrentTerm = new Settings();
-$terms = $getCurrentTerm->getCurrentTerm();
+$status=1;
+$getSettings = new Settings();
+$settings = $getSettings->getSettings($status);
+
+$getTerms = new Settings();
+$terms = $getTerms->getTerms();
 
 ?>
 <!DOCTYPE html>
@@ -19,7 +38,7 @@ $terms = $getCurrentTerm->getCurrentTerm();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Terms | Lilongwe Private School</title>
+  <title>View Settings | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -56,12 +75,12 @@ $terms = $getCurrentTerm->getCurrentTerm();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        View Terms
+        View Settings
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">View Terms</a></li>
+        <li class="active"><a href="#">View Settings</a></li>
        
       </ol>
     </section>
@@ -76,7 +95,7 @@ $terms = $getCurrentTerm->getCurrentTerm();
             <!-- form start -->
               <div class="box-body">
                 <!-- Trigger the modal with a button -->
-          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add New Term</button>
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add New Settings</button>
 
           <!-- Modal -->
           <div id="myModal" class="modal fade" role="dialog">
@@ -86,18 +105,36 @@ $terms = $getCurrentTerm->getCurrentTerm();
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">New Term</h4>
+                  <h4 class="modal-title">New Settings</h4>
                 </div>
+ 
                 <div class="modal-body">
                 <form role="form" action="terms.php" method="POST">
                   <div class="form-group">
-                    <label for="email">Term Name:</label>
-                    <input type="text" name="term" class="form-control" placeholder="E.g Term 3">
+                    <label for="email">Select Year</label>
+                    <select class="form-control" name="academic_year" required="">
+                      <option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option><option value="2036">2036</option><option value="2037">2037</option><option value="2038">2038</option><option value="2039">2039</option><option value="2040">2040</option><option value="2041">2041</option><option value="2042">2042</option><option value="2043">2043</option><option value="2044">2044</option><option value="2045">2045</option><option value="2046">2046</option><option value="2047">2047</option><option value="2048">2048</option><option value="2049">2049</option><option value="2050">2050</option><option>
+                    </select>
                   </div>
+                 <div class="form-group">
+                        <label>Select Term </label>
+                        <select name="term" class="form-control" required="">
+                        <option selected=""><b>Choose...</b></option>
+                <?php
+                  if(isset($terms) && count($terms)>0){
+                    foreach($terms as $term){ ?>
+                      <option value="<?php echo $term['id']; ?>"><?php echo $term['name']; ?></option>
+                    <?php
+                      
+                    }
+                  }
+                ?>
+              
+                        </select>
+                </div>
                   <div class="form-group">
-                    <label for="email">Term ID:</label>
-                    <input type="text" name="id" class="form-control" placeholder="E.g 2">
-                    <small>Add ID after the current ID as shown on the Table</small>
+                    <label for="email">Fees</label>
+                    <input type="text" name="fees" class="form-control" placeholder="E.g 50000" required="">
                   </div>
                   <button type="submit" name="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -110,33 +147,33 @@ $terms = $getCurrentTerm->getCurrentTerm();
             </div>
           </div>
             <?php
-            if(isset($_SESSION["term-added"]) && $_SESSION["term-added"]==true)
+            if(isset($_SESSION["settings-added"]) && $_SESSION["settings-added"]==true)
                   { ?>
             <div class="alert alert-success" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Success! </strong> New term has been added
+              <strong>Success! </strong> New settings has been added
             </div>  <?php
-            unset($_SESSION["term-added"]);
+            unset($_SESSION["settings-added"]);
                       }
               ?>
                 <h4>Current Term</h4>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Term Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Fees</th>
                   
                 </tr>
                 </thead>
                 <tbody>
         <?php
-        if(isset($terms) && count($terms)>0){
-          foreach($terms as $term){ ?>
+        if(isset($settings) && count($settings)>0){
+          foreach($settings as $setting){ ?>
             <tr>
-              <td><?php echo $term['id']; ?></td>
-              <td><?php echo $term['name']; ?></td>
-              </td>
-               
+              <td><?php echo $setting['academic_year']; ?></td>
+              <td>Term <?php echo $setting['term']; ?></td>
+              <td><?php echo $setting['fees']; ?></td>            
             </tr>
           <?php
             

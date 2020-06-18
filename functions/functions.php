@@ -44,19 +44,6 @@ class Settings{
 	}
 	
 
-	public function getCurrentTerm(){
-		$getCurrentTerm = $this->dbCon->PREPARE("SELECT id, name FROM terms ORDER BY id DESC LIMIT 1");
-		$getCurrentTerm->bindParam(1,$status);
-		$getCurrentTerm->execute();
-		
-		if($getCurrentTerm->rowCount()>0){
-			$rows = $getCurrentTerm->fetchAll();
-			
-			return $rows;
-		}
-	}	
-
-
 public function getSpecificCurrentSettings($settings_id){
 		$getSpecificCurrentSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE id=?");
 		$getSpecificCurrentSettings->bindParam(1,$settings_id);
@@ -69,18 +56,75 @@ public function getSpecificCurrentSettings($settings_id){
 		}
 	}
 
-	public function addTerm($id, $term){	
-			$addTerm = $this->dbCon->prepare("INSERT INTO terms (id, name)
-				VALUES (:id, :name)" );
-				$addTerm->execute(array(
-						':id'=>($id),
-					    ':name'=>($term)
+	public function UpdateSettingsTrail($current_id, $current_academic_year, $current_term, $current_fees, $current_status){	
+			$UpdateSettingsTrail = $this->dbCon->prepare("INSERT INTO settings_trail (id, academic_year, term, fees, status)
+				VALUES (:id, :academic_year, :term, :fees, :status)" );
+				$UpdateSettingsTrail->execute(array(
+						':id'=>($current_term),
+					    ':academic_year'=>($current_academic_year),
+					    ':term'=>($current_term),
+					    ':fees'=>($current_fees),
+					    ':status'=>($current_status)
 						  ));
-				$_SESSION['term-added']=true;
 
 						 		
-	}//End of adding a New Term
+	}//End of adding Current settings into Settings Trial
 
+
+	public function getSettings($status){
+		$getSettings = $this->dbCon->PREPARE("SELECT id,academic_year,term,fees,status FROM settings WHERE status=?");
+		$getSettings->bindParam(1,$status);
+		$getSettings->execute();
+		
+		if($getSettings->rowCount()>0){
+			$rows = $getSettings->fetchAll();
+			
+			return $rows;
+		}
+	}
+
+
+	public function getTerms(){
+		$getTerms = $this->dbCon->PREPARE("SELECT id, name FROM terms");
+		//$getTerms->bindParam(1,$status);
+		$getTerms->execute();
+		
+		if($getTerms->rowCount()>0){
+			$rows = $getTerms->fetchAll();
+			
+			return $rows;
+		}
+
+		
+	}
+
+
+	public function getPaymentType(){
+		$getPaymentType = $this->dbCon->PREPARE("SELECT id, name FROM payment_type");
+		$getPaymentType->execute();
+		
+		if($getPaymentType->rowCount()>0){
+			$rows = $getPaymentType->fetchAll();
+			
+			return $rows;
+		}
+
+		
+	}
+
+
+	public function updateSettings($academic_year, $term, $fees){
+			$status = 1;
+			$updateSettings = $this->dbCon->prepare("UPDATE settings SET academic_year=?,term=?, fees=?, status=?");
+			$updateSettings->bindParam(1,$academic_year);
+			$updateSettings->bindParam(2,$term);
+			$updateSettings->bindParam(3,$fees);
+			$updateSettings->bindParam(4,$status);
+			$updateSettings->execute();
+
+			$_SESSION['settings-added']=true;
+
+	}
 
 
 } //end of class settings
@@ -2205,9 +2249,9 @@ public function getBookCount($book_id){
 	} //end of getting Students Per Class
 
 
-	public function getAllStudentsPerClassPerPayment($level){		
-		$getAllStudentsPerClassPerPayment = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
-		$getAllStudentsPerClassPerPayment->bindParam(1,$level);
+	public function getAllStudentsPerClassPerPayment(){		
+		$getAllStudentsPerClassPerPayment = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) ORDER BY student_no ASC");
+		//$getAllStudentsPerClassPerPayment->bindParam(1,$level);
 		$getAllStudentsPerClassPerPayment->execute();
 		
 		if($getAllStudentsPerClassPerPayment->rowCount()>0){
@@ -2216,6 +2260,21 @@ public function getBookCount($book_id){
 		}
 	} //end of getting Students Per Class and Payment
 
+
+	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
+		$payment_type_id = 1;	
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
+		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
+		$getStudentsWithFeesBalances->bindParam(3,$term);
+		$getStudentsWithFeesBalances->bindParam(4,$fees);
+		$getStudentsWithFeesBalances->execute();
+		
+		if($getStudentsWithFeesBalances->rowCount()>0){
+			$rows = $getStudentsWithFeesBalances->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class and Payment
 
 
 	public function getSpecificFeesPerStudent($student_no){	
@@ -2339,10 +2398,9 @@ public function getBookCount($book_id){
 
 
 
-	public function RecordFees($fees, $student_no, $academic_year, $term, $remarks, $ref_num){
+	public function RecordFees($fees, $student_no, $academic_year, $term, $remarks, $ref_num, $payment_type){
 
 		$date = DATE("Y-m-d h:i");
-		$payment_type_id = 1;
 		$RecordFees = $this->dbCon->prepare("INSERT INTO payments (amount, students_student_no, academic_year, term, remarks, ref_num, payment_type_id, date_paid)
 		VALUES (:amount, :students_student_no, :academic_year, :term, :remarks, :ref_num, :payment_type_id, :date_paid)" );
 		$RecordFees->execute(array(
@@ -2352,7 +2410,7 @@ public function getBookCount($book_id){
 				  ':term'=>($term),
 				  ':remarks'=>($remarks),
 				  ':ref_num'=>($ref_num),
-				  ':payment_type_id'=>($payment_type_id),
+				  ':payment_type_id'=>($payment_type),
 				  ':date_paid'=>($date)
 				  ));
 

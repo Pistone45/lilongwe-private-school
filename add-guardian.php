@@ -113,7 +113,7 @@ if(isset($_POST['submit'])){
                 </div>
 				
 				<div class="form-group">
-                  <label for="fatherEmail">Secondary Email</label>
+                  <label for="fatherEmail">Secondary Phone</label>
                   <input type="text" class="form-control" name="secondaryPhone" id="secondaryPhone" >
                 </div>
 				

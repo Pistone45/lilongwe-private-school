@@ -10,30 +10,6 @@ $student = $getSpecificStudent->getSpecificStudent($id);
 }
 
 
-
-if (isset($_POST['record'])) {
-$fees = $_POST['fees'];
-$student_no = $_POST['student_no'];
-$academic_year = $_POST['academic_year'];
-$term = $_POST['term'];
-$remarks = $_POST['remarks'];
-
-function generateRandomString($length = 25) {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
-}
-//usage 
-$ref_num = generateRandomString(40);
-
-$RecordFees = new Staff();
-$RecordFees = $RecordFees->RecordFees($fees, $student_no, $academic_year, $term, $remarks, $ref_num);
-  
-}
 $student_no = $_GET['id'];
 $getSpecificFeesPerStudent = new Staff();
 $payments = $getSpecificFeesPerStudent->getSpecificFeesPerStudent($student_no);
@@ -104,51 +80,10 @@ $settings['term'];
     <!-- Main content -->
     <section class="content">
           <div class="row">
-          <div class="col-md-5 col-xs-12">
-            <div class="box">
-        <?php
-          if(isset($_SESSION["fees-recorded"]) && $_SESSION["fees-recorded"]==true)
-          {
-              echo "<div class='alert alert-success'>";
-              echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-              echo "<strong>Success! </strong>"; echo "You have successfully Recorded Fees for a Student";
-              unset($_SESSION["fees-recorded"]);
-              echo "</div>";
-          //header('Refresh: 5; URL= view-books.php');
-          }
-        ?>
-            <div class="box-body">
-            <h4>Record Payment:</h4>
-              <form role="form" action="track-payments.php?id=<?php echo$_GET['id']; ?>" method="POST">
-              <div class="form-group">
-                <label for="exampleInputEmail1">Fees</label>
-                <input type="number" name="fees" class="form-control" placeholder="Enter Fees E.g 10000" required="">
-                <small id="emailHelp" class="form-text text-muted">Do not put commas.</small>
-              </div>
-
-                <div class="form-group">
-                  <label for="exampleFormControlTextarea1">Remarks</label>
-                  <textarea name="remarks" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>
-
-                <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>">
-                <input type="text" hidden="" name="academic_year" value="<?php echo $settings['academic_year']; ?>">
-                <input type="text" hidden="" name="term" value="<?php echo $settings['term']; ?>">
-                
-                <button type="submit" name="record" class="btn btn-primary">Record Fees</button>
-            </form>
-            </div>
-            </div>
-          </div>
-          <div class="col-md-7 col-xs-12">
+          <div class="col-md-12 col-xs-12">
             <div class="box">
             <div class="box-body">
             <h4>Payments for <?php echo $student['student_no']; ?></h4>
-        <?php
-        $i = 0;
-        if(isset($payments) && count($payments)>0){
-          foreach($payments as $payment){ 
-            $i++;   ?>
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -161,6 +96,11 @@ $settings['term'];
                 </tr>
                 </thead>
                 <tbody>
+        <?php
+        $i = 0;
+        if(isset($payments) && count($payments)>0){
+          foreach($payments as $payment){ 
+            $i++;   ?>
           <tr>
                   <td><?php echo $payment['sub_class_name']; ?></td>
                   <td><?php echo $payment['amount']; ?></td>

@@ -83,26 +83,40 @@ $students = $getStudentCountPerGuardian->getStudentCountPerGuardian();
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-lg-6 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h4>Here are your Students:</h4>
+        <div class="col-lg-8 col-xs-12">
+          <!-- Box -->
+          <div class="box box-primary">
+              <div class="box-body">
+                
+                <table class="table">
+                  <h4>Below are your Children:</h4>
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
             <?php
             if(isset($students) && count($students)>0){
               foreach($students as $student){ ?>
-              <h5><?php echo $student['name']; ?></h5>
-                <?php
+                    <tr>
+                      <td><?php echo $student['name']; ?></td>
+                      <td><a href="guardian-select-student.php"><button class="btn btn-primary">Quick View</button></a></td>
+                    </tr>
+            <?php
                 
               }
             }else{
               echo "You are not Assigned to any class. Contact the Admin";
             }
           ?>
-          <p class="small-box-footer"><i>If you dont see your Students contact the admin</i> <i class="fa fa-arrow-circle-right"></i>
-            </div>
-            <div class="icon">
-              
+                    
+                  </tbody>
+                </table>
+
+              </div>
             </div>
           </div>
         </div>

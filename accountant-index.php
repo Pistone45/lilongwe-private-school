@@ -14,6 +14,16 @@ $subjects = $getSubjectsPerTeacher->getSubjectsPerTeacher();
 $getNotices = new Staff();
 $notice = $getNotices->getNotices();
 
+$status=1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+$fees = $settings['fees'];
+$academic_year = $settings['academic_year'];
+$term = $settings['term'];
+
+$getStudentsWithFeesBalances = new Staff();
+$students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $academic_year, $term);
 
 ?>
 <!DOCTYPE html>
@@ -81,36 +91,64 @@ $notice = $getNotices->getNotices();
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-lg-6 col-xs-12">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h4>Students With Fees Balances:</h4>
-            <?php
-            if(isset($levels) && count($levels)>0){
-              foreach($levels as $level){ ?>
-              <h5><?php echo $level['class_name']; ?></h5>
-                <?php
+        <div class="col-lg-8 col-xs-12">
+          <!-- Box -->
+          <div class="box box-primary">
+              <div class="box-body">
+                <h3>Students with Fees Balances</h3>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        $i = 0;
+        if(isset($students) && count($students)>0){
+          foreach($students as $student){ 
+            $i++;   ?>
+          <tr>
+                  <td><?php echo $student['student_no']; ?></td>
+                  <td><?php echo $student['firstname']; ?></td>
+                  <td><?php echo $student['lastname']; ?></td>
+                  <td><?php echo $student['sub_class_name']; ?></td>
+                </tr>
+
+
+          <?php
+            
+          }
+        }else{
+          echo "No Students with Fees Balances found";
+        }
+        ?>
                 
-              }
-            }else{
-              echo "No students with Fees balances Found";
-            }
-          ?>
-          <p class="small-box-footer"><i>If you dont see any Students contact the admin</i> <i class="fa fa-arrow-circle-right"></i>
-            </div>
-            <div class="icon">
-              
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                </tr>
+                </tfoot>
+              </table>
+
+              </div>
             </div>
           </div>
         </div>
-
       </div>
       <!-- /.row (main row) -->
 
     </section>
     <!-- /.content -->
   </div>
+
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 
@@ -320,5 +358,18 @@ $notice = $getNotices->getNotices();
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+  <script>
+  $(function () {
+    $('#example1').DataTable()
+    $('#example2').DataTable({
+      'paging'      : true,
+      'lengthChange': false,
+      'searching'   : false,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    })
+  })
+</script>
 </body>
 </html>
