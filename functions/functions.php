@@ -2263,7 +2263,7 @@ public function getBookCount($book_id){
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);

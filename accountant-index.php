@@ -91,7 +91,7 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div class="col-lg-8 col-xs-12">
+        <div class="col-lg-10 col-xs-12">
           <!-- Box -->
           <div class="box box-primary">
               <div class="box-body">
@@ -103,6 +103,9 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Class Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Fees Balance</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -116,6 +119,9 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <td><?php echo $student['firstname']; ?></td>
                   <td><?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class_name']; ?></td>
+                  <td><?php echo $student['academic_year']; ?></td>
+                  <td><?php echo $student['term']; ?></td>
+                  <td><?php echo $fees - $student['amount']; ?></td>
                 </tr>
 
 
@@ -134,6 +140,9 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Class Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Fees Balance</th>
                 </tr>
                 </tfoot>
               </table>

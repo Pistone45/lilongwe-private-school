@@ -128,7 +128,7 @@ $messages = $getMessages->getMessages();
 
             }else{  ?>
                 <p style="font-size: 20px;"><span class="label label-default">
-                <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($book['date_borrowed']))/86400); ?></span> Days</p><?php
+                <?php echo$date = round(abs(strtotime($book['due_date']) - strtotime($date = DATE("Y-m-d h:i")))/86400); ?></span> Days</p><?php
             } ?>
 
                   

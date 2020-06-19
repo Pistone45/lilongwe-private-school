@@ -37,23 +37,6 @@ if (isset($_POST['sub_class_id'])) {
 }
 
 
-
-if (isset($_POST['term'])) {
-  $settings_id = $_POST['term'];
-
-$getSpecificCurrentSettings = new Settings();
-$settings = $getSpecificCurrentSettings->getSpecificCurrentSettings($settings_id);
-    echo "<option>Select Term</option>";
-            if(isset($settings) && count($settings)>0){
-              foreach($settings as $setting){ ?>
-                <option value="<?php echo $setting['term']; ?>"><?php echo $setting['term']; ?></option>
-              <?php
-                
-              }
-            }
-        
-
-}
 //End of getting Drop own Lists for the Admin side
 
 if (isset($_POST['sub_class'])) {
@@ -83,22 +66,5 @@ if (isset($_POST['submit'])) {
   echo $term = $_POST['term'];
 }
 
-
-if (isset($_POST['academic_year'])) {
-  $settings_id = $_POST['academic_year'];
-
-$getSpecificCurrentSettings = new Settings();
-$settings = $getSpecificCurrentSettings->getSpecificCurrentSettings($settings_id);
-    echo "<option>Select Term</option>";
-            if(isset($settings) && count($settings)>0){
-              foreach($settings as $setting){ ?>
-                <option value="<?php echo $setting['id']; ?>"><?php echo $setting['term']; ?></option>
-              <?php
-                
-              }
-            }
-        
-
-}
 
 ?>
