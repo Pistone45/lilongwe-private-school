@@ -10,8 +10,8 @@ $students = $getStudents->getStudents();
   $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
 
-  $getStudentAssignment = new Students();
-  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+  $getStudentAssignmentMarks = new Students();
+  $assignments = $getStudentAssignmentMarks->getStudentAssignmentMarks($sub_class_id);
 
 
 ?>
@@ -89,7 +89,8 @@ $students = $getStudents->getStudents();
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Subject</th>
-                  <th>Assignment Type</th>                  
+                  <th>Assignment Type</th>
+                  <th>Marks</th>
                   <th>Action</th>
                   <th>Uploads</th>
                 </tr>
@@ -107,7 +108,7 @@ $students = $getStudents->getStudents();
 				  <td><?php echo $assignment['subject_name']; ?> </td>
           <td><?php echo $assignment['assignment_type_name']; ?> </td>
         
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+				  <td><?php if($assignment['marks'] == ""){echo "Not Marked";}else{echo $assignment['marks'];}  ?> </td>
           <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
                     ?><td style="color: red;">Date Passed</a></td><?php
                   } else { ?>
@@ -129,6 +130,7 @@ $students = $getStudents->getStudents();
                   <th>Term</th>
                   <th>Subject</th>
                   <th>Assignment Type</th>
+                  <th>Marks</th>
                   <th>Action</th>
                   <th>Upload</th>
 

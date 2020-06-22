@@ -648,8 +648,13 @@ public function getLoginStatus($id){
 	
 	public function getStudentAssignment($sub_class_id){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
-	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=? " );
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date,
+	subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name
+	FROM assignments INNER JOIN assignment_type
+	ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id)
+	INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) 
+	WHERE sub_classes_has_assignments.sub_classes_id=?" );
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->execute();
 		
@@ -659,6 +664,24 @@ public function getLoginStatus($id){
 		}
 	} //end of getting assignments per student
 
+	public function getStudentAssignmentMarks($sub_class_id){
+
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, submissions.marks as marks,
+	subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name
+	FROM assignments INNER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type
+	ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id)
+	INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) 
+	WHERE sub_classes_has_assignments.sub_classes_id=? AND students_student_no=?" );
+		$getStudentAssignment->bindParam(1, $sub_class_id);
+		$getStudentAssignment->bindParam(2, $_SESSION['user']['username']);
+		$getStudentAssignment->execute();
+		
+		if($getStudentAssignment->rowCount()>0){
+			$rows = $getStudentAssignment->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
 
 
 	public function getUploadedStudentAssignment($assignments_id){
@@ -1926,8 +1949,8 @@ public function deleteStudentAssignment($id, $assignment_url){
 
 
 public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
-		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE(" SELECT  student_no,firstname,middlename,lastname,subjects.name as subject, subjects.id as subject_id
-		FROM students INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) 
+		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE(" SELECT  student_no,firstname,middlename,lastname,subjects.name as subject, subjects.id as subject_id, classes.id as classes_id
+		FROM students INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN classes ON (classes.id=sub_classes.classes_id)
 		INNER JOIN sub_classes_has_subjects ON (sub_classes_has_subjects.sub_classes_id=sub_classes.id) 
 		INNER JOIN subjects ON (subjects.id=sub_classes_has_subjects.subjects_id)
 		WHERE students.sub_classes_id =? AND sub_classes_has_subjects.subjects_id=?");
@@ -2098,38 +2121,48 @@ public function getUser(){
 
 
 
-	public function recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $sub_class_id, $subject_id){
+	public function recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $class_id, $subject_id){
+		
 			$exam_status_id = 1;
-			
+			//echo getType($exam_status_id); die();
 		$checkExamResult = $this->dbCon->PREPARE("SELECT classes_has_subjects_classes_id, classes_has_subjects_subjects_id,academic_year,terms_id,students_student_no
 		FROM exam_results 
-		WHERE classes_has_subjects_classes_id=? AND classes_has_subjects_subjects_id=? AND academic_year=? AND terms_id=? AND students_student_no=?" );
-		$checkExamResult->bindValue(1, $sub_class_id);
+		WHERE classes_has_subjects_classes_id=? AND classes_has_subjects_subjects_id=? AND academic_year=? AND terms_id=?" );
+		$checkExamResult->bindValue(1, $class_id);
 		$checkExamResult->bindValue(2, $subject_id);
 		$checkExamResult->bindValue(3, $academic_year);
-		$checkExamResult->bindValue(4, $term);
-		$checkExamResult->bindValue(5, $students_student_no);
+		$checkExamResult->bindValue(4, $term);		
 		$checkExamResult->execute();
 		if($checkExamResult->rowCount()>0){
 
-			echo "<script>alert('You have already Recorded Exams for this Student');</script>";
+			echo "<script>alert('You have already Recorded Exams for this Class and subject');</script>";
 		}else{
 			
-				$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results (marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id, exam_status_id)
-				VALUES (:marks,:academic_year,:terms_id,:students_student_no,:exam_type_id,:staff_id,:classes_has_subjects_classes_id, :classes_has_subjects_subjects_id, :exam_status_id)" );
+			if(count($marks)>0){
+				foreach($marks as $mark){
+					$mark = (float)$mark;
+					
+					echo gettype($exam_type_id); die();
+					$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results 
+					(marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id)
+				VALUES (:marks,:academic_year,:terms_id,:students_student_no,:exam_type_id,:staff_id,:classes_has_subjects_classes_id, :classes_has_subjects_subjects_id)" );
 				$recordStudentsExams->execute(array(
-						  ':marks'=>($marks),
+						  ':marks'=>((float)$mark),
 						  ':academic_year'=>($academic_year),
 						  ':terms_id'=>($term),
 						  ':students_student_no'=>($students_student_no),
 						  ':exam_type_id'=>($exam_type_id),
 						  ':staff_id'=>($_SESSION['user']['username']),
-						  ':classes_has_subjects_classes_id'=>($sub_class_id),
-						  ':classes_has_subjects_subjects_id'=>($subject_id),
-						  ':exam_status_id'=>($exam_status_id)				  
+						  ':classes_has_subjects_classes_id'=>($class_id),
+						  ':classes_has_subjects_subjects_id'=>($subject_id)  
 						  ));
-				$_SESSION['marks-added']=true;		  		
+					
 				}
+				
+			}
+				
+		$_SESSION['marks-added']=true;		  		
+	}
 
 	}
 

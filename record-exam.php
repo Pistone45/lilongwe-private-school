@@ -7,12 +7,38 @@ $marks = $_POST['marks'];
   $academic_year = (int)$_POST['academic_year'];
   $term = (int)$_POST['term'];
   $students_student_no = $_POST['student_no'];
-  $exam_type_id = 1;
-  $sub_class_id = (int)$_POST['sub_class_id'];
+  $class_id = (int)$_POST['class_id'];
   $subject_id = (int)$_POST['subject_id'];
 
+	switch ($class_id){
+	  case $class_id==1:
+		$exam_type_id=1;
+		break;
+	  case $class_id==2:
+		$exam_type_id=1;
+		break;
+	  case $class_id==3:
+		$exam_type_id=1;
+		break;
+	  case $class_id==4:
+		$exam_type_id=1;
+		break;
+	  case $class_id==5:
+		$exam_type_id=1;
+		break;
+	  case $class_id==6:
+		$exam_type_id=2;
+		break;
+	  case $class_id==7:
+		$exam_type_id=2;
+		break;	  
+	  default:
+		$exam_type_id=1;
+	}
+		
+		
     $recordStudentsExams = new Staff();
-  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $sub_class_id, $subject_id);
+  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $class_id, $subject_id);
 }
 
 ?>

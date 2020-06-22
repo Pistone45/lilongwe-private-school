@@ -1,30 +1,65 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-	$subject_id = $_POST['subject_id'];
-	$sub_class_id = $_POST['sub_class_id'];
-
-$getAllStudentsPerClassSubject = new Staff();
-$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
-
-$getSubjectById = new Staff();
-$subject = $getSubjectById->getSubjectById($subject_id);
-
-$getClassesWithSubjects = new Staff();
-$classsubject = $getClassesWithSubjects->getClassesWithSubjects($sub_class_id, $subject_id);
-$classes_has_subjects_classes_id= $classsubject['linked_classes_id'];
-$classes_has_subjects_subjects_id = $classsubject['subjects_id'];
-}
-
-
-
+//get current academic_year and term
 $status = 1;
 $getCurrentSettings = new settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
+//gett exam type
 $getExamTypes = new Staff();
 $exam_type = $getExamTypes->getExamTypes();
+
+
+
+if (isset($_POST['submit'])) {
+	$subject_id = $_POST['subject_id'];
+	$sub_class_id = $_POST['sub_class_id'];
+	
+	//get all students taking the subject per class
+	$getAllStudentsPerClassSubject = new Staff();
+	$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
+	
+}
+
+if(isset($_POST['addMarks'])) {
+  $marks = $_POST['marks'];
+  $academic_year = (int)$settings['academic_year'];
+  $term = (int)$settings['term'];
+  $students_student_no = $_POST['student_no'];
+  $class_id = (int)$_POST['class_id'];
+  $subject_id = (int)$_POST['subject_id'];
+
+	switch ($class_id){
+	  case $class_id==1:
+		$exam_type_id=1;
+		break;
+	  case $class_id==2:
+		$exam_type_id=1;
+		break;
+	  case $class_id==3:
+		$exam_type_id=1;
+		break;
+	  case $class_id==4:
+		$exam_type_id=1;
+		break;
+	  case $class_id==5:
+		$exam_type_id=1;
+		break;
+	  case $class_id==6:
+		$exam_type_id=2;
+		break;
+	  case $class_id==7:
+		$exam_type_id=2;
+		break;	  
+	  default:
+		$exam_type_id=1;
+	}
+		
+		
+    $recordStudentsExams = new Staff();
+  $recordStudentsExams->recordStudentsExams($marks, $academic_year, $term, $students_student_no, $exam_type_id, $class_id, $subject_id);
+}
 
 
 
@@ -120,7 +155,7 @@ $exam_type = $getExamTypes->getExamTypes();
                   <th>Subject</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  <th>Action</th>
+                 
                 </tr>
                 </thead>
                 <tbody>
@@ -134,20 +169,13 @@ $exam_type = $getExamTypes->getExamTypes();
                   <td><?php echo $students['lastname']; ?></td>
                   <td><?php echo $students['subject']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
-				   <form role="form" action="" id="recordexams" method="POST">
+				   <form role="form" action="record-exams.php"  method="POST">
                   <td>
-					<input type="hidden" id="academic_year"  value="<?php echo $settings['academic_year']; ?>" name="academic_year">	
-					<input type="hidden" id="term"  value="<?php echo $settings['term']; ?>" name="term">
-					<input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no">	
-					<input type="hidden" id="subject_id" value="<?php echo $subject_id; ?>" name="subject_id">	
-					<input type="hidden" id="sub_class_id"  value="<?php echo $sub_class_id; ?>" name="sub_class_id">						
-					<input type="number" id="marks" name="marks"  placeholder="Enter Marks" class="form-control"/>	 			 
+					<input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no[]">	
+					<input type="number" id="marks" name="marks[]"  placeholder="Enter Marks" class="form-control"/>	 			 
 				  </td>
-				  <td>				 
-					<button type="submit" name="addMarks" class="btn btn-info">Add Marks</button>	
-					
-				  </td>
-				   </form>
+				 
+				 
                
       </tr>
 
@@ -170,7 +198,7 @@ $exam_type = $getExamTypes->getExamTypes();
                   <th>Subject</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  <th>Action</th>
+                 
                 </tr>
                 </tfoot>
               </table> <?php
@@ -178,10 +206,12 @@ $exam_type = $getExamTypes->getExamTypes();
                         echo "No Students Available to record Exams";
                       }
         ?>
-
-
-           
-            <!-- form start -->
+					
+					<input type="hidden" id="class_id"  value="<?php if(isset($students['classes_id'])){echo $students['classes_id'];} ?>" name="class_id">					
+					<input type="hidden" id="subject_id" value="<?php if(isset($subject_id)) { echo $subject_id;} ?>" name="subject_id">						
+					<button type="submit" name="addMarks" class="btn btn-block btn-success">Submit Students Marks</button>
+				  </form>       
+            <!-- form ends -->
 
       
           <!-- /.box -->
@@ -198,49 +228,7 @@ $exam_type = $getExamTypes->getExamTypes();
     <!-- /.content -->
   </div>
 
-<script>
-  $(document).ready(function () {
-    $('.btn-info').click(function (e) {
-      e.preventDefault();
-      var academic_year = $('#academic_year').val();
-      var term = $('#term').val();
-      var student_no = $('#student_no').val();
-      var subject_id = $('#subject_id').val();
-      var sub_class_id = $('#sub_class_id').val();
-      var marks = $('#marks').val();
-      $.ajax
-        ({
-          type: "POST",
-          url: "record-exam.php",
-          data: { "academic_year": academic_year, "term": term, "student_no": student_no , "subject_id": subject_id, "sub_class_id": sub_class_id, "marks": marks},
-          success: function (data) {
-            $('.result').html(data);
-            $('#recordexams')[0].reset();
-          }
-        });
-    });
-  });
-</script>
 
-  <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
