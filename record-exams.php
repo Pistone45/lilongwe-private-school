@@ -117,7 +117,7 @@ if(isset($_POST['addMarks'])) {
     </div>
       <ol class="breadcrumb">
         <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
+        <li class="active"><a href="view-students-assignments.php">Assign Exams Results</a></li>
        
       </ol>
     </section>
@@ -137,7 +137,7 @@ if(isset($_POST['addMarks'])) {
                                 echo "<strong>Success! </strong>"; echo "You have successfully Added Marks";
                                 unset($_SESSION["marks-added"]);
                                 echo "</div>";
-								 header('Refresh: 5; URL= record-exams.php');
+								 header('Refresh: 5; URL= filter-exam-results.php');
                             }
 							?>
 

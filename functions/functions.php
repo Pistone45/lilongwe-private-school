@@ -1691,17 +1691,23 @@ public function getAllSubclassSubjects($sub_class_id){
 	} //end of getting assignments uploaded by students
 
 
-	public function getFinalAssignmentMark($subject_id, $term){		
-		$getFinalAssignmentMark = $this->dbCon->Prepare("SELECT students_student_no as student_no, marks as mark, subjects.name as subject_name, assignments.academic_year as academic_year, students.firstname as firstname, assignments.terms_id as term, assignment_type.name as assignment_type_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) WHERE students_student_no=? AND assignments.terms_id=? ");
+	public function getFinalAssignmentMark($academic_year,$term){
+		
+		$getFinalAssignmentMark = $this->dbCon->Prepare("SELECT students_student_no as student_no, marks as mark, subjects.name as subject_name,academic_year,terms_id as term
+		FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
+		WHERE students_student_no=? AND academic_year=? AND terms_id=?");
 		$getFinalAssignmentMark->bindParam(1,$_SESSION['user']['username']);
-		$getFinalAssignmentMark->bindParam(2,$term);
+		$getFinalAssignmentMark->bindParam(2,$academic_year);
+		$getFinalAssignmentMark->bindParam(3,$term);
 		$getFinalAssignmentMark->execute();
 		
 		if($getFinalAssignmentMark->rowCount()>0){
 			$rows = $getFinalAssignmentMark->fetchAll();
 			return $rows;
+		}else{
+			return null;
 		}
-	} //end of getting Assignments Results
+	} //end of getting exam Results
 
 
 	public function getFinalAssignmentMarkPerGuardian($subject_id, $term, $student_no){		
@@ -2139,10 +2145,8 @@ public function getUser(){
 		}else{
 			
 			if(count($marks)>0){
-				foreach($marks as $mark){
-					$mark = (float)$mark;
+				foreach(array_combine($students_student_no, $marks) as $student => $mark){
 					
-					echo gettype($exam_type_id); die();
 					$recordStudentsExams = $this->dbCon->prepare("INSERT INTO exam_results 
 					(marks,academic_year,terms_id,students_student_no,exam_type_id,staff_id,classes_has_subjects_classes_id, classes_has_subjects_subjects_id)
 				VALUES (:marks,:academic_year,:terms_id,:students_student_no,:exam_type_id,:staff_id,:classes_has_subjects_classes_id, :classes_has_subjects_subjects_id)" );
@@ -2150,7 +2154,7 @@ public function getUser(){
 						  ':marks'=>((float)$mark),
 						  ':academic_year'=>($academic_year),
 						  ':terms_id'=>($term),
-						  ':students_student_no'=>($students_student_no),
+						  ':students_student_no'=>($student),
 						  ':exam_type_id'=>($exam_type_id),
 						  ':staff_id'=>($_SESSION['user']['username']),
 						  ':classes_has_subjects_classes_id'=>($class_id),
