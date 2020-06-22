@@ -1787,14 +1787,14 @@ public function getAssignmentID($sub_class_id){
 				$getAssignmentCount->execute();
 				
 				if($getAssignmentCount->rowCount()>=1){
-echo '<script language="javascript">';
-echo 'alert("Assignment Type for this Class already Exists")';
-echo '</script>';
+					echo '<script language="javascript">';
+					echo 'alert("Assignment Type for this Class already Exists")';
+					echo '</script>';
 				}else{
 
-								$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id, assignment_type_id)
-				VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id, :assignment_type_id)" );
-				$uploadAssignment->execute(array(
+					$uploadAssignment = $this->dbCon->prepare("INSERT INTO assignments (title,assignment_url,due_date,academic_year,terms_id,staff_id,subjects_id, assignment_type_id)
+					VALUES (:title,:assignment_url,:due_date,:academic_year,:terms_id,:staff_id,:subjects_id, :assignment_type_id)" );
+					$uploadAssignment->execute(array(
 						  ':title'=>($title),
 						  ':assignment_url'=>($assignment_url),
 						  ':due_date'=>($due_date),

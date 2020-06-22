@@ -1,9 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
+//get the current academic_year and term
+$status = 1;
+$getCurrentSettings = new settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+//get the assignment types
 $getAssignmentType = new Staff();
 $types = $getAssignmentType->getAssignmentType();
 
+//upload thhe assignment to database
 if(isset($_POST['submit'])){
 	$level = $_POST['level'];
 	
@@ -14,9 +21,8 @@ if(isset($_POST['upload'])){
   $subjects_id = $_POST['subjects_id'];
   $title = $_POST['title'];
   $due_date = $_POST['due_date'];
-  $title = $_POST['title'];
-  $academic_year = (int)$_POST['academic_year'];
-  $terms_id = (int)$_POST['term'];
+  $academic_year = (int)$settings['academic_year'];
+  $terms_id = (int)$settings['term'];
   $level = $_POST['level'];
 
   $target = "assignments/";
@@ -38,9 +44,7 @@ if(isset($_POST['upload'])){
 
 }
 
-$status = 1;
-$getCurrentSettings = new settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
+
 
 ?>
 <!DOCTYPE html>
@@ -130,7 +134,7 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
               </div>
 
               <div class="form-group">
-                  <label>Select Level </label>
+                  <label>Select Assignment Type </label>
                   <select name="assignment_type" class="form-control">
           <?php
             if(isset($types) && count($types)>0){
@@ -152,8 +156,6 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
             </div>
 
             <input type="text" hidden="" value="<?php if(isset($_POST['subjects_id'])) {echo $_POST['subjects_id'];}?>" name="subjects_id">
-            <input type="text" hidden="" value="<?php echo $settings['academic_year']; ?>" name="academic_year">
-            <input type="text" hidden="" value="<?php echo $settings['term']; ?>" name="term">
             <input type="text" hidden="" value="<?php if(isset($level)){ echo $level;} ?>" name="level">
 				
 			
