@@ -140,7 +140,7 @@ if(isset($_POST['submit'])){
                 </div>
                <div class="form-group">
                   <label for="exampleInputPassword1">Experience</label>
-                  <input type="text" class="form-control" name="experience" id="experience" placeholder="E.g 5">
+                  <input type="number" min="0" max="80" class="form-control" name="experience" id="experience" placeholder="E.g 5">
                 </div>
 				
 				<div class="form-group">

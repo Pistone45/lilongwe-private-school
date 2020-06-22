@@ -10,6 +10,7 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
 $getAssignmentType = new Staff();
 $types = $getAssignmentType->getAssignmentType();
 
+
 //upload thhe assignment to database
 if(isset($_POST['submit'])){
 	$level = $_POST['level'];
