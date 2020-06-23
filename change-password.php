@@ -1,28 +1,25 @@
 <?php
 include_once("functions/functions.php");
+if(!isset($_SESSION['user'])){
+    header("Location: login.php");
+    exit;
+  }
 
-  $id = $_GET['id'];
-  $student_no = $id;
+if (isset($_POST['submit'])) {
+  $new_password = $_POST['new_password'];
 
-  $getSpecificStudent = new Students();
-  $details = $getSpecificStudent->getSpecificStudent($id);
-  $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
+  $updatepassword = new User();
+  $updatepassword = $updatepassword->updatepassword($new_password);
 
-  $getAllStudentsAssignment = new Students();
-  $assignments = $getAllStudentsAssignment->getAllStudentsAssignment($sub_class_id);
-
-$id = $_GET['id'];
-$getStudentDetailsPerGuardian = new Guardian();
-$student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
+}
 
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Assignments | Lilongwe Private School</title>
+  <title>Lilongwe Private School | Change Password</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -31,8 +28,6 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -47,26 +42,26 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
     <?php include_once("header.html"); ?>
   <!-- Left side column. contains the logo and sidebar -->
-   <?php include_once('sidebar.html'); ?>
    
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Assignments for <?php echo $student['name']; ?>   
+        Change your Password to continue:
+       
       </h1>
       <ol class="breadcrumb">
-        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-assignments.php">Assignments</a></li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Change password</a></li>
        
       </ol>
     </section>
@@ -74,76 +69,80 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         
-          <div class="box">
+        <!-- left column -->
+        <div class="col-md-6">
+          <!-- general form elements -->
+          <div class="box box-primary">
             
-            <!-- /.box-header -->
-            <div class="box-body">
-                      <?php
-        if(isset($assignments) && count($assignments)>0){ ?>
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-					foreach($assignments as $assignment){ ?>
-					<tr>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
-                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
-                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
-                  <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['terms_id']; ?></td>
-				  <td><?php echo $assignment['subject_name']; ?> </td>
-          <td><?php echo $assignment['assignment_type_name']; ?></td>
-          <td><?php echo $assignment['marks']; ?></td>
-                </tr>
-					<?php
-						
-					} ?>
-
+           
+            <!-- form start -->
+            <form role="form" action="change-password.php" method="POST">
+			<?php
+                            if(isset($_SESSION["password-updated"]) && $_SESSION["password-updated"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully updated your password. Login to continue";
+                                unset($_SESSION["password-updated"]);
+                                echo "</div>";
+                                header('Refresh: 5; URL= logout.php');
+                            }
+							?>
+              <div class="box-body">
+              <div class="alert alert-warning">
+                <p>It looks like you have not changed your password. Change your password below </p>
+              </div>
+                <div class="form-group">
+                  <label for="Middlename">New Password</label>
+                  <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter new password" onkeyup='check();' required="">
+                </div>
+				
+				 <div class="form-group">
+                  <label for="Lastname">Confirm New Password</label>
+                  <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" placeholder="verify new password" onkeyup='check();' required="">
+                </div>
+				
+          <span id='message'></span>
                 
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Title</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Assignment Type</th>
-                  <th>Marks</th>
-                </tr>
-                </tfoot>
-              </table> <?php
-                      }else{
-                        echo "No assignments Available for the Student";
-                      }
-        ?>
-            </div>
-            <!-- /.box-body -->
+                
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
+
+        
+
         </div>
-        <!-- /.col -->
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+          
+        </div>
+        <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
+  <script type="text/javascript">
+    var check = function() {
+  if (document.getElementById('new_password').value ==
+    document.getElementById('confirm_new_password').value) {
+    document.getElementById('message').style.color = 'green';
+    document.getElementById('message').innerHTML = 'Passwords Matched';
+  } else {
+    document.getElementById('message').style.color = 'red';
+    document.getElementById('message').innerHTML = 'Passwords not matching';
+  }
+}
+  </script>
   <!-- /.content-wrapper -->
-   <?php include_once("footer.html"); ?>
-
+  <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -345,30 +344,11 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-<!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

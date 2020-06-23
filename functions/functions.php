@@ -227,6 +227,57 @@ class User{
 		
 	}
 
+
+	public function checkPassword(){	
+				$checkPassword = $this->dbCon->prepare("SELECT password FROM users WHERE username=?" );
+				$checkPassword->bindParam(1, $_SESSION['user']['username']);
+				$checkPassword->execute();
+
+				if($checkPassword->rowCount() == 1){
+				$row = $checkPassword -> fetch();
+
+				$password = trim($row['password']);
+				$username = trim($_SESSION['user']['username']);
+
+				if (password_verify($username, $password)) {
+					header("location: change-password.php");
+				}
+				
+				
+
+			}
+		
+	}//End of check Password
+
+
+	public function getPassword(){	
+				$getPassword = $this->dbCon->prepare("SELECT password FROM users WHERE username=?" );
+				$getPassword->bindParam(1, $_SESSION['user']['username']);
+				$getPassword->execute();
+
+				if($getPassword->rowCount() == 1){
+				$row = $getPassword -> fetch();
+				return $row;
+				}
+					
+		
+	}//End of getting Password
+
+
+	public function updatepassword($new_password){
+		$password = password_hash($new_password, PASSWORD_DEFAULT)."\n";
+
+		$updatepassword =$this->dbCon->PREPARE("UPDATE users SET password =? WHERE username=? ");
+		$updatepassword->bindParam(1,$password);
+		$updatepassword->bindParam(2,$_SESSION['user']['username']);
+		$updatepassword->execute();
+
+		$_SESSION['password-updated']= true;
+				
+	}
+
+
+
   public function addUser($username,$firstname,$middlename, $lastname, $role,$password,$status){
 	  $date = DATE("Y-m-d h:i");
 		//check if the user is already in the system before adding new user
@@ -389,22 +440,6 @@ class User{
 
 
 	} //end of getting single user
-
-	//Update Password
-	public function updatePassword($username, $password){
-
-		try{
-			$updatepassword = $this->dbCon->prepare("UPDATE users SET password =? WHERE username=?");
-			$updatepassword->bindparam(1, $password);
-			$updatepassword->bindparam(2, $username);
-			$updatepassword->execute();
-
-			$_SESSION['password_updated'] =true;
-		}catch(PDOException $e){
-			echo $e->getMessage();
-		}
-	}
-
 
 
 	
@@ -644,6 +679,20 @@ public function getLoginStatus($id){
 		$updateStudentCount->bindParam(2,$id);
 		$updateStudentCount->execute();
 	}
+
+
+	public function getAllStudentsAssignment($sub_class_id){
+
+	$getAllStudentsAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
+		$getAllStudentsAssignment->bindParam(1, $sub_class_id);
+		$getAllStudentsAssignment->execute();
+		
+		if($getAllStudentsAssignment->rowCount()>0){
+			$rows = $getAllStudentsAssignment->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
 	
 	
 	public function getStudentAssignment($sub_class_id, $student_no){

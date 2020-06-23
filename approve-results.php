@@ -3,7 +3,7 @@ include_once("functions/functions.php");
 
 if (isset($_POST['submit'])) {
 
-	echo$sub_class_id = $_POST['sub_class_id'];
+	$sub_class_id = $_POST['sub_class_id'];
 	$academic_year = $_POST['academic_year'];
 	$term = $_POST['term'];
 

@@ -5,6 +5,9 @@ if(!isset($_SESSION['user'])){
 		exit;
 	}
 
+$checkPassword = new User();
+$checkPassword = $checkPassword->checkPassword();
+
 if (isset($_GET['id'])) {
 $id = $_GET['id'];
 
@@ -16,9 +19,8 @@ $getStudentDetails = new Students();
 $details = $getStudentDetails->getStudentDetails();
 $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
-
-$getStudentAssignment = new Students();
-$assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+$getAllStudentsAssignment = new Students();
+$assignments = $getAllStudentsAssignment->getAllStudentsAssignment($sub_class_id);
 		
 $getStudents = new Students();
 $students = $getStudents->getStudents();

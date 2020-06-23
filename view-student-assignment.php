@@ -9,9 +9,8 @@ $students = $getStudents->getStudents();
   $details = $getStudentDetails->getStudentDetails();
   $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
-
-  $getStudentAssignment = new Students();
-  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+  $getAllStudentsAssignment = new Students();
+  $assignments = $getAllStudentsAssignment->getAllStudentsAssignment($sub_class_id);
 
 
 ?>
@@ -107,11 +106,12 @@ $students = $getStudents->getStudents();
 				  <td><?php echo $assignment['subject_name']; ?> </td>
           <td><?php echo $assignment['assignment_type_name']; ?> </td>
         
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
+				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-download"></i> Download</a></td>
           <?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date) {
                     ?><td style="color: red;">Date Passed</a></td><?php
-                  } else { ?>
-                    <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Uploads</a></td> <?php
+
+                  } else { ?> <td><a href="upload-student-assignment.php?id=<?php echo $assignment['assignment_id']; ?>"><i class="fa fa-edit"></i> Submit Assignment</a></td>
+                     <?php
           }
                    ?>
                 </tr>

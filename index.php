@@ -5,6 +5,10 @@ if(!isset($_SESSION['user'])){
 		exit;
 	}
 
+$checkPassword = new User();
+$checkPassword = $checkPassword->checkPassword();
+
+
 
 if (isset($_POST['submit'])) {
 $notice = $_POST['notice'];

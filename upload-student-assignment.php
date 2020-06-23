@@ -147,7 +147,7 @@ $term = $getTerm->getTerm();
             
            
             <!-- form start -->
-            <form action="upload-student-assignment" enctype="multipart/form-data" method="post">
+              <div class="box-body">
            <?php
                             if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
                             {
@@ -159,19 +159,17 @@ $term = $getTerm->getTerm();
                  header('Refresh: 5; URL= view-student-assignment.php');
                             }
               ?>
-              <div class="box-body">
-
               <div class="form-group">
                 <label for="exampleFormControlFile1">Assignment</label>
-                <input type="file" name="assignment" required="" class="form-control-file" id="exampleFormControlFile1">
+                <div class="alert alert-warning">
+                  <h4>You have already uploaded an assignment</h4>
+                </div>
               </div>
-          <input type="text" hidden="" value="<?php if (isset($_GET['id'])) {echo $assignments_id = $_GET['id'];} ?>" name="assignments_id">
       
               </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" name="upload" class="btn btn-primary">Upload</button>
               </div>
             </form>
           </div>

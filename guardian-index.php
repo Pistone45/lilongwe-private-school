@@ -4,6 +4,9 @@ if(!isset($_SESSION['user'])){
 		header("Location: login.php");
 		exit;
 	}
+
+$checkPassword = new User();
+$checkPassword = $checkPassword->checkPassword();
 		
 $getClassesPerTeacher = new Staff();
 $levels = $getClassesPerTeacher->getClassesPerTeacher();
