@@ -1692,13 +1692,17 @@ public function getAllSubclassSubjects($sub_class_id){
 
 
 	public function getFinalAssignmentMark($academic_year,$term){
+		$general=3;
 		
-		$getFinalAssignmentMark = $this->dbCon->Prepare("SELECT students_student_no as student_no, marks as mark, subjects.name as subject_name,academic_year,terms_id as term
-		FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
-		WHERE students_student_no=? AND academic_year=? AND terms_id=?");
+		$getFinalAssignmentMark = $this->dbCon->Prepare("SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
+		subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, SUM(submissions.marks) as assignment_marks, classes_has_subjects_subjects_id,subjects_id
+		FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id) 
+		INNER JOIN submissions ON(submissions.students_student_no=exam_results.students_student_no) INNER JOIN assignments ON (assignments.id=submissions.assignments_id)
+		WHERE exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=? AND assignment_type_id !=? GROUP BY classes_has_subjects_subjects_id,subjects_id");
 		$getFinalAssignmentMark->bindParam(1,$_SESSION['user']['username']);
 		$getFinalAssignmentMark->bindParam(2,$academic_year);
 		$getFinalAssignmentMark->bindParam(3,$term);
+		$getFinalAssignmentMark->bindParam(4,$general);
 		$getFinalAssignmentMark->execute();
 		
 		if($getFinalAssignmentMark->rowCount()>0){
