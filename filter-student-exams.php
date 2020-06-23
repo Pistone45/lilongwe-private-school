@@ -12,6 +12,14 @@ $status = 1;
 $getCurrentSettings = new Settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
+$academic_year =(int)$settings['academic_year'];
+//from academic_year get the last 10 years
+$ten_years = $academic_year-10;
+$years =range($academic_year,$ten_years,-1);
+
+$getTerms = new Settings();
+$terms = $getTerms->getTerms();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -76,22 +84,38 @@ $settings = $getCurrentSettings->getCurrentSettings($status);
            
             <!-- form start -->
       <form role="form" action="view-student-results.php" method="POST">
-      
-      <div class="box-body">
       <input type="text" hidden="" name="student_no" value="<?php echo $_GET['id']; ?>">
-    <div class="form-group">
-      <label>Select Academic Year </label>
-      <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
-        <option VALUE="">Select Academic Year</option>
-      <option value="<?php echo $settings['id']; ?>"><?php echo $settings['academic_year']; ?></option>
-    </select>
-</div>
-      <label>Select Term </label>
-      <select class="form-control" required="" name="term" id="term">
-        <option VALUE="">Select Term</option>     
-      </select>
-        
-              </div>
+      <div class="form-group">
+        <label>Select Academic Year </label>
+        <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+         <?php
+                    if(isset($years) && count($years)>0){
+                      foreach($years as $year){ ?>
+                        <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                      <?php
+                        
+                      }
+                    }
+                  ?>
+        </select>
+      </div>
+      
+      <div class="form-group">
+                        <label>Select Term </label>
+                        <select name="term" class="form-control" required="">
+                        
+                <?php
+                  if(isset($terms) && count($terms)>0){
+                    foreach($terms as $term){ ?>
+                      <option value="<?php echo $term['id']; ?>"><?php echo $term['name']; ?></option>
+                    <?php
+                      
+                    }
+                  }
+                ?>
+              
+                        </select>
+                </div>
               <!-- /.box-body -->
 
               <div class="box-footer">

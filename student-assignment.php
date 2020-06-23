@@ -2,13 +2,14 @@
 include_once("functions/functions.php");
 
   $id = $_GET['id'];
+  $student_no = $id;
 
   $getSpecificStudent = new Students();
   $details = $getSpecificStudent->getSpecificStudent($id);
   $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
   $getStudentAssignment = new Students();
-  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id);
+  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id, $student_no);
 
 $id = $_GET['id'];
 $getStudentDetailsPerGuardian = new Guardian();

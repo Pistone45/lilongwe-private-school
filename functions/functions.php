@@ -646,16 +646,17 @@ public function getLoginStatus($id){
 	}
 	
 	
-	public function getStudentAssignment($sub_class_id){
+	public function getStudentAssignment($sub_class_id, $student_no){
 
-	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date,
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, submissions.marks as marks,
 	subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name
-	FROM assignments INNER JOIN assignment_type
+	FROM assignments INNER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type
 	ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id)
 	INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) 
-	WHERE sub_classes_has_assignments.sub_classes_id=?" );
+	WHERE sub_classes_has_assignments.sub_classes_id=? AND students_student_no=?" );
 		$getStudentAssignment->bindParam(1, $sub_class_id);
+		$getStudentAssignment->bindParam(2, $student_no);
 		$getStudentAssignment->execute();
 		
 		if($getStudentAssignment->rowCount()>0){
