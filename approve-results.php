@@ -1,18 +1,36 @@
 <?php
 include_once("functions/functions.php");
 
+if (isset($_POST['approve'])) {
+$subject_id = $_POST['subject_id'];
+$sub_class_id = $_POST['sub_class_id'];
+
+$adminApproveResults = new Staff();
+$adminApproveResults = $adminApproveResults->adminApproveResults($subject_id, $sub_class_id);
+}
+
+
+
 if (isset($_POST['submit'])) {
 
-	$sub_class_id = $_POST['sub_class_id'];
-	$academic_year = $_POST['academic_year'];
-	$term = $_POST['term'];
+  $subject_id = $_POST['subject_id'];
+  $sub_class_id = $_POST['sub_class_id'];
+  $exam_type_id = 1;
+  $academic_year = $_POST['academic_year'];
 
-$getStudentsPerSubclass = new Staff();
-$studentsubclass = $getStudentsPerSubclass->getStudentsPerSubclass($sub_class_id, $academic_year, $term);
+$getStudentsPerExamType = new Staff();
+$student = $getStudentsPerExamType->getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year);
 
-$getTrialMark = new Staff();
-$mark = $getTrialMark->getTrialMark($academic_year, $term);
+$getSubjectById = new Staff();
+$subject = $getSubjectById->getSubjectById($subject_id);
 
+$getClassByID = new Staff();
+$classname = $getClassByID->getClassByID($sub_class_id);
+
+
+$subject_id = $_POST['subject_id'];
+$getClassAndSubjectName = new Staff();
+$classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $subject_id);
 //$exam = $mark['final_mark'];
 //$sub = $mark['exam_mark'];
 //echo$answer = $exam + $sub;
@@ -23,8 +41,6 @@ $mark = $getTrialMark->getTrialMark($academic_year, $term);
 //$exammarks = $getFinalExamPerTerm->getFinalExamPerTerm($academic_year, $term);
 }
 
-$getClassByID = new Staff();
-$classname = $getClassByID->getClassByID($sub_class_id);
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +48,7 @@ $classname = $getClassByID->getClassByID($sub_class_id);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Display Final Results| Lilongwe Private School</title>
+  <title>Approve Results| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -71,12 +87,30 @@ $classname = $getClassByID->getClassByID($sub_class_id);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        All Students in <?php echo $classname['sub_class_name']; ?> <button class="btn btn-info">Approve Class</button>
-       
+        Approve Results for <?php if(isset($_POST['submit'])){ echo $classname['subject_name'];} ?> in <?php if(isset($_POST['submit'])){echo $classname['sub_class_name'];} ?>
+        <form action="approve-results.php" method="POST">
+                <?php
+                            if(isset($_SESSION["approved"]) && $_SESSION["approved"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully approved a subject for viewing";
+                                unset($_SESSION["approved"]);
+                                echo "</div>";
+                 header('Refresh: 5; URL= filter-approved-results.php');
+                            }
+              ?>
+
+          <input type="text" hidden="" name="subject_id" value="<?php if(isset($_POST['submit'])){ echo  $subject_id = $_POST['subject_id'];} ?>">
+
+          <input type="text" hidden="" name="sub_class_id" value="<?php if(isset($_POST['submit'])){ echo  $sub_class_id = $_POST['sub_class_id'];} ?>">
+        <button type="submit" name="approve" class="btn btn-success btn-lg">Approve Results</button>
+       </form>
+
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-final-results.php">Final Results</a></li>
+        <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-students-assignments.php">Display Assignments</a></li>
        
       </ol>
     </section>
@@ -88,10 +122,9 @@ $classname = $getClassByID->getClassByID($sub_class_id);
         <div class="col-md-12">
           <!-- general form elements -->
           <div class="box box-primary">
-
       <?php
       $i = 0;
-        if(isset($studentsubclass) && count($studentsubclass)>0){ 
+        if(isset($student) && count($student)>0){ 
           ?>
 
               <table id="example1" class="table table-bordered table-striped">
@@ -100,33 +133,35 @@ $classname = $getClassByID->getClassByID($sub_class_id);
                   <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
+                  <th>Subject</th>
                   <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Final Mark</th>
-                  <th>Action</th>
-
+                  <th>Assignment Type</th>
+                  <th>Marks</th>
+                  
                 </tr>
                 </thead>
                 <tbody>
                   <?php
 
-          foreach($studentsubclass as $studentsubclasses){ 
+          foreach($student as $students){ 
             $i++;  ?>
           <tr>
-                  <td><?php echo $studentsubclasses['student_no']; ?></td>
-                  <td><?php echo $studentsubclasses['firstname']; ?></td>
-                  <td><?php echo $studentsubclasses['lastname']; ?></td>
-                  <td><?php echo $studentsubclasses['academic_year']; ?></td>
-                  <td><?php echo $studentsubclasses['term_name']; ?></td>
-                  <td><?php echo "Mark here"; ?></td>
-                  <td><input type="button" name="view" value="view" id="<?php echo $studentsubclasses["student_no"]; ?>" class="btn btn-info view_data" /></td>
+                  <td><?php echo $students['student_no']; ?></td>
+                  <td><?php echo $students['firstname']; ?></td>
+                  <td><?php echo $students['lastname']; ?></td>
+                  <td><?php echo $subject['subject_name']; ?></td>
+                  <td><?php echo $students['academic_year']; ?></td>
+                  <td><?php echo "Final Exam"; ?></td>
+                  <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
+                  <td></td>
+
 
                 </tr>
 
 
 
           <?php
-
+            
           } ?>
 
                 
@@ -136,18 +171,21 @@ $classname = $getClassByID->getClassByID($sub_class_id);
                   <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
+                  <th>Subject</th>
                   <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Final Mark</th>
-                  <th>Action</th>
+                  <th>Assignment Type</th>
+                  <th>Marks</th>
+                  
                 </tr>
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Marked Subjects Available at the moment";
+                        echo "No Students Available to approve Results";
                       }
         ?>
-          
+
+
+           
             <!-- form start -->
 
           </div>
@@ -165,38 +203,24 @@ $classname = $getClassByID->getClassByID($sub_class_id);
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <div id="dataModal" class="modal fade">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-                <div class="modal-header">  
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title">Students Marks Per Subject</h4>  
-                </div>  
-                <div class="modal-body" id="employee_detail">  
-                </div>  
-                <div class="modal-footer">  
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>  
- <script>  
- $(document).ready(function(){  
-      $('.view_data').click(function(){  
-           var employee_id = $(this).attr("id");  
-           $.ajax({  
-                url:"select.php",  
-                method:"post",  
-                data:{employee_id:employee_id},  
-                success:function(data){  
-                     $('#employee_detail').html(data);  
-                     $('#dataModal').modal("show");  
-                }  
-           });  
-      });  
- });  
- </script>
-
+  <script type="text/javascript">
+    function RecordExams() {
+    var mark = $("#mark").val();
+    var academic_year = $("#academic_year").val();
+    var term = $("#term").val();
+    var students_student_no = $("#students_student_no").val();
+    var exam_type_id = $("#exam_type_id").val();
+    var staff_id = $("#staff_id").val();
+    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
+    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
+    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
+     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
+    function(data) {
+   $('#results').html(data);
+   $('#myForm')[0].reset();
+    });
+}
+  </script>
   <?php include_once("footer.html"); ?>
 
   <!-- Control Sidebar -->

@@ -5,6 +5,14 @@ if(!isset($_SESSION['user'])){
 		exit;
 	}
 
+$status=1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+$fees = $settings['fees'];
+$academic_year = $settings['academic_year'];
+$term = $settings['term'];
+
 $checkPassword = new User();
 $checkPassword = $checkPassword->checkPassword();
 
@@ -38,6 +46,9 @@ $users = $countAllUsers->countAllUsers();
 
 $getNotices = new Staff();
 $notice = $getNotices->getNotices();
+
+$getFeesBalanceCount = new Staff();
+$fees_balance_count = $getFeesBalanceCount->getFeesBalanceCount($fees, $academic_year, $term);
 
 
 ?>
@@ -111,7 +122,7 @@ $notice = $getNotices->getNotices();
           <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
-              <h3>0</h3>
+              <h3><?php echo$fees_balance_count['fees_count']; ?></h3>
 
               <p>Students with Fees Balance</p>
             </div>

@@ -99,7 +99,12 @@ $terms = $getTerms->getTerms();
         
                   </select>
                 </div>
-
+      
+      <label>Select Subject </label>
+      <select class="form-control" required="" name="subject_id" id="subject">
+        <option VALUE="">Select Subject</option>     
+      </select>
+      <br>
       <div class="form-group">
         <label>Select Academic Year </label>
         <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">

@@ -117,7 +117,7 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
                   <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
                   <td><?php echo $marks['academic_year']; ?></td>
                   <td><?php echo $marks['term']; ?></td>
-                  <td><?php echo $marks['mark']+$marks['assignment_marks']; ?> </td>
+                  <td><?php echo $marks['mark']?> </td>
                   <td></td>
 
                 </tr>

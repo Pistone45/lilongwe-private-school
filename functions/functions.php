@@ -1743,13 +1743,14 @@ public function getAllSubclassSubjects($sub_class_id){
 
 	public function getFinalAssignmentMark($academic_year,$term){
 		$general=3;
+		$exam_status_id = 2;
 		
 		$getFinalAssignmentMark = $this->dbCon->Prepare("SELECT  student_no, SUM(mark) as mark, 
 		subject_name,academic_year,term, subjects_id
 			FROM (SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
 					subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, classes_has_subjects_subjects_id as subjects_id
 					FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
-				WHERE exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=?
+				WHERE exam_results.exam_status_id=? AND exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=?
 					GROUP BY classes_has_subjects_subjects_id,exam_results.students_student_no
 			UNION ALL
 			SELECT students_student_no as student_no, SUM(marks) as mark, 
@@ -1759,13 +1760,14 @@ public function getAllSubclassSubjects($sub_class_id){
 					GROUP BY subjects_id,students_student_no
 			) results
 			group by subjects_id,student_no");
-		$getFinalAssignmentMark->bindParam(1,$_SESSION['user']['username']);
-		$getFinalAssignmentMark->bindParam(2,$academic_year);
-		$getFinalAssignmentMark->bindParam(3,$term);
-		$getFinalAssignmentMark->bindParam(4,$_SESSION['user']['username']);
-		$getFinalAssignmentMark->bindParam(5,$academic_year);
-		$getFinalAssignmentMark->bindParam(6,$term);
-		$getFinalAssignmentMark->bindParam(7,$general);
+		$getFinalAssignmentMark->bindParam(1,$exam_status_id);
+		$getFinalAssignmentMark->bindParam(2,$_SESSION['user']['username']);
+		$getFinalAssignmentMark->bindParam(3,$academic_year);
+		$getFinalAssignmentMark->bindParam(4,$term);
+		$getFinalAssignmentMark->bindParam(5,$_SESSION['user']['username']);
+		$getFinalAssignmentMark->bindParam(6,$academic_year);
+		$getFinalAssignmentMark->bindParam(7,$term);
+		$getFinalAssignmentMark->bindParam(8,$general);
 		$getFinalAssignmentMark->execute();
 		
 		if($getFinalAssignmentMark->rowCount()>0){
@@ -1779,16 +1781,31 @@ public function getAllSubclassSubjects($sub_class_id){
 
 	public function getFinalAssignmentMarkPerGuardian($academic_year,$term, $student_no){
 		$general=3;
+		$exam_status_id = 2;
 		
-		$getFinalAssignmentMarkPerGuardian = $this->dbCon->Prepare("SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
-		subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, SUM(submissions.marks) as assignment_marks, classes_has_subjects_subjects_id,subjects_id
-		FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id) 
-		INNER JOIN submissions ON(submissions.students_student_no=exam_results.students_student_no) INNER JOIN assignments ON (assignments.id=submissions.assignments_id)
-		WHERE exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=? AND assignment_type_id !=? GROUP BY classes_has_subjects_subjects_id,subjects_id");
-		$getFinalAssignmentMarkPerGuardian->bindParam(1,$student_no);
-		$getFinalAssignmentMarkPerGuardian->bindParam(2,$academic_year);
-		$getFinalAssignmentMarkPerGuardian->bindParam(3,$term);
-		$getFinalAssignmentMarkPerGuardian->bindParam(4,$general);
+		$getFinalAssignmentMarkPerGuardian = $this->dbCon->Prepare("SELECT  student_no, SUM(mark) as mark, 
+		subject_name,academic_year,term, subjects_id
+			FROM (SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
+					subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, classes_has_subjects_subjects_id as subjects_id
+					FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
+				WHERE exam_results.exam_status_id=? AND exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=?
+					GROUP BY classes_has_subjects_subjects_id,exam_results.students_student_no
+			UNION ALL
+			SELECT students_student_no as student_no, SUM(marks) as mark, 
+					subjects.name as subject_name,academic_year,terms_id as term, subjects_id
+					FROM submissions  INNER JOIN assignments ON (assignments.id=submissions.assignments_id) INNER JOIN subjects ON(subjects.id=assignments.subjects_id)
+					WHERE students_student_no=? AND academic_year=? AND terms_id=? AND assignment_type_id !=?
+					GROUP BY subjects_id,students_student_no
+			) results
+			group by subjects_id,student_no");
+		$getFinalAssignmentMarkPerGuardian->bindParam(1,$exam_status_id);
+		$getFinalAssignmentMarkPerGuardian->bindParam(2,$student_no);
+		$getFinalAssignmentMarkPerGuardian->bindParam(3,$academic_year);
+		$getFinalAssignmentMarkPerGuardian->bindParam(4,$term);
+		$getFinalAssignmentMarkPerGuardian->bindParam(5,$student_no);
+		$getFinalAssignmentMarkPerGuardian->bindParam(6,$academic_year);
+		$getFinalAssignmentMarkPerGuardian->bindParam(7,$term);
+		$getFinalAssignmentMarkPerGuardian->bindParam(8,$general);
 		$getFinalAssignmentMarkPerGuardian->execute();
 		
 		if($getFinalAssignmentMarkPerGuardian->rowCount()>0){
@@ -1797,7 +1814,7 @@ public function getAllSubclassSubjects($sub_class_id){
 		}else{
 			return null;
 		}
-	} //end of getting Assignments Results
+	} //end of getting Assignments Results per guardian
 
 
 	public function getStudentsPerSubclass($sub_class_id, $subject_id, $term){		
@@ -2030,6 +2047,19 @@ public function deleteStudentAssignment($id, $assignment_url){
 	}
 
 
+	public function adminApproveResults($subject_id, $sub_class_id){
+		$exam_status_id = 2;
+		$adminApproveResults =$this->dbCon->PREPARE("UPDATE exam_results SET exam_status_id =? WHERE classes_has_subjects_subjects_id=? AND classes_has_subjects_classes_id=? ");
+		$adminApproveResults->bindParam(1,$exam_status_id);
+		$adminApproveResults->bindParam(2,$subject_id);
+		$adminApproveResults->bindParam(3,$sub_class_id);
+		$adminApproveResults->execute();
+		
+		 $_SESSION['approved']=true;
+		
+	}//End of admin approving results per subject
+
+
 
 public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
 		$getAllStudentsPerClassSubject = $this->dbCon->PREPARE(" SELECT  student_no,firstname,middlename,lastname,subjects.name as subject, subjects.id as subject_id, classes.id as classes_id
@@ -2131,6 +2161,22 @@ public function getClassByID($sub_class_id){
 		
 		if($getClassByID->rowCount()>0){
 			$row = $getClassByID->fetch();
+			
+			return $row;
+			
+		}
+		
+	}//getting class name
+
+
+public function getClassAndSubjectName($sub_class_id, $subject_id){
+		$getClassAndSubjectName = $this->dbCon->PREPARE("SELECT sub_classes.name as sub_class_name, subjects.name as subject_name FROM sub_classes INNER JOIN sub_classes_has_subjects ON(sub_classes_has_subjects.sub_classes_id=sub_classes.id) INNER JOIN subjects ON (sub_classes_has_subjects.subjects_id=subjects.id) WHERE sub_classes.id=? AND subjects.id=?");
+		$getClassAndSubjectName->bindParam(1,$sub_class_id);
+		$getClassAndSubjectName->bindParam(2,$subject_id);
+		$getClassAndSubjectName->execute();
+		
+		if($getClassAndSubjectName->rowCount()>0){
+			$row = $getClassAndSubjectName->fetch();
 			
 			return $row;
 			
@@ -2386,6 +2432,22 @@ public function getBookCount($book_id){
 		
 		if($getStudentsWithFeesBalances->rowCount()>0){
 			$rows = $getStudentsWithFeesBalances->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class and Payment
+
+
+	public function getFeesBalanceCount($fees, $academic_year, $term){	
+		$payment_type_id = 1;	
+		$getFeesBalanceCount = $this->dbCon->Prepare("SELECT count(student_no) as fees_count, student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getFeesBalanceCount->bindParam(1,$payment_type_id);
+		$getFeesBalanceCount->bindParam(2,$academic_year);
+		$getFeesBalanceCount->bindParam(3,$term);
+		$getFeesBalanceCount->bindParam(4,$fees);
+		$getFeesBalanceCount->execute();
+		
+		if($getFeesBalanceCount->rowCount()>0){
+			$rows = $getFeesBalanceCount->fetch();
 			return $rows;
 		}
 	} //end of getting Students Per Class and Payment
