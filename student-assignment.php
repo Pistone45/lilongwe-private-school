@@ -8,8 +8,8 @@ include_once("functions/functions.php");
   $details = $getSpecificStudent->getSpecificStudent($id);
   $sub_class_id = $details['sub_class_id'];//form 2 west = 5 
 
-  $getAllStudentsAssignment = new Students();
-  $assignments = $getAllStudentsAssignment->getAllStudentsAssignment($sub_class_id);
+  $getStudentAssignment = new Students();
+  $assignments = $getStudentAssignment->getStudentAssignment($sub_class_id, $student_no);
 
 $id = $_GET['id'];
 $getStudentDetailsPerGuardian = new Guardian();

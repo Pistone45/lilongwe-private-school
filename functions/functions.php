@@ -683,7 +683,7 @@ public function getLoginStatus($id){
 
 	public function getAllStudentsAssignment($sub_class_id){
 
-	$getAllStudentsAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, submissions.marks as marks, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments LEFT OUTER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
+	$getAllStudentsAssignment = $this->dbCon->Prepare("SELECT DISTINCT assignments.id as assignment_id, title, due_date, subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name FROM assignments INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id) INNER JOIN sub_classes
 	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) WHERE sub_classes_has_assignments.sub_classes_id=?");
 		$getAllStudentsAssignment->bindParam(1, $sub_class_id);
 		$getAllStudentsAssignment->execute();
@@ -1764,15 +1764,25 @@ public function getAllSubclassSubjects($sub_class_id){
 	} //end of getting exam Results
 
 
-	public function getFinalAssignmentMarkPerGuardian($subject_id, $term, $student_no){		
-		$getFinalAssignmentMarkPerGuardian = $this->dbCon->Prepare("SELECT students_student_no as student_no, marks as mark, subjects.name as subject_name, assignments.academic_year as academic_year, students.firstname as firstname, assignments.terms_id as term, assignment_type.name as assignment_type_name FROM submissions INNER JOIN students ON(submissions.students_student_no=students.student_no) INNER JOIN assignments ON(submissions.assignments_id=assignments.id) INNER JOIN subjects ON(assignments.subjects_id=subjects.id) INNER JOIN assignment_type ON(assignments.assignment_type_id=assignment_type.id) WHERE students_student_no=? AND assignments.terms_id=? ");
+	public function getFinalAssignmentMarkPerGuardian($academic_year,$term, $student_no){
+		$general=3;
+		
+		$getFinalAssignmentMarkPerGuardian = $this->dbCon->Prepare("SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
+		subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, SUM(submissions.marks) as assignment_marks, classes_has_subjects_subjects_id,subjects_id
+		FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id) 
+		INNER JOIN submissions ON(submissions.students_student_no=exam_results.students_student_no) INNER JOIN assignments ON (assignments.id=submissions.assignments_id)
+		WHERE exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=? AND assignment_type_id !=? GROUP BY classes_has_subjects_subjects_id,subjects_id");
 		$getFinalAssignmentMarkPerGuardian->bindParam(1,$student_no);
-		$getFinalAssignmentMarkPerGuardian->bindParam(2,$term);
+		$getFinalAssignmentMarkPerGuardian->bindParam(2,$academic_year);
+		$getFinalAssignmentMarkPerGuardian->bindParam(3,$term);
+		$getFinalAssignmentMarkPerGuardian->bindParam(4,$general);
 		$getFinalAssignmentMarkPerGuardian->execute();
 		
 		if($getFinalAssignmentMarkPerGuardian->rowCount()>0){
 			$rows = $getFinalAssignmentMarkPerGuardian->fetchAll();
 			return $rows;
+		}else{
+			return null;
 		}
 	} //end of getting Assignments Results
 

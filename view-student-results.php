@@ -94,7 +94,7 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
        <h3>Exam Result</h3>
       <?php
       $i = 0;
-        if(isset($mark) && count($mark)>0){ 
+        if(isset($FinamMarks) && count($FinamMarks)>0){ 
           ?>
 
               <table id="example1" class="table table-bordered table-striped">
@@ -110,14 +110,14 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
                 <tbody>
                   <?php
 
-          foreach($mark as $marks){ 
+          foreach($FinamMarks as $marks){ 
             $i++;  ?>
           <tr>
                   <td><?php echo $marks['subject_name']; ?></td>
                   <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
                   <td><?php echo $marks['academic_year']; ?></td>
-                  <td><?php echo $marks['term_name']; ?></td>
-                  <td><?php if($marks['final_mark'] == 0 || $marks['exam_mark'] == 0){ echo"Not Marked"; }else {echo $marks['final_mark'] + $marks['exam_mark'];} ?> </td>
+                  <td><?php echo $marks['term']; ?></td>
+                  <td><?php echo $marks['mark']+$marks['assignment_marks']; ?> </td>
                   <td></td>
 
                 </tr>

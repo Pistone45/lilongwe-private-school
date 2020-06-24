@@ -172,7 +172,7 @@ if(isset($_POST['addMarks'])) {
 				   <form role="form" action="record-exams.php"  method="POST">
                   <td>
 					<input type="hidden" id="student_no"  value="<?php echo $students['student_no']; ?>" name="student_no[]">	
-					<input type="number" id="marks" name="marks[]"  placeholder="Enter Marks" class="form-control"/>	 			 
+					<input type="number" id="marks" min="0" max="70" name="marks[]"  placeholder="Enter Marks" required="" class="form-control"/>	 			 
 				  </td>
 				 
 				 
