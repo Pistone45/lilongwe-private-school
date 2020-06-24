@@ -1779,6 +1779,29 @@ public function getAllSubclassSubjects($sub_class_id){
 	} //end of getting exam Results
 
 
+	public function getFinalPositions($academic_year,$term, $sub_class){
+		$general=3;
+		$exam_status_id = 2;
+		
+		$getFinalPositions = $this->dbCon->Prepare("SELECT DISTINCT academic_year,terms_id 
+      , CONCAT(students.firstname,' ', students.lastname) as student_name,
+   exam_results.marks as marks, submissions.marks as mark, sub_classes.name as class_name, 
+    exam_results.academic_year as academic_year, exam_results.terms_id as term
+     FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN submissions ON(submissions.students_student_no=students.student_no) WHERE academic_year=? AND terms_id=? AND students.sub_classes_id=? AND submissions.students_student_no=exam_results.students_student_no GROUP BY exam_results.students_student_no");
+		$getFinalPositions->bindParam(1,$academic_year);
+		$getFinalPositions->bindParam(2,$term);
+		$getFinalPositions->bindParam(3,$sub_class);
+		$getFinalPositions->execute();
+		
+		if($getFinalPositions->rowCount()>0){
+			$rows = $getFinalPositions->fetchAll();
+			return $rows;
+		}else{
+			return null;
+		}
+	} //end of getting Positions
+
+
 	public function getFinalAssignmentMarkPerGuardian($academic_year,$term, $student_no){
 		$general=3;
 		$exam_status_id = 2;
@@ -2101,7 +2124,7 @@ public function getAllExamsPerClassSubject($class_id, $sub_class_id, $subject_id
 
 
 public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year){
-		$getStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year
+		$getStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year, exam_status_id
 		FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no)
 		INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=? AND classes_has_subjects_subjects_id=?");
 		$getStudentsPerExamType->bindParam(1,$sub_class_id);
@@ -2423,7 +2446,7 @@ public function getBookCount($book_id){
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);

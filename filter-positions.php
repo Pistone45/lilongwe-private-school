@@ -4,13 +4,25 @@ include_once("functions/functions.php");
 $getSubClasses = new Classes();
 $levels = $getSubClasses->getSubClasses();
 
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+
+$academic_year =(int)$settings['academic_year'];
+//from academic_year get the last 10 years
+$ten_years = $academic_year-10;
+$years =range($academic_year,$ten_years,-1);
+
+$getTerms = new Settings();
+$terms = $getTerms->getTerms();
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Class| Lilongwe Private School</title>
+  <title>Filter Positions| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -47,7 +59,7 @@ $levels = $getSubClasses->getSubClasses();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Class Level
+        Class Level to filter positions:
        
       </h1>
       <ol class="breadcrumb">
@@ -84,6 +96,38 @@ $levels = $getSubClasses->getSubClasses();
 					?>
 				
                   </select>
+                </div>
+
+              <div class="form-group">
+      <label>Select Academic Year </label>
+      <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+       <?php
+                  if(isset($years) && count($years)>0){
+                    foreach($years as $year){ ?>
+                      <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                    <?php
+                      
+                    }
+                  }
+                ?>
+    </select>
+</div>
+      
+      <div class="form-group">
+                        <label>Select Term </label>
+                        <select name="term" class="form-control" required="">
+                        
+                <?php
+                  if(isset($terms) && count($terms)>0){
+                    foreach($terms as $term){ ?>
+                      <option value="<?php echo $term['id']; ?>"><?php echo $term['name']; ?></option>
+                    <?php
+                      
+                    }
+                  }
+                ?>
+              
+                        </select>
                 </div>
 				
               </div>

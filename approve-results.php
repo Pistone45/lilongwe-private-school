@@ -88,24 +88,6 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
     <section class="content-header">
       <h1>
         Approve Results for <?php if(isset($_POST['submit'])){ echo $classname['subject_name'];} ?> in <?php if(isset($_POST['submit'])){echo $classname['sub_class_name'];} ?>
-        <form action="approve-results.php" method="POST">
-                <?php
-                            if(isset($_SESSION["approved"]) && $_SESSION["approved"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully approved a subject for viewing";
-                                unset($_SESSION["approved"]);
-                                echo "</div>";
-                 header('Refresh: 5; URL= filter-approved-results.php');
-                            }
-              ?>
-
-          <input type="text" hidden="" name="subject_id" value="<?php if(isset($_POST['submit'])){ echo  $subject_id = $_POST['subject_id'];} ?>">
-
-          <input type="text" hidden="" name="sub_class_id" value="<?php if(isset($_POST['submit'])){ echo  $sub_class_id = $_POST['sub_class_id'];} ?>">
-        <button type="submit" name="approve" class="btn btn-success btn-lg">Approve Results</button>
-       </form>
 
       </h1>
       <ol class="breadcrumb">
@@ -137,7 +119,7 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
                   <th>Academic Year</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  
+                  <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -153,7 +135,7 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
                   <td><?php echo $students['academic_year']; ?></td>
                   <td><?php echo "Final Exam"; ?></td>
                   <td><?php if($students['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$students['marks'];} ?> </td>
-                  <td></td>
+                  <td><?php if($students['exam_status_id'] == 2 ){ ?><p style="color: green;">Approved</p><?php } else{  ?><p style="color: red;">Not Approved</p><?php  } ?></td>
 
 
                 </tr>
@@ -175,7 +157,7 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
                   <th>Academic Year</th>
                   <th>Assignment Type</th>
                   <th>Marks</th>
-                  
+                  <th>Status</th>
                 </tr>
                 </tfoot>
               </table> <?php
@@ -183,7 +165,24 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
                         echo "No Students Available to approve Results";
                       }
         ?>
+                <form action="approve-results.php" method="POST">
+                <?php
+                            if(isset($_SESSION["approved"]) && $_SESSION["approved"]==true)
+                            {
+                                echo "<div class='alert alert-success'>";
+                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                                echo "<strong>Success! </strong>"; echo "You have successfully approved a subject for viewing";
+                                unset($_SESSION["approved"]);
+                                echo "</div>";
+                 header('Refresh: 5; URL= filter-approved-results.php');
+                            }
+              ?>
 
+          <input type="text" hidden="" name="subject_id" value="<?php if(isset($_POST['submit'])){ echo  $subject_id = $_POST['subject_id'];} ?>">
+
+          <input type="text" hidden="" name="sub_class_id" value="<?php if(isset($_POST['submit'])){ echo  $sub_class_id = $_POST['sub_class_id'];} ?>">
+        <button type="submit" name="approve" class="btn btn-success btn-lg btn-block">Approve Results</button>
+       </form>
 
            
             <!-- form start -->
