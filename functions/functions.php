@@ -1780,8 +1780,8 @@ public function getAllSubclassSubjects($sub_class_id){
 
 
 	public function getFinalPositions($academic_year,$term, $sub_class){
-		$general=3;
-		$exam_status_id = 2;
+		//$general=3;
+		//$exam_status_id = 2;
 		
 		$getFinalPositions = $this->dbCon->Prepare("SELECT DISTINCT academic_year,terms_id 
       , CONCAT(students.firstname,' ', students.lastname) as student_name,

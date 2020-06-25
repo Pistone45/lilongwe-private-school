@@ -106,7 +106,7 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
                   <td><?php echo "CE1 + CE2 + Final Exam" ?></td>
                   <td><?php echo $position['academic_year']; ?></td>
                   <td><?php echo $position['term']; ?></td>
-                  <td><?php echo $position['marks'] + $position['mark']; ?> </td>
+                  <td><?php echo $position['marks']; ?> </td>
                   <td></td>
 
                 </tr>
