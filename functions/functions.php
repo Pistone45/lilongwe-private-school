@@ -2448,7 +2448,7 @@ public function getBookCount($book_id){
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? GROUP BY students_student_no ORDER BY student_no ASC ");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, students.middlename as middlename, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? GROUP BY students_student_no ORDER BY student_no ASC ");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);
@@ -2580,6 +2580,27 @@ public function getBookCount($book_id){
 	} //end of getting Students Per Missing Book Payment
 
 
+	public function getAllBookCount(){	
+		$getAllBookCount = $this->dbCon->Prepare("SELECT SUM(count) as book_count FROM books");
+		//$getAllBookCount->bindParam(1,id);
+		$getAllBookCount->execute();
+		
+		if($getAllBookCount->rowCount()>0){
+			$row = $getAllBookCount->fetch();
+			return $row;
+		}
+	} //end of getting Book Count
+
+	public function getSpecificBook($book_id){	
+		$getSpecificBook = $this->dbCon->Prepare("SELECT id, title, author, year_of_publication, count, book_status_id FROM books WHERE id =?"	);
+		$getSpecificBook->bindParam(1,$book_id);
+		$getSpecificBook->execute();
+		
+		if($getSpecificBook->rowCount()>0){
+			$row = $getSpecificBook->fetch();
+			return $row;
+		}
+	} //end of getting Specific Book
 
 
 	public function getStudentsFees($level, $academic_year, $term){	
@@ -2643,6 +2664,19 @@ public function getBookCount($book_id){
 	}
 
 
+	public function editBook($book_id, $title,$author,$year_of_publication,$count){
+
+
+		$editBook =$this->dbCon->PREPARE("UPDATE books SET title =?, author =?, year_of_publication =?, count =? WHERE id=? ");
+		$editBook->bindParam(1,$title);
+		$editBook->bindParam(2,$author);
+		$editBook->bindParam(3,$year_of_publication);
+		$editBook->bindParam(4,$count);
+		$editBook->bindParam(5,$book_id);
+		$editBook->execute();
+
+		$_SESSION['book-edited']=true;
+	}
 
 }
 

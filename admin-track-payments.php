@@ -1,9 +1,24 @@
 <?php
 include_once("functions/functions.php");
 
-$getAccountants = new Accountant();
-$accountants = $getAccountants->getAccountants();
+if (isset($_GET['id'])) {
+$id = $_GET['id'];
 
+$getSpecificStudent = new Students();
+$student = $getSpecificStudent->getSpecificStudent($id);
+
+}
+
+
+$student_no = $_GET['id'];
+$getSpecificFeesPerStudent = new Staff();
+$payments = $getSpecificFeesPerStudent->getSpecificFeesPerStudent($student_no);
+
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
+$settings['academic_year'];
+$settings['term'];
 
 
 ?>
@@ -12,7 +27,7 @@ $accountants = $getAccountants->getAccountants();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Accountants | Lilongwe Private School</title>
+  <title>Track Payment| Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -51,82 +66,78 @@ $accountants = $getAccountants->getAccountants();
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Accountants Details
+      <h1 style="text-transform: uppercase;">
+        Payment Details for <?php echo $student['firstname']." ".$student['lastname']; ?>
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Accountants Details</a></li>
+        <li class="active"><a href="#">Track Payment</a></li>
        
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-xs-12">
-         <div class="box-header with-border">
-              <a href="add-accountant.php"><button type="submit" class="btn btn-primary">Add Accountant Details</button></a>
-            </div>
-          <div class="box">
-            
-            <!-- /.box-header -->
+          <div class="row">
+          <div class="col-md-12 col-xs-12">
+            <div class="box">
             <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
+            <h4>Payments for <?php echo $student['student_no']; ?></h4>
+            <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                
-                  <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
+                  <th>Class Name</th>
+                  <th>Amount</th>
+                  <th>Date Paid</th>
+                  <th>Year</th>
+                  <th>Term</th>
+                  <th>Reference</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-				if(isset($accountants) && count($accountants)>0){
-					foreach($accountants as $accountant){ ?>
-					<tr>
-                 
-                  <td><?php echo $accountant['firstname']; ?></td>
-                  <td><?php echo $accountant['middlename']; ?></td>
-                  <td> <?php echo $accountant['lastname']; ?></td>
-                  <td><?php echo $accountant['phone']; ?></td>
-				  <td><?php echo $accountant['email']; ?> </td>
-				  <td><a href="edit-accountant.php?id=<?php echo $accountant['id']; ?>"><i class="fa fa-edit"></i> Edit Accountant</a></td>
+        <?php
+        $i = 0;
+        if(isset($payments) && count($payments)>0){
+          foreach($payments as $payment){ 
+            $i++;   ?>
+          <tr>
+                  <td><?php echo $payment['sub_class_name']; ?></td>
+                  <td><?php echo $payment['amount']; ?></td>
+                  <td><?php echo $payment['date_paid'];?></td>
+                  <td><?php echo $payment['academic_year'];?></td>
+                  <td><?php echo $payment['term'];?></td>
+                  <td><?php echo $payment['ref_num'];?></td>
+
                 </tr>
-					<?php
-						
-					}
-				}
-				?>
+
+
+          <?php
+            
+          }
+        }else{
+          echo "No Payments Found";
+        }
+        ?>
                 
                 </tbody>
-                <tfoot>
-                <tr>
-                   <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
-                </tr>
-                </tfoot>
               </table>
             </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
+            </div>
         </div>
-        <!-- /.col -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
+
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 
@@ -146,18 +157,5 @@ $accountants = $getAccountants->getAccountants();
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
 <!-- page script -->
-<script>
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-</script>
 </body>
 </html>

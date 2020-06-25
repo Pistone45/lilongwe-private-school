@@ -9,9 +9,6 @@ if(isset($_POST['submit'])){
 	$login->login($username, $password);
 }
 
-
-
-
 ?>
 <!DOCTYPE html>
 <html>

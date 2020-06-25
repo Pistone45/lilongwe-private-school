@@ -1,10 +1,14 @@
 <?php
 include_once("functions/functions.php");
 
-$getAccountants = new Accountant();
-$accountants = $getAccountants->getAccountants();
+$getAllStudentsPerClassPerPayment = new Staff();
+$students = $getAllStudentsPerClassPerPayment->getAllStudentsPerClassPerPayment();
 
+$getTerms = new Settings();
+$terms = $getTerms->getTerms();
 
+$getPaymentType = new Settings();
+$type = $getPaymentType->getPaymentType();
 
 ?>
 <!DOCTYPE html>
@@ -12,7 +16,7 @@ $accountants = $getAccountants->getAccountants();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Accountants | Lilongwe Private School</title>
+  <title>Track Fees | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -52,12 +56,12 @@ $accountants = $getAccountants->getAccountants();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Accountants Details
+        Track Fees
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Accountants Details</a></li>
+        <li class="active"><a href="#">Track Fees</a></li>
        
       </ol>
     </section>
@@ -66,53 +70,50 @@ $accountants = $getAccountants->getAccountants();
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-         <div class="box-header with-border">
-              <a href="add-accountant.php"><button type="submit" class="btn btn-primary">Add Accountant Details</button></a>
-            </div>
+         
           <div class="box">
-            
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                
-                  <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
-				if(isset($accountants) && count($accountants)>0){
-					foreach($accountants as $accountant){ ?>
+        $i = 0;
+				if(isset($students) && count($students)>0){
+					foreach($students as $student){ 
+            $i++;   ?>
 					<tr>
-                 
-                  <td><?php echo $accountant['firstname']; ?></td>
-                  <td><?php echo $accountant['middlename']; ?></td>
-                  <td> <?php echo $accountant['lastname']; ?></td>
-                  <td><?php echo $accountant['phone']; ?></td>
-				  <td><?php echo $accountant['email']; ?> </td>
-				  <td><a href="edit-accountant.php?id=<?php echo $accountant['id']; ?>"><i class="fa fa-edit"></i> Edit Accountant</a></td>
+                  <td><?php echo $student['student_no']; ?></td>
+                  <td><?php echo $student['firstname']; ?></td>
+                  <td><?php echo $student['lastname']; ?></td>
+                  <td><?php echo $student['sub_class_name']; ?></td>
+                  <td><a href="admin-track-payments.php?id=<?php echo $student['student_no']; ?>"><button class="btn btn-info">Track Payment</button></a></td>
                 </tr>
+
 					<?php
 						
 					}
-				}
+				}else{
+          echo "No Students for this particular Class found";
+        }
 				?>
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                   <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>
@@ -127,8 +128,33 @@ $accountants = $getAccountants->getAccountants();
     </section>
     <!-- /.content -->
   </div>
+
+  <script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover({
+        placement : 'top',
+        trigger : 'hover'
+    });
+});
+</script>
+<style>
+  .bs-example{
+      margin: 150px 50px;
+    }
+</style>
+
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
+
+
   <!-- /.content-wrapper -->
-<?php include_once("footer.html"); ?>
+   <?php include_once("footer.html"); ?>
+
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>

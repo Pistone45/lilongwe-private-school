@@ -1,13 +1,17 @@
 <?php
 include_once("functions/functions.php");
 
-if(isset($_POST['submit'])){
-	$class_id = $_POST['level'];		
+$getSubClasses = new Classes();
+$levels = $getSubClasses->getSubClasses();
 
-	$getSubjectsPerClassAndStudent = new Staff();
-	$courses = $getSubjectsPerClassAndStudent->getSubjectsPerClassAndStudent($class_id);
-}
+$status = 1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
 
+
+
+$getTerms = new Settings();
+$terms = $getTerms->getTerms();
 
 ?>
 <!DOCTYPE html>
@@ -15,7 +19,7 @@ if(isset($_POST['submit'])){
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select Subject Assignment| Lilongwe Private School</title>
+  <title>Select Class | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -52,11 +56,12 @@ if(isset($_POST['submit'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Subject Assignment       
+        Select Class Level
+       
       </h1>
       <ol class="breadcrumb">
-        <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Subject Assignment</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Class Level</a></li>
        
       </ol>
     </section>
@@ -71,17 +76,16 @@ if(isset($_POST['submit'])){
             
            
             <!-- form start -->
-            <form role="form" action="upload-student-assignment.php" method="POST">
+            <form role="form" action="admin-view-paid-fees.php" method="POST">
 			
               <div class="box-body">
-			  <input type="hidden" value="<?php if(isset($class_id)){echo $class_id;}  ?>" name="level" />
 			     <div class="form-group">
-                  <label>Select Subject Assignment </label>
-                  <select name="subjects_id" class="form-control">
+                  <label>Select Level </label>
+                  <select name="level" class="form-control" required="">
 					<?php
-						if(isset($courses) && count($courses)>0){
-							foreach($courses as $course){ ?>
-								<option value="<?php echo $course['subjects_id']; ?>"><?php echo $course['subject_name']; ?></option>
+						if(isset($levels) && count($levels)>0){
+							foreach($levels as $level){ ?>
+								<option value="<?php echo $level['id']; ?>"><?php echo $level['name']; ?></option>
 							<?php
 								
 							}
@@ -90,8 +94,31 @@ if(isset($_POST['submit'])){
 				
                   </select>
                 </div>
-				
-				
+                
+
+<div class="form-group">
+                    <label for="email">Select Year</label>
+                    <select class="form-control" name="academic_year" required="">
+                      <option value="2020">2020</option>
+                    </select>
+                  </div>
+                 <div class="form-group">
+                        <label>Select Term </label>
+                        <select name="term" class="form-control" required="">
+                <?php
+                  if(isset($terms) && count($terms)>0){
+                    foreach($terms as $term){ ?>
+                      <option value="<?php echo $term['id']; ?>"><?php echo $term['name']; ?></option>
+                    <?php
+                      
+                    }
+                  }
+                ?>
+              
+                        </select>
+                </div>
+
+
               </div>
               <!-- /.box-body -->
 
@@ -117,7 +144,7 @@ if(isset($_POST['submit'])){
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-<?php include_once("footer.html"); ?>
+  <?php include_once("footer.html"); ?>
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>

@@ -1,55 +1,32 @@
 <?php
-include_once("../functions/functions.php");
+include_once("functions/functions.php");
 if(!isset($_SESSION['user'])){
 		header("Location: login.php");
 		exit;
 	}
 
+if(isset($_GET['book_id'])){
+  $book_id = $_GET['book_id'];
+
+$getSpecificBook = new Staff();
+$book = $getSpecificBook->getSpecificBook($book_id);
+}
+
+
 if(isset($_POST['submit'])){
-	
-		//validate ID attachment
-	//validate  file
-	 if(isset($_FILES['banner_image'])){
-      $errors= array();
-      $file_name = $_FILES['banner_image']['name'];
-      $file_size =$_FILES['banner_image']['size'];
-      $file_tmp =$_FILES['banner_image']['tmp_name'];
-      $file_type=$_FILES['banner_image']['type'];
-	  $dot = ".";
 
-     // $file_ext=strtolower(end(explode($dot,$file_name)));
-
-	  $imagePath = "../banners/";
-	  $imagePath = $imagePath . basename($file_name);
-	   $file_ext = pathinfo($imagePath,PATHINFO_EXTENSION);
-      $expensions= array("JPG", "jpg","PNG","png","GIF","gif");
-
-      if(in_array($file_ext,$expensions)=== false){
-         $errors[]="This file extension is not allowed.";
-      }
-
-      if($file_size > 3007152){
-
-         $errors[]='File size must be not more than 3 MB';
-
-      }
-
-      if(empty($errors)==true){
-		move_uploaded_file($file_tmp, $imagePath);
-
-      }else{
-		   $errors[]='Error Uploading file';
-
-         //print_r($errors);
-      }
-	   
-	  $image_Path = $imagePath;
-	 // echo $image_Path; die();
-	 }
-
+    $book_id = $_POST['book_id'];
 	  $title = $_POST['title'];
-	 $addBanner = new Banner();
-	 $addBanner->addBanner($image_Path,$title);
+	  $author = $_POST['author'];
+    $year_of_publication = $_POST['year_of_publication'];
+    $old_count = $_POST['old_count'];
+    $new_count = $_POST['new_count'];
+
+    $count = $old_count + $new_count;
+
+	 $editBook = new Staff();
+	 $editBook->editBook($book_id, $title,$author,$year_of_publication,$count);
+
 	
 
 	
@@ -61,7 +38,7 @@ if(isset($_POST['submit'])){
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Add Banner | Click Mobile</title>
+  <title>Edit Book | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -98,12 +75,12 @@ if(isset($_POST['submit'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Add Banner
+        Edit Book
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="add-banner.php">Add Banner</a></li>
+        <li><a href="librarian-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Edit Book</a></li>
        
       </ol>
     </section>
@@ -111,16 +88,16 @@ if(isset($_POST['submit'])){
     <!-- Main content -->
     <section class="content">
 	<!-- form start -->
-            <form role="form" action="add-banner.php" method="POST" enctype="multipart/form-data">
+            <form role="form" action="edit-book.php" method="POST" enctype="multipart/form-data">
 			<?php
-                            if(isset($_SESSION["banner-added"]) && $_SESSION["banner-added"]==true)
+                            if(isset($_SESSION["book-edited"]) && $_SESSION["book-edited"]==true)
                             {
                                 echo "<div class='alert alert-success'>";
                                 echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully added a banner";
-                                unset($_SESSION["banner-added"]);
+                                echo "<strong>Success! </strong>"; echo "You have successfully edited a Book";
+                                unset($_SESSION["book-edited"]);
                                 echo "</div>";
-								 header('Refresh: 5; URL= view-banners.php');
+								 header('Refresh: 5; URL= view-books.php');
                             }
 							?>
       <div class="row box box-primary">
@@ -128,23 +105,41 @@ if(isset($_POST['submit'])){
         <div class="col-md-6">
           <!-- general form elements -->
               <div class="box-body">
+<div class="alert alert-warning">
+  <p>There are currently <span style="font-size: 20px;" class="badge"><?php if(isset($book)){ echo $book['count'];} ?></span> books of this Book</p>
+</div>          
+                <input type="text" name="book_id" value="<?php if(isset($book)){ echo $book['id'];} ?>" hidden>
+                <input type="text" name="old_count" value="<?php if(isset($book)){ echo $book['count'];} ?>" hidden>
+                <div class="form-group">
+                  <label for="fatherName">Book ID</label>
+                  <input class="form-control" value="<?php if(isset($book)){ echo $book['id'];} ?>" name="id" required disabled="">
+                </div>
+                <div class="form-group">
+                  <label for="fatherName">Title</label>
+                  <input class="form-control" placeholder="Enter Book Title" name="title" required value="<?php if(isset($book)){ echo $book['title'];} ?>">
+                </div>
+
+                <div class="form-group">
+                  <label for="fatherName">Author</label>
+                  <input class="form-control" placeholder="Enter Author Name" name="author" value="<?php if(isset($book)){ echo $book['author'];} ?>" required>
+                </div>
+	         
+				        <div class="form-group">
+                  <label for="fatherName">Year of Publication</label>
+                  <input type="number" min="1900" placeholder="Example 2014" max="3000" class="form-control" name="year_of_publication" required value="<?php if(isset($book)){ echo $book['year_of_publication'];} ?>">
+                </div>
+                <div class="form-group">
+                  <label for="fatherName">Book Count</label>
+                  <input type="number" value="0" min="0" placeholder="" class="form-control" name="new_count" required>
+                  <small style="color: red;">We will add this on top of the exisiting number of Books</small>
+                </div>
+              
                 
-				
-				<div class="form-group">
-                  <label for="fatherMiddleName">Banner Image</label>
-                  <input type="file" class="" name="banner_image" required>
-                </div>
-				
-				 <div class="form-group">
-                  <label for="fatherName">Short Description</label>
-                  <input class="form-control" name="title" required>
-                </div>
-				
               </div>
 			  
               <!-- /.box-body -->
 			  <div class="box-footer">
-                <button type="submit" name="submit" class="btn btn-primary btn-block">Submit</button>
+                <button type="submit" name="submit" class="btn btn-primary btn-block"><i class="fa fa-edit" aria-hidden="true"></i> Edit Book</button>
               </div>
           <!-- /.box -->
 
@@ -168,14 +163,6 @@ if(isset($_POST['submit'])){
   </div>
   <!-- /.content-wrapper -->
   <?php include_once("footer.html"); ?>
-
-  
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
-</div>
-<!-- ./wrapper -->
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
