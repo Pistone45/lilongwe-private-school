@@ -1,15 +1,8 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_POST['submit'])) {
-  $level = $_POST['level'];
-  $academic_year = $_POST['academic_year'];
-  $term = $_POST['term'];
-
-$getStudentsFees = new Staff();
-$fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
-
-}
+$getAllUsers = new User();
+$users = $getAllUsers->getAllUsers();
 
 
 ?>
@@ -18,7 +11,7 @@ $fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Paid Fees | Lilongwe Private School</title>
+  <title>All users | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -58,12 +51,12 @@ $fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Students who have paid School Fees:
+        All System Users
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="accountant-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Paid Fees</a></li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-users.php">All users</a></li>
        
       </ol>
     </section>
@@ -79,53 +72,53 @@ $fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student ID</th>
-                  <th>Student Name</th>
-                  <th>Class Name</th>
-                  <th>Amount</th>
-                  <th>Date Paid</th>
-                  <th>Year</th>
-                  <th>Reference</th>
+                  <th>Username</th>
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Role</th>
+        				  <th>Date Added</th>
+        				  <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
         $i = 0;
-				if(isset($fees) && count($fees)>0){
-					foreach($fees as $fee){ 
+				if(isset($users) && count($users)>0){
+					foreach($users as $user){ 
             $i++;   ?>
-					<tr>
-                  <td><?php echo $fee['students_student_no']; ?></td>
-                  <td><?php echo $fee['student_name']; ?></td>
-                  <td><?php echo $fee['sub_class_name']; ?></td>
-                  <td><?php echo $fee['amount']; ?></td>
-                  <td><?php $date = date_create($fee['date_paid']); echo date_format($date,"d, M Y");?></td>
-                  <td><?php echo $fee['academic_year'];?></td>
-                  <td><?php echo $fee['ref_num'];?></td>
-
+          
+					     <tr>
+                  <td><?php echo $user['username']; ?></td>
+                  <td><?php echo $user['firstname']; ?></td>
+                  <td><?php echo $user['middlename']; ?></td>
+                  <td><?php echo $user['lastname']; ?></td>
+                  <td><?php echo $user['role_name']; ?></td>
+        				  <td><?php $date = date_create($user['date_added']); echo date_format($date,"d, M Y"); ?></td>
+        				  <td><?php echo $user['status_name']; ?></td>
                 </tr>
-
 
 					<?php
 						
 					}
-				}else{
-          echo "No students Found";
-        }
+				}
 				?>
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Class Name</th>
-                  <th>Action</th>
+                  <th>Username</th>
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Role</th>
+                  <th>Date Added</th>
+                  <th>Status</th>
                 </tr>
                 </tfoot>
               </table>
             </div>
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -136,30 +129,13 @@ $fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
     </section>
     <!-- /.content -->
   </div>
-
-  <script>
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover({
-        placement : 'top',
-        trigger : 'hover'
-    });
-});
-</script>
-<style>
-  .bs-example{
-      margin: 150px 50px;
-    }
-</style>
-
-    <script type="text/javascript">
+      <script type="text/javascript">
     window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
         $(this).remove(); 
     });
 }, 4000);
   </script>
-
-
   <!-- /.content-wrapper -->
    <?php include_once("footer.html"); ?>
 

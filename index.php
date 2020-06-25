@@ -127,7 +127,7 @@ $fees_balance_count = $getFeesBalanceCount->getFeesBalanceCount($fees, $academic
               <p>Students with Fees Balance</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="ion ion-cash"></i>
             </div>
             <a href="fees-balances.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
@@ -159,7 +159,7 @@ $fees_balance_count = $getFeesBalanceCount->getFeesBalanceCount($fees, $academic
             <div class="icon">
               <i class="ion ion-person-add"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="view-students.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -174,7 +174,7 @@ $fees_balance_count = $getFeesBalanceCount->getFeesBalanceCount($fees, $academic
             <div class="icon">
               <i class="ion ion-pie-graph"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="view-users.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->

@@ -386,7 +386,9 @@ class User{
 		public function getAllUsers(){
 		//get all users
 		try{
-			$getUsers = $this->dbCon->prepare("SELECT username, firstname,middlename,lastname, email, phone from users " );
+			$getUsers = $this->dbCon->prepare("SELECT roles.name as role_name,
+			user_status.name as status_name, username, firstname,middlename,lastname, user_status_id, roles_id, date_added FROM users INNER JOIN roles ON(users.roles_id=roles.id) 
+				INNER JOIN user_status ON(users.user_status_id=user_status.id) ORDER BY roles.name ASC" );
 			$getUsers->execute();
 			if($getUsers->rowCount()>0){
 				$row = $getUsers->fetchAll();
@@ -2446,7 +2448,7 @@ public function getBookCount($book_id){
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM payments INNER JOIN students ON(payments.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? GROUP BY students_student_no ORDER BY student_no ASC ");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);
@@ -2462,7 +2464,7 @@ public function getBookCount($book_id){
 
 	public function getFeesBalanceCount($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getFeesBalanceCount = $this->dbCon->Prepare("SELECT count(student_no) as fees_count, student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
+		$getFeesBalanceCount = $this->dbCon->Prepare("SELECT DISTINCT count(student_no) as fees_count, student_no, firstname, lastname, SUM(payments.amount) as amount, sub_classes.name as sub_class_name, payments.academic_year as academic_year, payments.term as term FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN payments ON(payments.students_student_no=students.student_no) WHERE payment_type_id=? AND academic_year=? AND term=? AND payments.amount <? ORDER BY student_no ASC");
 		$getFeesBalanceCount->bindParam(1,$payment_type_id);
 		$getFeesBalanceCount->bindParam(2,$academic_year);
 		$getFeesBalanceCount->bindParam(3,$term);

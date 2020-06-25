@@ -106,7 +106,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
                   <td><?php echo $submit['assignment_type_name']; ?></td>
                   <td><?php echo $submit['assignment_title']; ?></td>
                   <td><?php if($submit['marks'] == ""){echo "<i>Not Marked</i>";}else{echo$submit['marks'];} ?> </td>
-                  <td>
+                  
           <form action="submit.php?id=<?php echo $_POST['term']; ?>" method="POST">
         <input type="text" hidden="" id="assignments_id" value="<?php echo $submit['assignments_id']; ?>" name="assignments_id">
 
@@ -121,7 +121,7 @@ $submitted = $getAllSubmittedAssignments->getAllSubmittedAssignments($class_id, 
         <!-- End of the variables to passed on to the next page -->
           
           <td><button type="submit" name="variables" class="btn btn-info">Edit Marks</button></td>
-          </form></td>
+          </form>
 
           <td><a href="assignments/students/<?php echo $submit['submitted_assignment']; ?>"><button class="btn btn-success">Download</button></a></td>
 
