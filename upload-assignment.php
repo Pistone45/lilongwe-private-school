@@ -110,7 +110,7 @@ if(isset($_POST['upload'])){
             
            
             <!-- form start -->
-            <form action="upload-assignment" enctype="multipart/form-data" method="post">
+            <form action="upload-assignment.php" enctype="multipart/form-data" method="post">
 			     <?php
                             if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
                             {
