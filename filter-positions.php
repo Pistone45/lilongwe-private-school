@@ -98,20 +98,20 @@ $terms = $getTerms->getTerms();
                   </select>
                 </div>
 
-              <div class="form-group">
-      <label>Select Academic Year </label>
-      <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
-       <?php
-                  if(isset($years) && count($years)>0){
-                    foreach($years as $year){ ?>
-                      <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
-                    <?php
-                      
-                    }
-                  }
-                ?>
-    </select>
-</div>
+      <div class="form-group">
+          <label>Select Academic Year </label>
+          <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+           <?php
+                      if(isset($years) && count($years)>0){
+                        foreach($years as $year){ ?>
+                          <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                        <?php
+                          
+                        }
+                      }
+                    ?>
+        </select>
+    </div>
       
       <div class="form-group">
                         <label>Select Term </label>

@@ -8,7 +8,10 @@ $status = 1;
 $getCurrentSettings = new Settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
-
+$academic_year =(int)$settings['academic_year'];
+//from academic_year get the last 10 years
+$ten_years = $academic_year-10;
+$years =range($academic_year,$ten_years,-1);
 
 $getTerms = new Settings();
 $terms = $getTerms->getTerms();
@@ -96,16 +99,24 @@ $terms = $getTerms->getTerms();
                 </div>
                 
 
-<div class="form-group">
-                    <label for="email">Select Year</label>
-                    <select class="form-control" name="academic_year" required="">
-                      <option value="2020">2020</option>
-                    </select>
-                  </div>
+        <div class="form-group">
+          <label>Select Academic Year </label>
+          <select required="" name="academic_year" class="form-control" id="academic_year" onchange="showTerm(this.value)">
+           <?php
+                      if(isset($years) && count($years)>0){
+                        foreach($years as $year){ ?>
+                          <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                        <?php
+                          
+                        }
+                      }
+                    ?>
+        </select>
+      </div>
+
                  <div class="form-group">
                         <label>Select Term </label>
                         <select name="term" class="form-control" required="">
-                        <option selected=""><b>Choose...</b></option>
                 <?php
                   if(isset($terms) && count($terms)>0){
                     foreach($terms as $term){ ?>

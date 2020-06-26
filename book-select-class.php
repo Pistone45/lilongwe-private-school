@@ -104,7 +104,6 @@ $books = $getAllBooks->getAllBooks();
         <div class="form-group">
           <label>Select Book</label>
           <select name="book_id" class="form-control" required="">
-          <option selected="">Choose Book...</option>
   <?php
     if(isset($books) && count($books)>0){
       foreach($books as $book){ ?>
