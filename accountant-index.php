@@ -124,7 +124,7 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <td><?php echo $student['sub_class_name']; ?></td>
                   <td><?php echo $student['academic_year']; ?></td>
                   <td><?php echo $student['term']; ?></td>
-                  <td><?php echo $fees - $student['amount']; ?></td>
+                  <td>K<?php echo number_format($fees - $student['amount']); ?></td>
                 </tr>
 
 
