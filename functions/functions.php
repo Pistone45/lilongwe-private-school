@@ -926,6 +926,17 @@ class Subjects{
 		}
 	} //end of getting subjects per class
 	
+	public function getSubjectsPerSubClass($sub_class){
+		$getSubjectsPerSubClass = $this->dbCon->Prepare("SELECT count(subjects_id) as subjects_count FROM sub_classes_has_subjects WHERE sub_classes_id=?");
+		$getSubjectsPerSubClass->bindParam(1,$sub_class);
+		$getSubjectsPerSubClass->execute();
+		
+		if($getSubjectsPerSubClass->rowCount()>0){
+			$rows = $getSubjectsPerSubClass->fetch();
+			return $rows;
+		}
+	} //end of getting subjects per Sub class
+	
 	public function assignSubjectsToClasses($class,$subjects){
 		if(!empty($subjects)){
 			
@@ -1780,19 +1791,41 @@ public function getAllSubclassSubjects($sub_class_id){
 		}
 	} //end of getting exam Results
 
-
+	
 	public function getFinalPositions($academic_year,$term, $sub_class){
-		//$general=3;
-		//$exam_status_id = 2;
-		
-		$getFinalPositions = $this->dbCon->Prepare("SELECT DISTINCT academic_year,terms_id 
-      , CONCAT(students.firstname,' ', students.lastname) as student_name,
-   exam_results.marks as marks, submissions.marks as mark, sub_classes.name as class_name, 
-    exam_results.academic_year as academic_year, exam_results.terms_id as term
-     FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no) INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) INNER JOIN submissions ON(submissions.students_student_no=students.student_no) WHERE academic_year=? AND terms_id=? AND students.sub_classes_id=? AND submissions.students_student_no=exam_results.students_student_no GROUP BY exam_results.students_student_no");
-		$getFinalPositions->bindParam(1,$academic_year);
-		$getFinalPositions->bindParam(2,$term);
+	//get subjects count per sub_class
+	$getSubjectsPerSubClass = new Subjects();
+	$rows = $getSubjectsPerSubClass->getSubjectsPerSubClass($sub_class);
+	$subjects_count = $rows['subjects_count'];
+	$exam_status_id =1; //Active
+	$general_assignment=3;
+		$getFinalPositions = $this->dbCon->Prepare("SELECT  student_no, student_name,class_name,ROUND(SUM(mark) /?,2)  as mark ,academic_year,term
+			FROM (SELECT exam_results.students_student_no as student_no, sub_classes.name as class_name,SUM(exam_results.marks) as mark, 
+					exam_results.academic_year,exam_results.terms_id as term,concat(firstname,' ',middlename,' ',lastname) as student_name
+					FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
+                    INNER JOIN students ON (students.student_no=exam_results.students_student_no)
+					 INNER JOIN sub_classes ON(sub_classes.id=students.sub_classes_id)
+				WHERE exam_results.exam_status_id=? AND students.sub_classes_id=? AND exam_results.academic_year=? AND exam_results.terms_id=?
+					GROUP BY exam_results.students_student_no
+			UNION ALL
+			SELECT students_student_no as student_no, sub_classes.name as class_name,SUM(marks) as mark,academic_year,terms_id as term,concat(firstname,' ',middlename,' ',lastname) as student_name
+					FROM submissions  INNER JOIN assignments ON (assignments.id=submissions.assignments_id) 
+                    INNER JOIN subjects ON(subjects.id=assignments.subjects_id)
+                    INNER JOIN students ON(students.student_no=submissions.students_student_no)
+					INNER JOIN sub_classes ON(sub_classes.id=students.sub_classes_id)
+					WHERE students.sub_classes_id=? AND academic_year=? AND terms_id=? AND assignment_type_id !=?
+					GROUP BY students_student_no
+			) results
+			group by student_no ORDER BY mark DESC");
+		$getFinalPositions->bindParam(1,$subjects_count);
+		$getFinalPositions->bindParam(2,$exam_status_id);
 		$getFinalPositions->bindParam(3,$sub_class);
+		$getFinalPositions->bindParam(4,$academic_year);
+		$getFinalPositions->bindParam(5,$term);
+		$getFinalPositions->bindParam(6,$sub_class);
+		$getFinalPositions->bindParam(7,$academic_year);
+		$getFinalPositions->bindParam(8,$term);
+		$getFinalPositions->bindParam(9,$general_assignment);
 		$getFinalPositions->execute();
 		
 		if($getFinalPositions->rowCount()>0){
