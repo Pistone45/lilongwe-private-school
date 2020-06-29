@@ -34,7 +34,7 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Lilongwe Private School| Dashboard</title>
+  <title>Lilongwe Private School | Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -116,16 +116,16 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
         $i = 0;
         if(isset($students) && count($students)>0){
           foreach($students as $student){ 
-            $i++;   ?>
-          <tr>
+            $i++;  if($fees - $student['amount'] == 0){}else{  ?>          <tr>
                   <td><?php echo $student['student_no']; ?></td>
                   <td><?php echo $student['firstname']; ?></td>
                   <td><?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class_name']; ?></td>
-                  <td><?php echo $student['academic_year']; ?></td>
-                  <td><?php echo $student['term']; ?></td>
-                  <td>K<?php echo number_format($fees - $student['amount']); ?></td>
-                </tr>
+                  <td><?php echo $academic_year ?></td>
+                  <td><?php echo $term = $settings['term']; ?></td>
+                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo number_format($fees - $student['amount']);} ?></td>
+                </tr><?php } ?>
+
 
 
           <?php
