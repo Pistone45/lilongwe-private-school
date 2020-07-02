@@ -232,7 +232,7 @@ $term = $getTerm->getTerm();
             
            
             <!-- form start -->
-            <form action="upload-student-assignment" enctype="multipart/form-data" method="post">
+            <form action="upload-student-assignment.php" enctype="multipart/form-data" method="post">
            <?php
                             if(isset($_SESSION["uploaded"]) && $_SESSION["uploaded"]==true)
                             {
