@@ -2483,7 +2483,7 @@ public function getBookCount($book_id){
 		$payment_type_id = 1;	
 		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_class_name, SUM(amount) as amount
 			FROM (SELECT payments.students_student_no as student_no, SUM(amount) as amount, students.firstname as firstname, students.lastname as lastname, sub_classes.name as sub_class_name FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id)
-				WHERE payment_type_id=? AND academic_year=? AND term=?
+				WHERE payment_type_id=? AND academic_year=? AND term=? 
 					GROUP BY payments.students_student_no HAVING (SUM(amount) <=?)
 			UNION ALL
 			SELECT student_no as student_no, firstname, lastname, sub_classes.name as sub_class_name, null

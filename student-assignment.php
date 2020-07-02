@@ -66,7 +66,7 @@ $student = $getStudentDetailsPerGuardian->getStudentDetailsPerGuardian($id);
       </h1>
       <ol class="breadcrumb">
         <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-assignments.php">Assignments</a></li>
+        <li class="active"><a href="#">Assignments</a></li>
        
       </ol>
     </section>

@@ -71,7 +71,7 @@ if(isset($_POST['submit'])){
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="add-teacher.php">Teacher Registration</a></li>
+        <li class="active"><a href="#">Teacher Registration</a></li>
        
       </ol>
     </section>
@@ -88,7 +88,7 @@ if(isset($_POST['submit'])){
                                 echo "<strong>Success! </strong>"; echo "You have successfully added a teacher";
                                 unset($_SESSION["teacher-added"]);
                                 echo "</div>";
-								 header('Refresh: 5; URL= view-teachers.php');
+								 header('Refresh: 5; URL= view-teacher.php');
                             }
 							?>
       <div class="row box box-primary">

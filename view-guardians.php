@@ -56,8 +56,8 @@ $guardians = $getGuardians->getGuardians();
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-guardians.php">Guardian Details</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Guardian Details</a></li>
        
       </ol>
     </section>

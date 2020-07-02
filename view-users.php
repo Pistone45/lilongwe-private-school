@@ -55,8 +55,8 @@ $users = $getAllUsers->getAllUsers();
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-users.php">All users</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">All users</a></li>
        
       </ol>
     </section>

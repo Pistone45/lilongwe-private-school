@@ -25,7 +25,7 @@ if(isset($_POST['submit'])){
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Lilongwe Private School | Add Admin</title>
+  <title>Add Admin | Lilongwe Private School |</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -91,7 +91,7 @@ if(isset($_POST['submit'])){
                                 echo "<strong>Success! </strong>"; echo "You have successfully added the User";
                                 unset($_SESSION["user-added"]);
                                 echo "</div>";
-								 header('Refresh: 5; URL= add-user.php');
+								 header('Refresh: 5; URL= index.php');
                             }
 							?>
               <div class="box-body">

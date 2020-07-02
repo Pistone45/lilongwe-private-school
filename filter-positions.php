@@ -22,7 +22,7 @@ $terms = $getTerms->getTerms();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Filter Positions| Lilongwe Private School</title>
+  <title>Filter Positions | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -64,7 +64,7 @@ $terms = $getTerms->getTerms();
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="select-level.php">Class Level</a></li>
+        <li class="active"><a href="#">Class Level</a></li>
        
       </ol>
     </section>

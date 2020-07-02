@@ -113,17 +113,16 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                 </thead>
                 <tbody>
         <?php
-        $i = 0;
         if(isset($students) && count($students)>0){
           foreach($students as $student){ 
-            $i++;  if($fees - $student['amount'] == 0){}else{  ?>          <tr>
+              if($fees - $student['amount'] == 0){}else{  ?>          <tr>
                   <td><?php echo $student['student_no']; ?></td>
                   <td><?php echo $student['firstname']; ?></td>
                   <td><?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class_name']; ?></td>
                   <td><?php echo $academic_year ?></td>
                   <td><?php echo $term = $settings['term']; ?></td>
-                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo number_format($fees - $student['amount']);} ?></td>
+                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($fees - $student['amount']);} ?></td>
                 </tr><?php } ?>
 
 

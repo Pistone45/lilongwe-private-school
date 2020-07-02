@@ -54,8 +54,8 @@ $teachers = $getTeachers->getTeachers();
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-teachers.php">Teacher Details</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Teacher Details</a></li>
        
       </ol>
     </section>

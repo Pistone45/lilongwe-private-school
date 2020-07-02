@@ -26,7 +26,7 @@ $levels = $getClassPerStudent->getClassPerStudent($sub_class_id);
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Select | Lilongwe Private School</title>
+  <title>Select Level | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -68,7 +68,7 @@ $levels = $getClassPerStudent->getClassPerStudent($sub_class_id);
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="select-level.php">Course Level</a></li>
+        <li class="active"><a href="#">Course Level</a></li>
        
       </ol>
     </section>

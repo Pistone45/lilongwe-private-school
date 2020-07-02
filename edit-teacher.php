@@ -78,7 +78,7 @@ if(isset($_POST['submit'])){
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="edit-teacher.php">Edit Teacher</a></li>
+        <li class="active"><a href="#">Edit Teacher</a></li>
        
       </ol>
     </section>

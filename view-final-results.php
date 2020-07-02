@@ -17,7 +17,7 @@ $FinamMarks = $getFinalAssignmentMark->getFinalAssignmentMark($academic_year, $t
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Final Results| Lilongwe Private School</title>
+  <title>View Final Results | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -61,7 +61,7 @@ $FinamMarks = $getFinalAssignmentMark->getFinalAssignmentMark($academic_year, $t
       </h1>
       <ol class="breadcrumb">
         <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-final-results.php">Final Results</a></li>
+        <li class="active"><a href="#">Final Results</a></li>
        
       </ol>
     </section>

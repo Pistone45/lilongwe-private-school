@@ -69,7 +69,7 @@ $terms = $getTerms->getTerms();
       </h1>
       <ol class="breadcrumb">
         <li><a href="student-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="filter-fina.php">Filter Exam Results</a></li>
+        <li class="active"><a href="#">Filter Exam Results</a></li>
        
       </ol>
     </section>

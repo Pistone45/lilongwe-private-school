@@ -44,8 +44,6 @@ if (isset($_POST['sub_class'])) {
 
   $getSubjectsPerClassAndTeacher = new Staff();
   $subject = $getSubjectsPerClassAndTeacher->getSubjectsPerClassAndTeacher($class_id);
-
-    echo "<option>Select Subject</option>";
             if(isset($subject) && count($subject)>0){
               foreach($subject as $subjects){ ?>
                 <option value="<?php echo $subjects['subjects_id']; ?>"><?php echo $subjects['subject_name']; ?></option>

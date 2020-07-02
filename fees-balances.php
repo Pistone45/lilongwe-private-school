@@ -63,8 +63,8 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="fees-balances.php">Fees Balances</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Fees Balances</a></li>
        
       </ol>
     </section>
@@ -84,7 +84,6 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                 <tr>
                   <th>Student No</th>
                   <th>First Name</th>
-                  <th>Middle Name</th>
                   <th>Last Name</th>
                   <th>Class</th>
                   <th>Academic Year</th>
@@ -95,18 +94,18 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                 <tbody>
 				<?php
 				if(isset($students) && count($students)>0){
-					foreach($students as $student){ ?>
+					foreach($students as $student){ 
+            if($fees - $student['amount'] == 0) {}else{?>
 					<tr>
                   <td><?php echo $student['student_no']; ?></td>
                   <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['middlename']; ?></td>
                   <td> <?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class_name']; ?></td>
-				          <td><?php echo $student['academic_year']; ?> </td>
-                  <td><?php echo $student['term']; ?> </td>
-                  <td><?php echo number_format($student['amount'],2); ?> </td>
+				          <td><?php echo $academic_year; ?> </td>
+                  <td><?php echo $term; ?> </td>
+                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($fees - $student['amount']);} ?></td>
                 </tr>
-					<?php
+					<?php }
 						
 					}
 				}else{echo "No students with fees balances found";}
@@ -117,7 +116,6 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                 <tr>
                   <th>Student No</th>
                   <th>First Name</th>
-                  <th>Middle Name</th>
                   <th>Last Name</th>
                   <th>Class</th>
         				  <th>Academic Year</th>

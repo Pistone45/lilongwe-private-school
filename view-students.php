@@ -65,8 +65,8 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="view-students.php">Student Details</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Student Details</a></li>
        
       </ol>
     </section>
