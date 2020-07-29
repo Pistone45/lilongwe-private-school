@@ -1,24 +1,9 @@
 <?php
 include_once("functions/functions.php");
 
-if (isset($_GET['id'])) {
-$id = $_GET['id'];
+$getTeachers = new Staff();
+$teachers = $getTeachers->getTeachers();
 
-$getSpecificStudent = new Students();
-$student = $getSpecificStudent->getSpecificStudent($id);
-
-}
-
-
-$student_no = $_GET['id'];
-$getSpecificFeesPerStudent = new Staff();
-$payments = $getSpecificFeesPerStudent->getSpecificFeesPerStudent($student_no);
-
-$status = 1;
-$getCurrentSettings = new Settings();
-$settings = $getCurrentSettings->getCurrentSettings($status);
-$settings['academic_year'];
-$settings['term'];
 
 
 ?>
@@ -27,7 +12,7 @@ $settings['term'];
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Track Payment| Lilongwe Private School</title>
+  <title>View Teachers | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -66,80 +51,84 @@ $settings['term'];
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1 style="text-transform: uppercase;">
-        Payment Details for <?php echo $student['firstname']." ".$student['lastname']; ?>
+      <h1>
+        Teacher Details
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Track Payment</a></li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-teachers.php">Teacher Details</a></li>
        
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
-          <div class="row">
-          <div class="col-md-12 col-xs-12">
-            <div class="box">
+      <div class="row">
+        <div class="col-xs-12">
+         <div class="box-header with-border">
+              <a href="add-teacher.php"><button type="submit" class="btn btn-primary">Add Teacher Details</button></a>
+            </div>
+          <div class="box">
+            
+            <!-- /.box-header -->
             <div class="box-body">
-            <h4>Payments for <?php echo $student['student_no']; ?></h4>
-            <table id="example1" class="table table-bordered table-striped">
+              <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Class Name</th>
-                  <th>Amount</th>
-                  <th>Date Paid</th>
-                  <th>Year</th>
-                  <th>Term</th>
-                  <th>Reference</th>
+                
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Primary Phone</th>
+				  <th>Email</th>
+				  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-        <?php
-        $i = 0;
-        if(isset($payments) && count($payments)>0){
-          foreach($payments as $payment){ 
-            $i++;   ?>
-          <tr>
-                  <td><?php echo $payment['sub_class_name']; ?></td>
-                  <td>K<?php echo number_format($payment['amount']); ?></td>
-                  <td><?php echo $payment['date_paid'];?></td>
-                  <td><?php echo $payment['academic_year'];?></td>
-                  <td><?php echo $payment['term'];?></td>
-                  <td><?php echo $payment['ref_num'];?></td>
-
+				<?php
+				if(isset($teachers) && count($teachers)>0){
+					foreach($teachers as $teacher){ ?>
+					<tr>
+                 
+                  <td><?php echo $teacher['firstname']; ?></td>
+                  <td><?php echo $teacher['middlename']; ?></td>
+                  <td> <?php echo $teacher['lastname']; ?></td>
+                  <td><?php echo $teacher['phone']; ?></td>
+				  <td><?php echo $teacher['email']; ?> </td>
+				  <td><a href="select-teacher-class.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Assign Subjects</a></td>
                 </tr>
-
-
-          <?php
-            
-          }
-        }else{
-          echo "No Payments Found";
-        }
-        ?>
+					<?php
+						
+					}
+				}
+				?>
                 
                 </tbody>
+                <tfoot>
+                <tr>
+                   <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Primary Phone</th>
+				  <th>Email</th>
+				  <th>Action</th>
+                </tr>
+                </tfoot>
               </table>
             </div>
-            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
         </div>
+        <!-- /.col -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
-
-<script type="text/javascript">
-    window.setTimeout(function() {
-    $(".alert").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove(); 
-    });
-}, 4000);
-  </script>
   <!-- /.content-wrapper -->
-<?php include_once("footer.html"); ?>
+   <?php include_once("footer.html"); ?>
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -157,5 +146,18 @@ $settings['term'];
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
 <!-- page script -->
+<script>
+  $(function () {
+    $('#example1').DataTable()
+    $('#example2').DataTable({
+      'paging'      : true,
+      'lengthChange': false,
+      'searching'   : false,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    })
+  })
+</script>
 </body>
 </html>
