@@ -21,10 +21,12 @@ if(isset($_POST['upload'])){
   $assignment_type = $_POST['assignment_type'];
   $subjects_id = $_POST['subjects_id'];
   $title = $_POST['title'];
-  $due_date = $_POST['due_date'];
+  $date = $_POST['due_date'];
   $academic_year = (int)$settings['academic_year'];
   $terms_id = (int)$settings['term'];
   $level = $_POST['level'];
+
+  $due_date = date('Y-m-d h:i',strtotime($date . "+1 days"));
 
   $target = "assignments/";
   $target = $target . basename($_FILES['assignment']['name']);
@@ -152,8 +154,8 @@ if(isset($_POST['upload'])){
 
               <div class="form-group">
               <label for="exampleInputEmail1">Due Date</label>
-              <input type="date" name="due_date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-              <small id="emailHelp" class="form-text text-muted">Select the due date</small>
+              <input type="date" name="due_date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required="">
+              <small style="color: red;" id="emailHelp" class="form-text text-muted">Select the due date</small>
             </div>
 
             <input type="text" hidden="" value="<?php if(isset($_POST['subjects_id'])) {echo $_POST['subjects_id'];}?>" name="subjects_id">

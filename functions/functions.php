@@ -110,7 +110,23 @@ public function getSpecificCurrentSettings($settings_id){
 		}
 
 		
-	}
+	}// End of getting Payment Type
+
+
+	public function getFeesPaymentType(){
+		$id = 1;
+		$getFeesPaymentType = $this->dbCon->PREPARE("SELECT id, name FROM payment_type WHERE id=?");
+		$getFeesPaymentType->bindParam(1, $id);
+		$getFeesPaymentType->execute();
+		
+		if($getFeesPaymentType->rowCount()>0){
+			$rows = $getFeesPaymentType->fetchAll();
+			
+			return $rows;
+		}
+
+		
+	}//End of getting fees Payment type
 
 
 	public function updateSettings($academic_year, $term, $fees){
@@ -164,8 +180,10 @@ class User{
 				$row = $login_query -> fetch();
 				$hash_pass =trim($row['password']);
 				$roles_id =$row['roles_id'];
+				$user_status_id =$row['user_status_id'];
+
 				//verify password
-				if (password_verify($password, $hash_pass)) {
+				if (password_verify($password, $hash_pass) && $user_status_id == 1) {
 					
 					// Success!
 					$_SESSION['user'] = $row;
@@ -620,12 +638,12 @@ public function getLoginStatus($id){
 						  $_SESSION['student-added']=true;
 		
 					
-				}elseif($class==4){
+				}elseif($class_id==4){
 					//opr
 					
-				}elseif($class==5){
+				}elseif($class_id==5){
 					
-				}elseif($class == 6){
+				}elseif($class_id == 6){
 					
 				}
 				
@@ -953,6 +971,7 @@ class Subjects{
 	} //end of getting assigning subjects to classes
 	
 	public function assignSubjectsToSubClassAndTeacher($teacher_id,$sub_class,$subjects){
+		try{
 		if(!empty($subjects)){			
 			foreach($subjects as $subject){
 				//check if subject is not already assigned to teacher
@@ -978,9 +997,15 @@ class Subjects{
 				
 				
 		}
+				} catch (PDOException $e){
+			$_SESSION['duplicate_subject'] = true;
+		}
+	
 		
 	} //end of getting assigning subjects to sub classes and teachers
 	
+
+
 	public function getAssignedSubjects($teacher_id){
 		$getAssignedSubjects = $this->dbCon->Prepare("SELECT sub_classes_id,subjects_id, staff_id,subjects.name as subject, sub_classes.name as sub_class FROM sub_classes_has_subjects
 		INNER JOIN subjects ON (subjects.id=sub_classes_has_subjects.subjects_id) INNEr JOIN sub_classes ON (sub_classes.id=sub_classes_has_subjects.sub_classes_id) WHERE staff_id=?");
@@ -2178,6 +2203,26 @@ public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id
 	}
 
 
+	public function checkStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year){
+		$checkStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year, exam_status_id
+		FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no)
+		INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=? AND classes_has_subjects_subjects_id=?");
+		$checkStudentsPerExamType->bindParam(1,$sub_class_id);
+		$checkStudentsPerExamType->bindParam(2,$exam_type_id);
+		$checkStudentsPerExamType->bindParam(3,$academic_year);
+		$checkStudentsPerExamType->bindParam(4,$subject_id);
+		$checkStudentsPerExamType->execute();
+		
+		if($checkStudentsPerExamType->rowCount()>0){
+			$row = $checkStudentsPerExamType->fetch();
+			
+			return $row;
+			
+		}
+		
+	}// Checking if a class is already approved
+
+
 
 
 public function getSubjectById($subject_id){
@@ -2477,6 +2522,18 @@ public function getBookCount($book_id){
 			return $rows;
 		}
 	} //end of getting Students Per Class and Payment
+
+
+		public function getStudentsPerSubClassName($sub_class_id){		
+		$getStudentsPerSubClassName = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getStudentsPerSubClassName->bindParam(1,$sub_class_id);
+		$getStudentsPerSubClassName->execute();
+		
+		if($getStudentsPerSubClassName->rowCount()>0){
+			$rows = $getStudentsPerSubClassName->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per SUb Class
 
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
@@ -2985,6 +3042,14 @@ class Librarian{
 
 		  $_SESSION['librarian-edited']=true;
 		}
+
+
+	public function deleteBook($id){
+		$deleteBook =$this->dbCon->PREPARE("DELETE FROM books WHERE id='$id'");
+		$deleteBook->bindParam(1,$id);
+		$deleteBook->execute();
+		
+	}//End of deleting a Book
 
 
 

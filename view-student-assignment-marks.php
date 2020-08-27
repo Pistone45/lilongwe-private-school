@@ -98,9 +98,13 @@ $students = $getStudents->getStudents();
 					foreach($assignments as $assignment){ ?>
 					<tr>
                   <td><?php echo $assignment['title']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i"); if ($assignment['due_date'] < $date){
-                    echo "<b>Date Passed </b>(";$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y").')';
-                  } else {$date = date_create($assignment['due_date']); echo date_format($date,"d, M Y");}?></td>
+                  <td><?php $date = DATE("Y-m-d h:i");
+
+                  $due_date = date('Y-m-d',strtotime($assignment['due_date'] . "-1 days"));
+
+                  if ($assignment['due_date'] < $date) {echo "<b>Date Passed </b>(";$date = date_create($due_date); echo date_format($date,"d, M Y").')';} else {
+                    $date = date_create($due_date); echo date_format($date,"d, M Y");}
+                   ?></td>
                   <td><?php echo $assignment['academic_year']; ?></td>
                   <td><?php echo $assignment['terms_id']; ?></td>
 				  <td><?php echo $assignment['subject_name']; ?> </td>

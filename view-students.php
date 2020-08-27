@@ -97,9 +97,9 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
                   <th>Middlename</th>
                   <th>Lastname</th>
                   <th>Current Level</th>
-				  <th>Status</th>
-				  <th>Action</th>
-          <th>Action</th>
+        				  <th>Status</th>
+        				  <th>Action</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -110,17 +110,17 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
             $i++;   ?>
           
 					<tr>
-                  <td><?php echo $student_no = $student['student_no']; ?></td>
-                  <td><?php echo $student['firstname']; ?></td>
-                  <td><?php echo $student['middlename']; ?></td>
-                  <td> <?php echo $student['lastname']; ?></td>
-                  <td><?php echo $student['sub_class']; ?></td>
-				  <td><?php echo $student['student_status']; ?> </td>
-				  <td><a href="student-details.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a></td>
-          <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Contact Student</button></td>
-                </tr>
+              <td><?php echo $student_no = $student['student_no']; ?></td>
+              <td><?php echo $student['firstname']; ?></td>
+              <td><?php echo $student['middlename']; ?></td>
+              <td> <?php echo $student['lastname']; ?></td>
+              <td><?php echo $student['sub_class']; ?></td>
+    				  <td><?php echo $student['student_status']; ?> </td>
+    				  <td><a href="student-details.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a></td>
+              <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Contact Student</button></td>
+          </tr>
 
-                            <!-- Modal -->
+<!-- Modal -->
 <div id="<?php echo $i; ?>" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -128,7 +128,7 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Contact Student</h4>
+        <h4 class="modal-title">Contact <?php echo $student['firstname'].' '.$student['lastname']; ?></h4>
       </div>
       <div class="modal-body">
             <form action="view-students.php" method="post">
@@ -166,9 +166,9 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
                   <th>Middlename</th>
                   <th>Lastname</th>
                   <th>Current Level</th>
-          <th>Status</th>
-          <th>Action</th>
-          <th>Action</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>

@@ -114,6 +114,17 @@ $levels = $getSubClasses->getSubClasses();
 					 header('Refresh: 5; URL= view-teachers.php');
 				}
 			?>
+			<?php
+				if(isset($_SESSION["duplicate_subject"]) && $_SESSION["duplicate_subject"]==true)
+				{
+					echo "<div class='alert alert-warning'>";
+					echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+					echo "<strong>Failed! </strong>"; echo "This subject is already assigned to another teacher in the same class";
+					unset($_SESSION["duplicate_subject"]);
+					echo "</div>";
+					 header('Refresh: 5; URL= view-teachers.php');
+				}
+			?>
               <div class="box-body">
 				<input type="hidden" value="<?php if(isset($teacher_id)){ echo $teacher_id; }?>" name="teacher_id" />
 				<input type="hidden" value="<?php if(isset($sub_class)){ echo $sub_class; }?>" name="sub_class" />
