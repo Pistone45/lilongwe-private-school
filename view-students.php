@@ -85,6 +85,19 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
               <strong>Success!</strong> You have successfully sent a Message
             </div>  <?php
             unset($_SESSION["message-sent"]);
+            header('Refresh: 4; URL= view-students.php');
+                      }
+              ?>
+
+          <?php
+              if(isset($_SESSION["student_deleted"]) && $_SESSION["student_deleted"]==true)
+                  { ?>
+            <div class="alert alert-danger" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> You have successfully deleted a Student
+            </div>  <?php
+            unset($_SESSION["student_deleted"]);
+            header('Refresh: 4; URL= view-students.php');
                       }
               ?>
             <!-- /.box-header -->
@@ -92,33 +105,66 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Registration Number</th>
+                  <th>Guardian</th>
+                  <th>Student NO</th>
                   <th>Firstname</th>
-                  <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Current Level</th>
+                  <th>Class</th>
         				  <th>Status</th>
         				  <th>Action</th>
                   <th>Action</th>
+                  <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
         $i = 0;
+        $delete = 0;
 				if(isset($students) && count($students)>0){
 					foreach($students as $student){ 
-            $i++;   ?>
+            $i++;  
+            $delete++;  ?>
           
 					<tr>
+              <td><?php echo $student['guardian']; ?></td>
               <td><?php echo $student_no = $student['student_no']; ?></td>
               <td><?php echo $student['firstname']; ?></td>
-              <td><?php echo $student['middlename']; ?></td>
               <td> <?php echo $student['lastname']; ?></td>
               <td><?php echo $student['sub_class']; ?></td>
     				  <td><?php echo $student['student_status']; ?> </td>
     				  <td><a href="student-details.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a></td>
               <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Contact Student</button></td>
+              <td><a href="#"><i style="font-size: 28px; color: red;" data-toggle="modal" data-target="#my<?php echo$delete; ?>Modal" class="fa fa-trash-o" aria-hidden="true"></i></a></td>
           </tr>
+
+
+<!-- Modal -->
+<div id="my<?php echo$delete; ?>Modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Delete <?php echo $student['firstname'].' '.$student['lastname']; ?></h4>
+      </div>
+      <div class="modal-body">
+        <form action="delete-student.php" method="POST">
+          <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>">
+          <div class="alert alert-warning">
+            <p>Are you sure you want to delete this student? All his data including his details, fees balances, borrowed books and exams results will be gone from the system.</p>
+          </div>
+          <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- Modal -->
 <div id="<?php echo $i; ?>" class="modal fade" role="dialog">
@@ -161,14 +207,15 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Registration Number</th>
+                  <th>Guardian</th>
+                  <th>Student NO</th>
                   <th>Firstname</th>
-                  <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Current Level</th>
+                  <th>Class</th>
                   <th>Status</th>
                   <th>Action</th>
                   <th>Action</th>
+                  <th>Delete</th>
                 </tr>
                 </tfoot>
               </table>
@@ -184,13 +231,6 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
     </section>
     <!-- /.content -->
   </div>
-      <script type="text/javascript">
-    window.setTimeout(function() {
-    $(".alert").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove(); 
-    });
-}, 4000);
-  </script>
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 

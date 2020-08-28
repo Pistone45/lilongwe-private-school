@@ -461,7 +461,25 @@ class User{
 
 	} //end of getting single user
 
+	public function disableSpecificUser($username){
+			$status = '0';
+			$disableSpecificUser = $this->dbCon->PREPARE("UPDATE users SET user_status_id=? WHERE username=?");
+			$disableSpecificUser->bindParam(1,$status);
+			$disableSpecificUser->bindParam(2,$username);
+			$disableSpecificUser->execute();
 
+			$_SESSION['user_deactivated'] = true;
+		}//End of Disabling a User
+
+	public function enableSpecificUser($username){
+			$status = '1';
+			$enableSpecificUser = $this->dbCon->PREPARE("UPDATE users SET user_status_id=? WHERE username=?");
+			$enableSpecificUser->bindParam(1,$status);
+			$enableSpecificUser->bindParam(2,$username);
+			$enableSpecificUser->execute();
+
+			$_SESSION['user_activated'] = true;
+		}//End of Enabling a User
 	
 
 
@@ -488,10 +506,10 @@ class Students{
 	}
 
 	public function getStudents(){
-		$getStudents = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender,place_of_birth,country_of_birth,nationality,home_language,
+		$getStudents = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, CONCAT(guardians.firstname, ' ' ,guardians.lastname)as guardian, place_of_birth,country_of_birth,nationality,home_language,
 		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type,
 		student_status.name as student_status,sub_classes.name as sub_class
-		FROM students INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
+		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
 		ON (student_status.id=students.student_status_id) INNER JOIN gender ON (gender.id=students.gender_id)");
 		$getStudents->execute();
 		
@@ -502,10 +520,10 @@ class Students{
 	} //end of getting students
 	
 	public function getSpecificStudent($id){
-		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender, gender_id, place_of_birth,country_of_birth,nationality,home_language,
+		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, gender_id, guardians.email as guardian_email, place_of_birth,country_of_birth,nationality,home_language,
 		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type, blood_type_id,
 		student_status.name as student_status,sub_classes.name as sub_class, sub_classes.id as sub_class_id
-		FROM students INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
+		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
 		ON (student_status.id=students.student_status_id) INNER JOIN gender ON (gender.id=students.gender_id) WHERE student_no=?");
 		$getSpecificStudent->bindParam(1,$id);
 		$getSpecificStudent->execute();
@@ -677,6 +695,37 @@ public function getLoginStatus($id){
 		$editStudent->execute();
 		$_SESSION['student-edited'] = true;
 	}
+
+
+    public function deleteStudent($student_no){
+
+    	$examResults = $this->dbCon->Prepare("DELETE FROM exam_results WHERE students_student_no=?");
+		$examResults->bindParam(1,$student_no);
+		$examResults->execute();
+
+		$examResults = $this->dbCon->Prepare("DELETE FROM submissions WHERE students_student_no=?");
+		$examResults->bindParam(1,$student_no);
+		$examResults->execute();
+
+		$users = $this->dbCon->Prepare("DELETE FROM users WHERE username=?");
+		$users->bindParam(1,$student_no);
+		$users->execute();
+
+		$payments = $this->dbCon->Prepare("DELETE FROM payments WHERE students_student_no=?");
+		$payments->bindParam(1,$student_no);
+		$payments->execute();
+
+		$payments = $this->dbCon->Prepare("DELETE FROM students_has_classes_has_subjects WHERE students_student_no=?");
+		$payments->bindParam(1,$student_no);
+		$payments->execute();
+
+
+		$deleteStudent = $this->dbCon->Prepare("DELETE FROM students WHERE student_no=?");
+		$deleteStudent->bindParam(1,$student_no);
+		$deleteStudent->execute();
+
+		$_SESSION['student_deleted'] = true;
+	} 
 
 	
     public function getStudentCount(){
@@ -1568,6 +1617,19 @@ class Staff{
 		
 	}
 	
+
+	public function getSubClassName($sub_class_id){
+		$getSubClassName = $this->dbCon->Prepare("SELECT name 
+		FROM sub_classes WHERE id=? ");
+		$getSubClassName->bindParam(1, $sub_class_id);
+		$getSubClassName->execute();
+		
+		if($getSubClassName->rowCount()>0){
+			$row = $getSubClassName->fetch();
+			return $row;
+		}
+	} //End of getting Sub Class Name
+
 
 	public function AddNotice($notice, $deadline){
 				$AddNotice = $this->dbCon->prepare("INSERT INTO notices (notice,deadline)
@@ -2525,7 +2587,7 @@ public function getBookCount($book_id){
 
 
 		public function getStudentsPerSubClassName($sub_class_id){		
-		$getStudentsPerSubClassName = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_classes.name as sub_class_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
+		$getStudentsPerSubClassName = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, middlename, sub_classes.name as sub_class_name, student_status.name as status_name FROM students INNER JOIN sub_classes ON(students.sub_classes_id=sub_classes.id)  INNER JOIN student_status ON(students.student_status_id=student_status.id) WHERE sub_classes_id=? ORDER BY student_no ASC");
 		$getStudentsPerSubClassName->bindParam(1,$sub_class_id);
 		$getStudentsPerSubClassName->execute();
 		
@@ -2777,7 +2839,20 @@ public function getBookCount($book_id){
 		$editBook->execute();
 
 		$_SESSION['book-edited']=true;
-	}
+	}//End of Editing a book
+
+
+	public function increaseBookCount($book_id, $count){
+		$increaseBookCount =$this->dbCon->PREPARE("UPDATE books SET count=? WHERE id=? ");
+		$increaseBookCount->bindParam(1,$count);
+		$increaseBookCount->bindParam(2,$book_id);
+		$increaseBookCount->execute();
+
+		$_SESSION['count_increased']=true;
+	}//End of Increasing book count
+
+
+
 
 }
 
@@ -2945,6 +3020,22 @@ class Accountant{
 		}
 
 
+	public function getStudentsFeesBalancesPerClass($class_id, $fees, $term, $academic_year){	
+		$payment_type_id = 1;	
+		$getStudentsFeesBalancesPerClass = $this->dbCon->Prepare("SELECT amount FROM payments");
+		//$getStudentsFeesBalancesPerClass->bindParam(1,$payment_type_id);
+		//$getStudentsFeesBalancesPerClass->bindParam(2,$academic_year);
+		//$getStudentsFeesBalancesPerClass->bindParam(3,$term);
+		//$getStudentsFeesBalancesPerClass->bindParam(4,$fees);
+		//$getStudentsFeesBalancesPerClass->execute();
+		
+		if($getStudentsFeesBalancesPerClass->rowCount()>0){
+			$rows = $getStudentsFeesBalancesPerClass->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class and Payment
+
+
 
 }
 
@@ -3048,6 +3139,8 @@ class Librarian{
 		$deleteBook =$this->dbCon->PREPARE("DELETE FROM books WHERE id='$id'");
 		$deleteBook->bindParam(1,$id);
 		$deleteBook->execute();
+
+		$_SESSION['book_deleted'] = true;
 		
 	}//End of deleting a Book
 

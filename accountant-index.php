@@ -97,6 +97,17 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
         <div class="col-lg-10 col-xs-12">
           <!-- Box -->
           <div class="box box-primary">
+          <?php
+            if(isset($_SESSION["reminder_sent"]) && $_SESSION["reminder_sent"]==true)
+            {
+                echo "<div class='alert alert-success'>";
+                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                echo "<strong>Success! </strong>"; echo "You have successfully sent a reminder to Guardian";
+                unset($_SESSION["reminder_sent"]);
+                echo "</div>";
+                //header('Refresh: 5; URL= accountant-index.php');
+                }
+            ?>
               <div class="box-body">
                 <h3>Students with Fees Balances</h3>
               <table id="example1" class="table table-bordered table-striped">
@@ -109,6 +120,7 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Fees Balance</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -122,7 +134,14 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <td><?php echo $student['sub_class_name']; ?></td>
                   <td><?php echo $academic_year ?></td>
                   <td><?php echo $term = $settings['term']; ?></td>
-                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($fees - $student['amount']);} ?></td>
+                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($balance = $fees - $student['amount']);} ?></td>
+                  <td>
+                    <form action="remind-guardian.php" method="POST">
+                      <input type="hidden" name="student_no" value="<?php echo$student['student_no']; ?>">
+                      <input type="hidden" name="fees_balance" value="<?php if($fees - $student['amount'] == $fees){ ?>Not Paid<?php }else{echo $balance = $fees - $student['amount'];} ?>">
+                    <button type="submit" name="remind_guardian" class="btn btn-warning">Remind Guardian</button>
+                    </form>
+                  </td>
                 </tr><?php } ?>
 
 
@@ -145,6 +164,7 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Fees Balance</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>
@@ -186,5 +206,14 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
     })
   })
 </script>
+
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+</script>
+
 </body>
 </html>

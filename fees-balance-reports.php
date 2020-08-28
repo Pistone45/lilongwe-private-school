@@ -1,21 +1,19 @@
 <?php
 include_once("functions/functions.php");
 
-$getAllUsers = new User();
-$users = $getAllUsers->getAllUsers();
+if (isset($_POST['submit'])) {
+$class_id = $_POST['level'];
 
-if (isset($_GET['deactivate'])) {
-  $username = $_GET['deactivate'];
+$status=1;
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings($status);
 
-  $disableSpecificUser = new User();
-  $disableSpecificUser = $disableSpecificUser->disableSpecificUser($username);
-}
+$fees = $settings['fees'];
+$academic_year = $settings['academic_year'];
+$term = $settings['term'];
 
-if (isset($_GET['activate'])) {
-  $username = $_GET['activate'];
-
-  $enableSpecificUser = new User();
-  $enableSpecificUser = $enableSpecificUser->enableSpecificUser($username);
+$getStudentsFeesBalancesPerClass = new Accountant();
+$students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($class_id, $fees, $term, $academic_year);
 }
 
 
@@ -25,7 +23,7 @@ if (isset($_GET['activate'])) {
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>All users | Lilongwe Private School</title>
+  <title>School Fees Reports | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -65,98 +63,135 @@ if (isset($_GET['activate'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        All System Users
-       
+        School Fees Reports
       </h1>
       <ol class="breadcrumb">
-        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">All users</a></li>
+        <li><a href="accountant-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Fees Reports</a></li>
        
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
+
       <div class="row">
         <div class="col-xs-12">
          
           <div class="box">
-            <!-- /.box-header -->
-            <div class="box-body">
-            <?php
-              if(isset($_SESSION["user_activated"]) && $_SESSION["user_activated"]==true)
-                {
-                  echo "<div class='alert alert-success'>";
-                  echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                  echo "<strong>Success! </strong>"; echo "You have successfully Activated a User";
-                  unset($_SESSION["user_activated"]);
-                  echo "</div>";
-                 header('Refresh: 4; URL= view-users.php');
-                  }
-              ?>
+            <ul class="nav nav-tabs" style="padding-top:10px; padding-left: 10px;">
+              <li class="active"><a data-toggle="tab" href="#home">Students with Balances</a></li>
+              <li><a data-toggle="tab" href="#menu1">Students with no payment</a></li>
+            </ul>
 
-              <?php
-              if(isset($_SESSION["user_deactivated"]) && $_SESSION["user_deactivated"]==true)
-                {
-                  echo "<div class='alert alert-warning'>";
-                  echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                  echo "<strong>Success! </strong>"; echo "You have successfully Deactivated a User";
-                  unset($_SESSION["user_deactivated"]);
-                  echo "</div>";
-                 header('Refresh: 4; URL= view-users.php');
-                  }
-              ?>
+            <div class="tab-content" style="padding-left: 10px; padding-bottom: 10px;">
+              <div id="home" class="tab-pane fade in active">
+                <h3>
+                  <form action="school-fee-pdf.php" method="POST">
+                  <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
+                  <button type="submit" name="submit" class="btn btn-primary">Dowload Report</button>
+                  </form>
+                </h3>
+              
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Username</th>
+                  <th>Student ID</th>
                   <th>Firstname</th>
-                  <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Role</th>
-        				  <th>Date Added</th>
-        				  <th>Status</th>
+                  <th>Payment Type</th>
+                  <th>Amount</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
+        <?php
         $i = 0;
-				if(isset($users) && count($users)>0){
-					foreach($users as $user){ 
+        if(isset($students) && count($students)>0){
+          foreach($students as $student){ 
             $i++;   ?>
           
-					     <tr>
-                  <td><?php echo $user['username']; ?></td>
-                  <td><?php echo $user['firstname']; ?></td>
-                  <td><?php echo $user['middlename']; ?></td>
-                  <td><?php echo $user['lastname']; ?></td>
-                  <td><?php echo $user['role_name']; ?></td>
-        				  <td><?php $date = date_create($user['date_added']); echo date_format($date,"d, M Y"); ?></td>
-                  <td><?php if($user['user_status_id'] == 1){  ?><a href="view-users.php?deactivate=<?php echo $user['username']; ?>"><i style="color: green; font-size: 28px;" class="fa fa-toggle-on" aria-hidden="true"></i></a><?php  }else{  ?><a href="view-users.php?activate=<?php echo $user['username']; ?>"><i style="color: red; font-size: 28px;" class="fa fa-toggle-off" aria-hidden="true"></i></a><?php } ?></td>
-                </tr>
+          <tr>
+          <td><?php echo $student['student_no']; ?></td>
+          <td><?php echo $student['firstname']; ?></td>
+          <td><?php echo $student['lastname']; ?></td>
+          <td><?php echo $student['payment_type']; ?></td>
+          <td>K<?php echo number_format($student['amount']); ?></td>
+          </tr>
 
-					<?php
-						
-					}
-				}
-				?>
+          <?php
+            
+          }
+        }
+        ?>
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Username</th>
+                  <th>Student ID</th>
                   <th>Firstname</th>
-                  <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Role</th>
-                  <th>Date Added</th>
-                  <th>Status</th>
+                  <th>Payment Type</th>
+                  <th>Amount</th>
                 </tr>
                 </tfoot>
               </table>
+
+              </div>
+              <div id="menu1" class="tab-pane fade">
+                <h3>
+                  <form action="admission-fee-pdf.php" method="POST">
+                  <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
+                  <button type="submit" name="submit" class="btn btn-primary">Dowload Report</button>
+                  </form>
+                </h3>
+              <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Firstname</th>
+                  <th>Lastname</th>
+                  <th>Payment Type</th>
+                  <th>Amount</th>
+                  <th>Date Paid</th>
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        $i = 0;
+        if(isset($admissionfees) && count($admissionfees)>0){
+          foreach($admissionfees as $admissionfee){ 
+            $i++;   ?>
+          
+          <tr>
+          <td><?php echo $admissionfee['student_id']; ?></td>
+          <td><?php echo $admissionfee['firstname']; ?></td>
+          <td><?php echo $admissionfee['lastname']; ?></td>
+          <td><?php echo $admissionfee['payment_type']; ?></td>
+          <td>K<?php echo number_format($admissionfee['amount']); ?></td>
+          <td><?php $date = date_create($admissionfee['date_paid']); echo date_format($date,"d, M Y"); ?></td>
+          </tr>
+
+          <?php
+            
+          }
+        }
+        ?>
+                
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Firstname</th>
+                  <th>Lastname</th>
+                  <th>Payment Type</th>
+                  <th>Amount</th>
+                  <th>Date Paid</th>
+                </tr>
+                </tfoot>
+              </table>
+              </div>
             </div>
 
-            <!-- /.box-body -->
           </div>
           <!-- /.box -->
         </div>

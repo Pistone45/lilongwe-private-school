@@ -1,8 +1,17 @@
 <?php
 include_once("functions/functions.php");
 
-$getTeachers = new Staff();
-$teachers = $getTeachers->getTeachers();
+if (isset($_POST['submit'])) {
+$sub_class_id = $_POST['level'];
+
+  $getStudentsPerSubClassName = new Staff();
+  $students = $getStudentsPerSubClassName->getStudentsPerSubClassName($sub_class_id);
+
+  $getSubClassName = new Staff();
+  $subclass = $getSubClassName->getSubClassName($sub_class_id);
+
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -10,7 +19,7 @@ $teachers = $getTeachers->getTeachers();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Teachers | Lilongwe Private School</title>
+  <title><?php echo $subclass['name']; ?> Student List | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -50,12 +59,11 @@ $teachers = $getTeachers->getTeachers();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Teacher Details
-       
+       <?php echo $subclass['name']; ?> Student List
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Teacher Details</a></li>
+        <li class="active"><a href="#">Student List</a></li>
        
       </ol>
     </section>
@@ -64,35 +72,38 @@ $teachers = $getTeachers->getTeachers();
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-         <div class="box-header with-border">
-              <a href="add-teacher.php"><button type="submit" class="btn btn-primary">Add Teacher Details</button></a>
-            </div>
+          <form action="student-list-pdf.php" method="POST">
+            <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
+            <button type="submit" name="list" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> Download PDF <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+          </form>
           <div class="box">
-            
-    <!-- /.box-header -->
-    <div class="box-body">
-      <table id="example1" class="table table-bordered table-striped">
-        <thead>
-        <tr>
-          <th>Firstname</th>
-          <th>Middlename</th>
-          <th>Lastname</th>
-          <th>Primary Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Registration Number</th>
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Current Level</th>
+        				  <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
 				<?php
-				if(isset($teachers) && count($teachers)>0){
-					foreach($teachers as $teacher){ ?>
+        $i = 0;
+				if(isset($students) && count($students)>0){
+					foreach($students as $student){ 
+            $i++;   ?>
+          
 					<tr>
-            <td><?php echo $teacher['firstname']; ?></td>
-            <td><?php echo $teacher['middlename']; ?></td>
-            <td> <?php echo $teacher['lastname']; ?></td>
-            <td><?php echo $teacher['phone']; ?></td>
-  				  <td><?php echo $teacher['email']; ?> </td>
-  				  <td><a href="edit-teacher.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Edit Teacher</a></td>
+              <td><?php echo $student_no = $student['student_no']; ?></td>
+              <td><?php echo $student['firstname']; ?></td>
+              <td><?php echo $student['middlename']; ?></td>
+              <td> <?php echo $student['lastname']; ?></td>
+              <td><?php echo $student['sub_class_name']; ?></td>
+    				  <td><?php echo $student['status_name']; ?> </td>
           </tr>
 					<?php
 						
@@ -103,16 +114,17 @@ $teachers = $getTeachers->getTeachers();
                 </tbody>
                 <tfoot>
                 <tr>
+                  <th>Registration Number</th>
                   <th>Firstname</th>
                   <th>Middlename</th>
                   <th>Lastname</th>
-                  <th>Primary Phone</th>
-        				  <th>Email</th>
-        				  <th>Action</th>
+                  <th>Current Level</th>
+                  <th>Status</th>
                 </tr>
                 </tfoot>
               </table>
             </div>
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -123,6 +135,13 @@ $teachers = $getTeachers->getTeachers();
     </section>
     <!-- /.content -->
   </div>
+      <script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 
