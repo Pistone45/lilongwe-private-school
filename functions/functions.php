@@ -520,7 +520,7 @@ class Students{
 	} //end of getting students
 	
 	public function getSpecificStudent($id){
-		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, gender_id, guardians.email as guardian_email, place_of_birth,country_of_birth,nationality,home_language,
+		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, gender_id, guardians.email as guardian_email, CONCAT(guardians.firstname, ' ', guardians.middlename, ' ', guardians.lastname) as guardian_name, place_of_birth,country_of_birth,nationality,home_language,
 		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type, blood_type_id,
 		student_status.name as student_status,sub_classes.name as sub_class, sub_classes.id as sub_class_id
 		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
@@ -1239,7 +1239,7 @@ class Guardian{
 
 	public function getGuardians(){
 		
-		$getGuardians = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,primary_phone,secondary_phone,address,email,occupation,employer FROM guardians");
+		$getGuardians = $this->dbCon->Prepare("SELECT id,firstname,middlename,lastname,primary_phone, CONCAT(firstname, ' ' ,lastname) as fullname, secondary_phone,address,email,occupation,employer FROM guardians");
 		$getGuardians->execute();
 		
 		if($getGuardians->rowCount()>0){
@@ -1312,6 +1312,17 @@ class Guardian{
 		 $_SESSION['guardian-updated']=true;
 		
 	}
+
+
+	public function changeGuardian($guardian_id, $student_no){
+		$changeGuardian = $this->dbCon->Prepare("UPDATE students SET guardians_id=? WHERE student_no=? ");
+		$changeGuardian->bindParam(1, $guardian_id);
+		$changeGuardian->bindParam(2, $student_no);
+		$changeGuardian->execute();
+
+		$_SESSION['guardian_changed'] = true;
+
+	}//End of changing a guardian
 
 
 	public function getMessagesPerGuardian($id){
@@ -3020,20 +3031,32 @@ class Accountant{
 		}
 
 
-	public function getStudentsFeesBalancesPerClass($class_id, $fees, $term, $academic_year){	
-		$payment_type_id = 1;	
-		$getStudentsFeesBalancesPerClass = $this->dbCon->Prepare("SELECT amount FROM payments");
-		//$getStudentsFeesBalancesPerClass->bindParam(1,$payment_type_id);
-		//$getStudentsFeesBalancesPerClass->bindParam(2,$academic_year);
-		//$getStudentsFeesBalancesPerClass->bindParam(3,$term);
-		//$getStudentsFeesBalancesPerClass->bindParam(4,$fees);
-		//$getStudentsFeesBalancesPerClass->execute();
+	public function getStudentsFeesBalancesPerClass($class_id, $fees, $term, $academic_year){
+		
+		$getStudentsFeesBalancesPerClass = $this->dbCon->Prepare("SELECT SUM(amount) as amount, academic_year, term, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname, students.student_no as student_no FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) WHERE students.sub_classes_id=? AND term=? AND academic_year=? GROUP BY student_no ");
+		$getStudentsFeesBalancesPerClass->bindParam(1, $class_id);
+		$getStudentsFeesBalancesPerClass->bindParam(2, $term);
+		$getStudentsFeesBalancesPerClass->bindParam(3, $academic_year);
+		$getStudentsFeesBalancesPerClass->execute();
 		
 		if($getStudentsFeesBalancesPerClass->rowCount()>0){
 			$rows = $getStudentsFeesBalancesPerClass->fetchAll();
 			return $rows;
 		}
-	} //end of getting Students Per Class and Payment
+	} //end of getting Fees Per Class
+
+
+		public function getStudentsWithNoPayment($class_id, $fees, $term, $academic_year){
+		
+		$getStudentsWithNoPayment = $this->dbCon->Prepare("SELECT amount, academic_year, term, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname, students.student_no as student_no FROM students LEFT JOIN payments ON (payments.students_student_no=students.student_no) WHERE students.sub_classes_id=? AND academic_year IS NULL GROUP BY student_no ");
+		$getStudentsWithNoPayment->bindParam(1, $class_id);
+		$getStudentsWithNoPayment->execute();
+		
+		if($getStudentsWithNoPayment->rowCount()>0){
+			$rows = $getStudentsWithNoPayment->fetchAll();
+			return $rows;
+		}
+	} //end of getting Fees Per Class
 
 
 

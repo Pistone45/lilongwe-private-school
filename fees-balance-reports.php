@@ -14,6 +14,10 @@ $term = $settings['term'];
 
 $getStudentsFeesBalancesPerClass = new Accountant();
 $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($class_id, $fees, $term, $academic_year);
+
+$getStudentsWithNoPayment = new Accountant();
+$noPayments = $getStudentsWithNoPayment->getStudentsWithNoPayment($class_id, $fees, $term, $academic_year);
+
 }
 
 
@@ -87,9 +91,12 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
             <div class="tab-content" style="padding-left: 10px; padding-bottom: 10px;">
               <div id="home" class="tab-pane fade in active">
                 <h3>
-                  <form action="school-fee-pdf.php" method="POST">
+                  <form action="school-fee-balance-pdf.php" method="POST">
                   <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
-                  <button type="submit" name="submit" class="btn btn-primary">Dowload Report</button>
+                  <input type="hidden" name="academic_year" value="<?php echo $academic_year; ?>">
+                  <input type="hidden" name="term" value="<?php echo $term; ?>">
+                  <input type="hidden" name="fees" value="<?php echo $fees; ?>">
+                  <button type="submit" name="balance" class="btn btn-primary">Dowload Report</button>
                   </form>
                 </h3>
               
@@ -99,8 +106,9 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
                   <th>Student ID</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
-                  <th>Payment Type</th>
-                  <th>Amount</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Balance</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -114,8 +122,9 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
           <td><?php echo $student['student_no']; ?></td>
           <td><?php echo $student['firstname']; ?></td>
           <td><?php echo $student['lastname']; ?></td>
-          <td><?php echo $student['payment_type']; ?></td>
-          <td>K<?php echo number_format($student['amount']); ?></td>
+          <td><?php echo $student['academic_year']; ?></td>
+          <td><?php echo $student['term']; ?></td>
+          <td>K<?php echo number_format($fees- $student['amount']); ?></td>
           </tr>
 
           <?php
@@ -130,8 +139,9 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
                   <th>Student ID</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
-                  <th>Payment Type</th>
-                  <th>Amount</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Balance</th>
                 </tr>
                 </tfoot>
               </table>
@@ -139,9 +149,12 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
               </div>
               <div id="menu1" class="tab-pane fade">
                 <h3>
-                  <form action="admission-fee-pdf.php" method="POST">
+                  <form action="unpaid-fee-pdf.php" method="POST">
                   <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
-                  <button type="submit" name="submit" class="btn btn-primary">Dowload Report</button>
+                  <input type="hidden" name="fees" value="<?php echo $fees; ?>">
+                  <input type="hidden" name="academic_year" value="<?php echo $academic_year; ?>">
+                  <input type="hidden" name="term" value="<?php echo $term; ?>">
+                  <button type="submit" name="unpaid" class="btn btn-primary">Dowload Report</button>
                   </form>
                 </h3>
               <table id="example2" class="table table-bordered table-striped">
@@ -150,25 +163,25 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
                   <th>Student ID</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
-                  <th>Payment Type</th>
-                  <th>Amount</th>
-                  <th>Date Paid</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Balance</th>
                 </tr>
                 </thead>
                 <tbody>
         <?php
         $i = 0;
-        if(isset($admissionfees) && count($admissionfees)>0){
-          foreach($admissionfees as $admissionfee){ 
+        if(isset($noPayments) && count($noPayments)>0){
+          foreach($noPayments as $noPayment){ 
             $i++;   ?>
           
           <tr>
-          <td><?php echo $admissionfee['student_id']; ?></td>
-          <td><?php echo $admissionfee['firstname']; ?></td>
-          <td><?php echo $admissionfee['lastname']; ?></td>
-          <td><?php echo $admissionfee['payment_type']; ?></td>
-          <td>K<?php echo number_format($admissionfee['amount']); ?></td>
-          <td><?php $date = date_create($admissionfee['date_paid']); echo date_format($date,"d, M Y"); ?></td>
+          <td><?php echo $noPayment['student_no']; ?></td>
+          <td><?php echo $noPayment['firstname']; ?></td>
+          <td><?php echo $noPayment['lastname']; ?></td>
+          <td><?php echo $academic_year; ?></td>
+          <td><?php echo $term; ?></td>
+          <td>K<?php echo number_format($fees); ?></td>
           </tr>
 
           <?php
@@ -180,12 +193,13 @@ $students = $getStudentsFeesBalancesPerClass->getStudentsFeesBalancesPerClass($c
                 </tbody>
                 <tfoot>
                 <tr>
+                <tr>
                   <th>Student ID</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
-                  <th>Payment Type</th>
-                  <th>Amount</th>
-                  <th>Date Paid</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Balance</th>
                 </tr>
                 </tfoot>
               </table>
