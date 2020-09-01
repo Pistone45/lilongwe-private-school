@@ -1,11 +1,16 @@
 <?php
 include_once("functions/functions.php");
 
-$getStudents = new Students();
-$students = $getStudents->getStudents();
+if (isset($_POST['submit'])) {
+$sub_class_id = $_POST['level'];
 
-$getAssignments = new Staff();
-$assignments = $getAssignments->getAssignments();
+  $getStudentsPerSubClassName = new Staff();
+  $students = $getStudentsPerSubClassName->getStudentsPerSubClassName($sub_class_id);
+
+  $getSubClassName = new Staff();
+  $subclass = $getSubClassName->getSubClassName($sub_class_id);
+
+}
 
 
 ?>
@@ -14,7 +19,7 @@ $assignments = $getAssignments->getAssignments();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Assignments | Lilongwe Private School</title>
+  <title><?php echo $subclass['name']; ?> Student List | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -54,12 +59,11 @@ $assignments = $getAssignments->getAssignments();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        View Assignments
-       
+       <?php echo $subclass['name']; ?> Student List
       </h1>
       <ol class="breadcrumb">
-        <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Assignments</a></li>
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="#">Student List</a></li>
        
       </ol>
     </section>
@@ -68,46 +72,39 @@ $assignments = $getAssignments->getAssignments();
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-         
+          <form action="student-list-pdf.php" method="POST">
+            <input type="hidden" name="level" value="<?php if(isset($_POST['submit'])){ echo $_POST['level'];} ?>">
+            <button type="submit" name="list" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> Download PDF <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+          </form>
           <div class="box">
-            
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Class</th>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Registration Number</th>
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Current Level</th>
+        				  <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
-				if(isset($assignments) && count($assignments)>0){
-					foreach($assignments as $assignment){ ?>
+        $i = 0;
+				if(isset($students) && count($students)>0){
+					foreach($students as $student){ 
+            $i++;   ?>
+          
 					<tr>
-                  <td><?php echo $assignment['class_name']; ?></td>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php echo $assignment['assignment_type_name']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i");
-
-                  $due_date = date('Y-m-d',strtotime($assignment['due_date'] . "-1 days"));
-
-                  if ($assignment['due_date'] < $date) {echo "<b>Date Passed </b>(";$date = date_create($due_date); echo date_format($date,"d, M Y").')';} else {
-                    $date = date_create($due_date); echo date_format($date,"d, M Y");}
-                   ?></td>
-                  <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['term_name']; ?></td>
-				  <td><?php echo $assignment['subject_name']; ?> </td>
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a class="btn disabled" href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
-                </tr>
+              <td><?php echo $student_no = $student['student_no']; ?></td>
+              <td><?php echo $student['firstname']; ?></td>
+              <td><?php echo $student['middlename']; ?></td>
+              <td> <?php echo $student['lastname']; ?></td>
+              <td><?php echo $student['sub_class_name']; ?></td>
+    				  <td><?php echo $student['status_name']; ?> </td>
+          </tr>
 					<?php
 						
 					}
@@ -117,19 +114,17 @@ $assignments = $getAssignments->getAssignments();
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Class</th>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                  <th>Registration Number</th>
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Current Level</th>
+                  <th>Status</th>
                 </tr>
                 </tfoot>
               </table>
             </div>
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -140,6 +135,13 @@ $assignments = $getAssignments->getAssignments();
     </section>
     <!-- /.content -->
   </div>
+      <script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 

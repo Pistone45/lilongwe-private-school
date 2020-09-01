@@ -10,6 +10,17 @@ if(isset($_GET['id'])){
   $loginstatus = $getLoginStatus->getLoginStatus($id);
 }
 
+$getGuardians = new Guardian();
+$guardians = $getGuardians->getGuardians();
+
+if (isset($_POST['change_guardian'])) {
+  $guardian_id = $_POST['guardian_id'];
+  $student_no = $_POST['student_no'];
+
+  $changeGuardian = new Guardian();
+  $changeGuardian->changeGuardian($guardian_id, $student_no);
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,7 +64,7 @@ if(isset($_GET['id'])){
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Student Details <!-- Trigger the modal with a button -->
+        Student Details <button data-toggle="modal" data-target="#changeGuardian" class="btn btn-primary">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></button>
 
       </h1>
       <ol class="breadcrumb">
@@ -65,10 +76,19 @@ if(isset($_GET['id'])){
 
     <!-- Main content -->
     <section class="content">
-	
 	<?php
 		if(count($details)>0){ ?>
-		
+      <?php
+      if(isset($_SESSION["guardian_changed"]) && $_SESSION["guardian_changed"]==true)
+      {
+        echo "<div class='alert alert-success'>";
+        echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+        echo "<strong>Success! </strong>"; echo "You have successfully changed a Guardian for a student";
+        unset($_SESSION["guardian_changed"]);
+        echo "</div>";
+         header('Refresh: 4; URL= view-students.php');
+      }
+      ?>
       <div class="row">
         <div class="col-md-5">
           <!-- Profile Image -->
@@ -80,7 +100,10 @@ if(isset($_GET['id'])){
           
 
               <ul class="list-group list-group-unbordered">
-			  <li class="list-group-item">
+              <li class="list-group-item">
+                  <b style="color: green;">Guardian Name</b> <a class="pull-right"><?php echo $details['guardian_name']; ?></a>
+                </li>
+			         <li class="list-group-item">
                   <b>Name</b> <a class="pull-right"><?php echo $details['firstname']. ' '. $details['middlename']. ' '.$details['lastname']; ?></a>
                 </li>
                 <li class="list-group-item">
@@ -185,6 +208,7 @@ if ($loginstatus['user_status_id'] == 0) { ?>
         </div>
         <!-- /.col -->
       </div>
+
       <!-- /.row -->
 	  
 	  	<?php
@@ -193,6 +217,45 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 			?>
 
     </section>
+          <!-- Modal -->
+<div id="changeGuardian" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></h4>
+      </div>
+      <div class="modal-body">
+        <form action="student-details.php?id=<?php if(isset($_GET['id'])){ echo $_GET['id'];} ?>" method="POST">
+           <div class="form-group">
+            <label>Select new Guardian</label>
+            <div class="radio">
+          <?php
+            if(isset($guardians) && count($guardians)>0){
+              foreach($guardians as $guardian){ ?>
+                  <label><input required="" type="radio" name="guardian_id" value="<?php if(isset($guardians)){echo $guardian['id'];} ?>"><?php if(isset($guardians)){echo $guardian['fullname'];} ?></label> <br>
+              <?php
+                
+              }
+            }
+          ?>
+          <input type="hidden" name="student_no" value="<?php if(isset($_GET['id'])){ echo $_GET['id'];} ?>">
+          
+          </div>
+          </div>
+          <button type="submit" name="change_guardian" class="btn btn-primary">Change Guardian</button>
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->

@@ -4,6 +4,14 @@ $status = 1;
 $getCurrentSettings = new Settings();
 $settings = $getCurrentSettings->getCurrentSettings($status);
 
+if (isset($_POST['level'])) {
+  $sub_class_id = $_POST['level'];
+
+  $getStudentsPerSubClassName = new Staff();
+  $students = $getStudentsPerSubClassName->getStudentsPerSubClassName($sub_class_id);
+}
+  
+
 $academic_year =(int)$settings['academic_year'];
 //from academic_year get the last 10 years
 $ten_years = $academic_year-10;
@@ -11,11 +19,6 @@ $years =range($academic_year,$ten_years,-1);
 
 $getTerms = new Settings();
 $terms = $getTerms->getTerms();
-
-
-$getAllStudentsPerClassPerPayment = new Staff();
-$students = $getAllStudentsPerClassPerPayment->getAllStudentsPerClassPerPayment();
-
 
 $getPaymentType = new Settings();
 $type = $getPaymentType->getPaymentType();
@@ -115,7 +118,7 @@ $RecordFees = $RecordFees->RecordFees($fees, $student_no, $academic_year, $term,
               echo "<strong>Success! </strong>"; echo "You have successfully Recorded Fees for a Student";
               unset($_SESSION["fees-recorded"]);
               echo "</div>";
-          //header('Refresh: 5; URL= view-books.php');
+          header('Refresh: 5; URL= filter-fees.php');
           }
         ?>
             <!-- /.box-header -->

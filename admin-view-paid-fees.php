@@ -118,10 +118,12 @@ $fees= $getStudentsFees->getStudentsFees($level, $academic_year, $term);
                 <tfoot>
                 <tr>
                   <th>Student ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
+                  <th>Student Name</th>
                   <th>Class Name</th>
-                  <th>Action</th>
+                  <th>Amount</th>
+                  <th>Date Paid</th>
+                  <th>Year</th>
+                  <th>Reference</th>
                 </tr>
                 </tfoot>
               </table>

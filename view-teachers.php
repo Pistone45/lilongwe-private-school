@@ -1,11 +1,9 @@
 <?php
 include_once("functions/functions.php");
 
-$getStudents = new Students();
-$students = $getStudents->getStudents();
+$getTeachers = new Staff();
+$teachers = $getTeachers->getTeachers();
 
-$getAssignments = new Staff();
-$assignments = $getAssignments->getAssignments();
 
 
 ?>
@@ -14,7 +12,7 @@ $assignments = $getAssignments->getAssignments();
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>View Assignments | Lilongwe Private School</title>
+  <title>View Teachers | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -54,12 +52,12 @@ $assignments = $getAssignments->getAssignments();
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        View Assignments
+        Teacher Details
        
       </h1>
       <ol class="breadcrumb">
-        <li><a href="teacher-index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Assignments</a></li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><a href="view-teachers.php">Teacher Details</a></li>
        
       </ol>
     </section>
@@ -68,7 +66,9 @@ $assignments = $getAssignments->getAssignments();
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-         
+         <div class="box-header with-border">
+              <a href="add-teacher.php"><button type="submit" class="btn btn-primary">Add Teacher Details</button></a>
+            </div>
           <div class="box">
             
             <!-- /.box-header -->
@@ -76,37 +76,27 @@ $assignments = $getAssignments->getAssignments();
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Class</th>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                
+                  <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Primary Phone</th>
+				  <th>Email</th>
+				  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
-				if(isset($assignments) && count($assignments)>0){
-					foreach($assignments as $assignment){ ?>
+				if(isset($teachers) && count($teachers)>0){
+					foreach($teachers as $teacher){ ?>
 					<tr>
-                  <td><?php echo $assignment['class_name']; ?></td>
-                  <td><?php echo $assignment['title']; ?></td>
-                  <td><?php echo $assignment['assignment_type_name']; ?></td>
-                  <td><?php $date = DATE("Y-m-d h:i");
-
-                  $due_date = date('Y-m-d',strtotime($assignment['due_date'] . "-1 days"));
-
-                  if ($assignment['due_date'] < $date) {echo "<b>Date Passed </b>(";$date = date_create($due_date); echo date_format($date,"d, M Y").')';} else {
-                    $date = date_create($due_date); echo date_format($date,"d, M Y");}
-                   ?></td>
-                  <td><?php echo $assignment['academic_year']; ?></td>
-                  <td><?php echo $assignment['term_name']; ?></td>
-				  <td><?php echo $assignment['subject_name']; ?> </td>
-				  <td><a href="assignments/<?php echo $assignment['assignment_url']; ?>"><i class="fa fa-edit"></i> Download</a></td>
-          <td><a class="btn disabled" href="delete-assignment.php?id=<?php echo $assignment['id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
+                 
+                  <td><?php echo $teacher['firstname']; ?></td>
+                  <td><?php echo $teacher['middlename']; ?></td>
+                  <td> <?php echo $teacher['lastname']; ?></td>
+                  <td><?php echo $teacher['phone']; ?></td>
+				  <td><?php echo $teacher['email']; ?> </td>
+				  <td><a href="select-teacher-class.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Assign Subjects</a></td>
                 </tr>
 					<?php
 						
@@ -117,15 +107,12 @@ $assignments = $getAssignments->getAssignments();
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Class</th>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Due Date</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Subject</th>
-                  <th>Action</th>
-                  <th>Action</th>
+                   <th>Firstname</th>
+                  <th>Middlename</th>
+                  <th>Lastname</th>
+                  <th>Primary Phone</th>
+				  <th>Email</th>
+				  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>
@@ -141,7 +128,7 @@ $assignments = $getAssignments->getAssignments();
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-<?php include_once("footer.html"); ?>
+   <?php include_once("footer.html"); ?>
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>

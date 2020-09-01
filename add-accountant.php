@@ -77,16 +77,16 @@ if(isset($_POST['submit'])){
 	<!-- form start -->
             <form role="form" action="add-accountant.php" method="POST">
 			<?php
-                            if(isset($_SESSION["accountant-added"]) && $_SESSION["accountant-added"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully added an Accountant";
-                                unset($_SESSION["accountant-added"]);
-                                echo "</div>";
-								 header('Refresh: 5; URL= view-accountant.php');
-                            }
-							?>
+        if(isset($_SESSION["accountant-added"]) && $_SESSION["accountant-added"]==true)
+        {
+            echo "<div class='alert alert-success'>";
+            echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+            echo "<strong>Success! </strong>"; echo "You have successfully added an Accountant";
+            unset($_SESSION["accountant-added"]);
+            echo "</div>";
+            header('Refresh: 5; URL= view-accountant.php');
+            }
+				?>
       <div class="row box box-primary">
         <!-- left column -->
         <div class="col-md-6">

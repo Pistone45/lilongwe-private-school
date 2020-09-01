@@ -1,21 +1,29 @@
 <?php
 include_once("functions/functions.php");
 
-$getAllUsers = new User();
-$users = $getAllUsers->getAllUsers();
+$getAllBooks = new Staff();
+$books = $getAllBooks->getAllBooks();
 
-if (isset($_GET['deactivate'])) {
-  $username = $_GET['deactivate'];
+$getSubClasses = new Classes();
+$levels = $getSubClasses->getSubClasses();
 
-  $disableSpecificUser = new User();
-  $disableSpecificUser = $disableSpecificUser->disableSpecificUser($username);
+if (isset($_POST['book_count'])) {
+  $book_id = $_POST['book_id'];
+  $old_count = $_POST['old_count'];
+  $new_count = $_POST['new_count'];
+
+  $count = $old_count + $new_count;
+
+  $increaseBookCount = new Staff();
+  $increaseBookCount->increaseBookCount($book_id, $count);
 }
 
-if (isset($_GET['activate'])) {
-  $username = $_GET['activate'];
 
-  $enableSpecificUser = new User();
-  $enableSpecificUser = $enableSpecificUser->enableSpecificUser($username);
+if (isset($_GET['delete'])) {
+  $id = $_GET['delete'];
+
+  $deleteBook = new Librarian();
+  $deleteBook->deleteBook($id);
 }
 
 
@@ -25,7 +33,7 @@ if (isset($_GET['activate'])) {
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>All users | Lilongwe Private School</title>
+  <title>View Books | Lilongwe Private School</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -65,12 +73,12 @@ if (isset($_GET['activate'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        All System Users
+        View Books <a href="books-pdf.php"><button class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> Download PDF <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button></a>
        
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">All users</a></li>
+        <li class="active"><a href="#">View Books</a></li>
        
       </ol>
     </section>
@@ -81,60 +89,95 @@ if (isset($_GET['activate'])) {
         <div class="col-xs-12">
          
           <div class="box">
+            
             <!-- /.box-header -->
             <div class="box-body">
             <?php
-              if(isset($_SESSION["user_activated"]) && $_SESSION["user_activated"]==true)
+              if(isset($_SESSION["book_deleted"]) && $_SESSION["book_deleted"]==true)
                 {
-                  echo "<div class='alert alert-success'>";
+                  echo "<div class='alert alert-warning'>";
                   echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                  echo "<strong>Success! </strong>"; echo "You have successfully Activated a User";
-                  unset($_SESSION["user_activated"]);
+                  echo "<strong>Success! </strong>"; echo "You have successfully Deleted a Book";
+                  unset($_SESSION["book_deleted"]);
                   echo "</div>";
-                 header('Refresh: 4; URL= view-users.php');
+                 header('Refresh: 4; URL= admin-view-books.php');
                   }
               ?>
 
               <?php
-              if(isset($_SESSION["user_deactivated"]) && $_SESSION["user_deactivated"]==true)
+              if(isset($_SESSION["count_increased"]) && $_SESSION["count_increased"]==true)
                 {
-                  echo "<div class='alert alert-warning'>";
+                  echo "<div class='alert alert-success'>";
                   echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                  echo "<strong>Success! </strong>"; echo "You have successfully Deactivated a User";
-                  unset($_SESSION["user_deactivated"]);
+                  echo "<strong>Success! </strong>"; echo "You have successfully increase a Book count";
+                  unset($_SESSION["count_increased"]);
                   echo "</div>";
-                 header('Refresh: 4; URL= view-users.php');
+                 header('Refresh: 4; URL= admin-view-books.php');
                   }
               ?>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Username</th>
-                  <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Role</th>
-        				  <th>Date Added</th>
-        				  <th>Status</th>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Publication Year</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
         $i = 0;
-				if(isset($users) && count($users)>0){
-					foreach($users as $user){ 
+				if(isset($books) && count($books)>0){
+					foreach($books as $book){ 
             $i++;   ?>
-          
-					     <tr>
-                  <td><?php echo $user['username']; ?></td>
-                  <td><?php echo $user['firstname']; ?></td>
-                  <td><?php echo $user['middlename']; ?></td>
-                  <td><?php echo $user['lastname']; ?></td>
-                  <td><?php echo $user['role_name']; ?></td>
-        				  <td><?php $date = date_create($user['date_added']); echo date_format($date,"d, M Y"); ?></td>
-                  <td><?php if($user['user_status_id'] == 1){  ?><a href="view-users.php?deactivate=<?php echo $user['username']; ?>"><i style="color: green; font-size: 28px;" class="fa fa-toggle-on" aria-hidden="true"></i></a><?php  }else{  ?><a href="view-users.php?activate=<?php echo $user['username']; ?>"><i style="color: red; font-size: 28px;" class="fa fa-toggle-off" aria-hidden="true"></i></a><?php } ?></td>
-                </tr>
+					<tr>
+                  <td><?php echo $book['book_id']; ?></td>
+                  <td><?php echo $book['title']; ?></td>
+                  <td><?php echo $book['author']; ?></td>
+                  <td><?php echo $book['year_of_publication']; ?></td>
+                  <td><button type="button" class="btn btn-primary"> <span class="badge"><?php echo $book['count'];?> </span> Available</td></button>
 
+                  <td><?php if($book['count'] == 0 ){  ?><button class="btn btn-danger">Out of Stock</button> <?php } else{  ?><button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?php echo $i; ?>">Increase Books</button> <?php } ?></td>
+                  <td><a href="admin-view-books.?delete=<?php echo $book['book_id']; ?>"><i class="fa fa-trash"></i> Delete</a></td>
+
+<!-- Modal -->
+<div id="<?php echo $i; ?>" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Increase the Book count</h4>
+      </div>
+      <div class="modal-body">
+                          <!-- form start -->
+            <form role="form" action="admin-view-books.php" method="POST">
+      
+              <div class="box-body">
+                <input hidden="" type="text" name="book_id" value="<?php echo $book['book_id']; ?>">
+                <input type="text" name="old_count" value="<?php if(isset($book)){ echo $book['count'];} ?>" hidden>
+                <div class="form-group">
+                  <label for="fatherName">Book Count</label>
+                  <input type="number" placeholder="Example 5" class="form-control" name="new_count" required>
+                </div>
+
+                <button type="submit" name="book_count" class="btn btn-primary">Submit</button>
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+                </tr>
 					<?php
 						
 					}
@@ -144,18 +187,17 @@ if (isset($_GET['activate'])) {
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Username</th>
-                  <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Role</th>
-                  <th>Date Added</th>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Publication Year</th>
                   <th>Status</th>
+                  <th>Action</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>
             </div>
-
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -166,13 +208,6 @@ if (isset($_GET['activate'])) {
     </section>
     <!-- /.content -->
   </div>
-      <script type="text/javascript">
-    window.setTimeout(function() {
-    $(".alert").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove(); 
-    });
-}, 4000);
-  </script>
   <!-- /.content-wrapper -->
 <?php include_once("footer.html"); ?>
 

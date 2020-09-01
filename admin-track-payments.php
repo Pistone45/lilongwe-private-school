@@ -103,7 +103,7 @@ $settings['term'];
             $i++;   ?>
           <tr>
                   <td><?php echo $payment['sub_class_name']; ?></td>
-                  <td><?php echo number_format($payment['amount'],2); ?></td>
+                  <td>K<?php echo number_format($payment['amount']); ?></td>
                   <td><?php echo $payment['date_paid'];?></td>
                   <td><?php echo $payment['academic_year'];?></td>
                   <td><?php echo $payment['term'];?></td>

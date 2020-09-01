@@ -69,33 +69,31 @@ $teachers = $getTeachers->getTeachers();
             </div>
           <div class="box">
             
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                
-                  <th>Firstname</th>
-                  <th>Middlename</th>
-                  <th>Lastname</th>
-                  <th>Primary Phone</th>
+    <!-- /.box-header -->
+    <div class="box-body">
+      <table id="example1" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>Firstname</th>
+          <th>Middlename</th>
+          <th>Lastname</th>
+          <th>Primary Phone</th>
 				  <th>Email</th>
 				  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
+        </tr>
+        </thead>
+        <tbody>
 				<?php
 				if(isset($teachers) && count($teachers)>0){
 					foreach($teachers as $teacher){ ?>
 					<tr>
-                 
-                  <td><?php echo $teacher['firstname']; ?></td>
-                  <td><?php echo $teacher['middlename']; ?></td>
-                  <td> <?php echo $teacher['lastname']; ?></td>
-                  <td><?php echo $teacher['phone']; ?></td>
-				  <td><?php echo $teacher['email']; ?> </td>
-				  <td><a href="edit-teacher.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Edit Teacher</a></td>
-                </tr>
+            <td><?php echo $teacher['firstname']; ?></td>
+            <td><?php echo $teacher['middlename']; ?></td>
+            <td> <?php echo $teacher['lastname']; ?></td>
+            <td><?php echo $teacher['phone']; ?></td>
+  				  <td><?php echo $teacher['email']; ?> </td>
+  				  <td><a href="edit-teacher.php?id=<?php echo $teacher['id']; ?>"><i class="fa fa-edit"></i> Edit Teacher</a></td>
+          </tr>
 					<?php
 						
 					}
@@ -105,12 +103,12 @@ $teachers = $getTeachers->getTeachers();
                 </tbody>
                 <tfoot>
                 <tr>
-                   <th>Firstname</th>
+                  <th>Firstname</th>
                   <th>Middlename</th>
                   <th>Lastname</th>
                   <th>Primary Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
+        				  <th>Email</th>
+        				  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>

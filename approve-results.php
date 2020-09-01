@@ -21,6 +21,9 @@ if (isset($_POST['submit'])) {
 $getStudentsPerExamType = new Staff();
 $student = $getStudentsPerExamType->getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year);
 
+$checkStudentsPerExamType = new Staff();
+$checkStudent = $checkStudentsPerExamType->checkStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year);
+
 $getSubjectById = new Staff();
 $subject = $getSubjectById->getSubjectById($subject_id);
 
@@ -162,7 +165,18 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Students Available to approve Results";
+                        $_SESSION['no_students'] = true;
+
+                        if(isset($_SESSION["no_students"]) && $_SESSION["no_students"]==true)
+                        {
+                            echo "<div class='alert alert-warning'>";
+                            echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                            echo "<strong>No Students! </strong>"; echo "No Students found to approve results";
+                            unset($_SESSION["no_students"]);
+                            echo "</div>";
+                        header('Refresh: 5; URL= filter-approved-results.php');
+                      }
+                            
                       }
         ?>
                 <form action="approve-results.php" method="POST">
@@ -181,7 +195,11 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
           <input type="text" hidden="" name="subject_id" value="<?php if(isset($_POST['submit'])){ echo  $subject_id = $_POST['subject_id'];} ?>">
 
           <input type="text" hidden="" name="sub_class_id" value="<?php if(isset($_POST['submit'])){ echo  $sub_class_id = $_POST['sub_class_id'];} ?>">
-        <button type="submit" name="approve" class="btn btn-success btn-lg btn-block">Approve Results</button>
+        <?php if(isset($checkStudent['exam_status_id']) == 2){  ?>
+        <button disabled="" class="btn btn-success btn-lg btn-block">Results Already Approved</button>
+        <?php  }else{ ?>
+        <button type="submit" name="approve" class="btn btn-success btn-lg btn-block">Approve Results</button><?php } ?>
+
        </form>
 
            
