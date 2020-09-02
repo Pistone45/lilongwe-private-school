@@ -620,8 +620,8 @@ public function getLoginStatus($id){
 						  ':blood_type_id'=>($blood_type),
 						  ':home_doctor'=>($home_doctor),
 						  ':student_status_id'=>($student_status_id),
-						  ':sub_classes_id'=>($sub_class),
-						  ':guardian_id'=>($guardian_id),
+						  ':sub_classes_id'=>($_SESSION['sub_class']),
+						  ':guardian_id'=>($_SESSION['guardian_id']),
 						  ':gender_id'=>($gender)
 						  ));
 						  
@@ -656,14 +656,110 @@ public function getLoginStatus($id){
 						  $_SESSION['student-added']=true;
 		
 					
-				}elseif($class_id==4){
-					//opr
+				}elseif($class_id==4 || $class_id==5 || $class_id==6){
+
+									$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob,place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
+					musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,blood_type_id,student_status_id,sub_classes_id,guardians_id, gender_id)
+					VALUES (:student_no,:firstname,:middlename,:lastname,:dob,:place_of_birth,:country_of_birth,:nationality,:home_language,:year_of_entry,:sporting_interests,
+					:musical_interests,:other_interests,:medical_information,:other_schools_attended,:student_picture,:home_doctor,:admission_date,:blood_type_id,:student_status_id,:sub_classes_id,:guardian_id, :gender_id)" );
+					$addStudent->execute(array(
+						  ':student_no'=>($student_no),
+						  ':firstname'=>($firstname),
+						  ':middlename'=>($middlename),
+						  ':lastname'=>($lastname),						  
+						  ':dob'=>($dob),
+						  ':place_of_birth'=>($place_of_birth),
+						  ':country_of_birth'=>($country_of_birth),
+						  ':nationality'=>($nationality),
+						  ':home_language'=>($home_language),
+						  ':year_of_entry'=>($year_of_entry),
+						  ':sporting_interests'=>($sporting_interests),
+						  ':musical_interests'=>($musical_interests),
+						  ':other_interests'=>($other_interests),
+						  ':medical_information'=>($medical_information),
+						  ':other_schools_attended'=>($other_schools_attended),
+						  ':student_picture'=>($student_picture),
+						  ':home_doctor'=>($home_doctor),
+						  ':admission_date'=>($admission_date),
+						  ':blood_type_id'=>($blood_type),
+						  ':home_doctor'=>($home_doctor),
+						  ':student_status_id'=>($student_status_id),
+						  ':sub_classes_id'=>($sub_class),
+						  ':guardian_id'=>($guardian_id),
+						  ':gender_id'=>($gender)
+						  ));
+
+				  $addFirstStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addFirstStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_a']
+				  ));
+
+				  $addSecondStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addSecondStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_b']
+				  ));
+
+				  $addThirdStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addThirdStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_c']
+				  ));
+
+				  $addFourthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addFourthStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_d']
+				  ));
+
+				  $addFifthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addFifthStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_e']
+				  ));
+
+				  $addSixthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+				  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+				  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+				  $addSixthStudentSubject->execute(array(
+					':students_student_no'=>$student_no,
+					':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+					':classes_has_subjects_subjects_id'=>$_SESSION['option_f']
+				  ));
+
+		  		  //update student count
+				  $newCount = $count+1;
+				  $updateStudentCount = new Students();
+				  $updateStudentCount->updateStudentCount($newCount);
+				  
+				  //add the teacher to users table for logins
+					$role =30; //Students role id
+					$status = 1; //active status
+					$username = $student_no;
+					$password = password_hash($student_no, PASSWORD_DEFAULT)."\n"; 
+					$addUser = new User();
+					$addUser->addUser($username,$firstname,$middlename, $lastname, $role,$password,$status);
+	
+				  $_SESSION['student-added']=true;
+
 					
-				}elseif($class_id==5){
-					
-				}elseif($class_id == 6){
-					
-				}
+		}
 				
 	}
 	
@@ -1418,6 +1514,101 @@ class Classes{
 		}
 	} //end of getting classes
 	
+
+	public function getSpecificClass($class_id){
+		$getSpecificClass = $this->dbCon->Prepare("SELECT id,name FROM classes WHERE id=?	");
+		$getSpecificClass->bindParam(1, $class_id);
+		$getSpecificClass->execute();
+		
+		if($getSpecificClass->rowCount()>0){
+			$row = $getSpecificClass->fetch();
+			return $row;
+		}
+	} //end of getting Specific classes
+	
+
+
+	public function getOptionA($class_id){
+		$options_name = 'Option A'; //OPTION A
+		$getOptionA = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionA->bindParam(1, $class_id);
+		$getOptionA->bindParam(2, $options_name);
+		$getOptionA->execute();
+		
+		if($getOptionA->rowCount()>0){
+			$rows = $getOptionA->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option A
+
+	public function getOptionB($class_id){
+		$options_name = 'Option B'; //OPTION A
+		$getOptionB = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionB->bindParam(1, $class_id);
+		$getOptionB->bindParam(2, $options_name);
+		$getOptionB->execute();
+		
+		if($getOptionB->rowCount()>0){
+			$rows = $getOptionB->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option B
+
+
+	public function getOptionC($class_id){
+		$options_name = 'Option C'; //OPTION C
+		$getOptionC = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionC->bindParam(1, $class_id);
+		$getOptionC->bindParam(2, $options_name);
+		$getOptionC->execute();
+		
+		if($getOptionC->rowCount()>0){
+			$rows = $getOptionC->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option C
+
+	public function getOptionD($class_id){
+		$options_name = 'Option D'; //OPTION C
+		$getOptionD = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionD->bindParam(1, $class_id);
+		$getOptionD->bindParam(2, $options_name);
+		$getOptionD->execute();
+		
+		if($getOptionD->rowCount()>0){
+			$rows = $getOptionD->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option D
+
+
+	public function getOptionE($class_id){
+		$options_name = 'Option E'; //OPTION C
+		$getOptionE = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionE->bindParam(1, $class_id);
+		$getOptionE->bindParam(2, $options_name);
+		$getOptionE->execute();
+		
+		if($getOptionE->rowCount()>0){
+			$rows = $getOptionE->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option E
+
+	public function getOptionF($class_id){
+		$options_name = 'Option F'; //OPTION C
+		$getOptionF = $this->dbCon->Prepare("SELECT students_options.id as id, subjects_id, options_id, students_options.classes_id as classes_id, subjects.name as subject_name FROM students_options INNER JOIN subjects ON(students_options.subjects_id=subjects.id) INNER JOIN options ON(students_options.options_id=options.id) WHERE students_options.classes_id=? AND options.name=? ");
+		$getOptionF->bindParam(1, $class_id);
+		$getOptionF->bindParam(2, $options_name);
+		$getOptionF->execute();
+		
+		if($getOptionF->rowCount()>0){
+			$rows = $getOptionF->fetchAll();
+			return $rows;
+		}
+	} //end of getting Subject Option F
+
+
 	public function getSubClasses(){
 		$getSubClasses = $this->dbCon->Prepare("SELECT id,name, classes_id FROM sub_classes");
 		$getSubClasses->execute();
@@ -1427,6 +1618,7 @@ class Classes{
 			return $row;
 		}
 	} //end of getting classes
+
 	
 	public function getClassPerSubClass($sub_class){
 		$getClassPerSubClass = $this->dbCon->PREPARE("SELECT classes_id FROM sub_classes WHERE id=?");

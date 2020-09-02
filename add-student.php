@@ -1,6 +1,17 @@
 <?php
 include_once("functions/functions.php");
 
+if (isset($_POST['subject_options'])) {
+  
+  $_SESSION['option_a'] = $_POST['option_a'];
+  $_SESSION['option_b'] = $_POST['option_b'];
+  $_SESSION['option_c'] = $_POST['option_c'];
+  $_SESSION['option_d'] = $_POST['option_d'];
+  $_SESSION['option_e'] = $_POST['option_e'];
+  $_SESSION['option_f'] = $_POST['option_f'];
+
+}
+
 $getSubClasses = new Classes();
 $sub_classes = $getSubClasses->getSubClasses();
 
@@ -10,8 +21,8 @@ $gender = $getGender->getGender();
 $getBloodType = new Blood();
 $blood_type = $getBloodType->getBloodType();
 
-if(isset($_GET['id'])){
-	$guardian_id = $_GET['id'];
+if(isset($_SESSION['guardian_id'])){
+	$guardian_id = $_SESSION['guardian_id'];
 }
 
 if(isset($_POST['submit'])){
@@ -78,7 +89,7 @@ if(isset($_POST['submit'])){
 	$other_schools_attended = $_POST['other_schools_attended'];
 	$home_doctor = $_POST['home_doctor'];
 	$admission_date = $_POST['admission_date'];
-	$sub_class = $_POST['sub_class'];
+	$sub_class = $_SESSION['sub_class'];
 	
 	//echo $certificate; die();
 	$addStudent = new Students();
@@ -130,7 +141,6 @@ if(isset($_POST['submit'])){
     <section class="content-header">
       <h1>
         Student Registration
-       
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -147,39 +157,22 @@ if(isset($_POST['submit'])){
 		   <!-- form start -->
             <form role="form" action="add-student.php" method="POST" enctype="multipart/form-data">
 			<?php
-                            if(isset($_SESSION["student-added"]) && $_SESSION["student-added"]==true)
-                            {
-                                echo "<div class='alert alert-success'>";
-                                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
-                                echo "<strong>Success! </strong>"; echo "You have successfully added a Student";
-                                unset($_SESSION["student-added"]);
-                                echo "</div>";
-								 header('Refresh: 5; URL= view-students.php');
-                            }
-							?>
-              <div class="box-body">
+      if(isset($_SESSION["student-added"]) && $_SESSION["student-added"]==true)
+      {
+          echo "<div class='alert alert-success'>";
+          echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+          echo "<strong>Success! </strong>"; echo "You have successfully added a Student";
+          unset($_SESSION["student-added"]);
+          echo "</div>";
+			 header('Refresh: 5; URL= view-students.php');
+        }
+		 ?>
+        <div class="box-body">
 			  
         <div class="col-md-6">
           <!-- general form elements -->
        
 				<input type="hidden" value="<?php if(isset($guardian_id)){ echo $guardian_id; } ?>" name="guardian_id" />
-           
-				<div class="form-group">
-                  <label>Select Classes</label>
-                  <select name="sub_class" class="form-control">
-				  <?php
-					if(count($sub_classes)>0){
-						foreach($sub_classes as $row){ ?>
-							<option value="<?php echo $row['id']; ?>"><?php echo $row['name']?></option>
-							<?php
-						}
-					}else{
-						echo "No classes Available";
-					}
-				  ?>                    
-                  
-                  </select>
-                </div>
 			
                 <div class="form-group">
                   <label for="firstname">Firstname</label>

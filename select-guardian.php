@@ -4,7 +4,31 @@ include_once("functions/functions.php");
 $getGuardians = new Guardian();
 $guardians = $getGuardians->getGuardians();
 
+$getSubClasses = new Classes();
+$sub_classes = $getSubClasses->getSubClasses();
 
+if (isset($_POST['select_class'])) {
+
+  $guardian_id = $_POST['guardian_id'];
+  $sub_class = $_POST['sub_class'];
+
+  $getClassPerSubClass = new Classes();
+  $classes_id = $getClassPerSubClass->getClassPerSubClass($sub_class);
+  $class_id = $classes_id['classes_id'];
+
+  if ($class_id == 1 || $class_id==2 || $class_id==3) {
+    $_SESSION['guardian_id'] = $_POST['guardian_id'];
+    $_SESSION['sub_class'] = $_POST['sub_class'];
+    header("location: add-student.php");
+
+  }elseif($class_id==4 || $class_id==5 || $class_id==6){
+    $_SESSION['guardian_id'] = $_POST['guardian_id'];
+    $_SESSION['sub_class'] = $_POST['sub_class'];
+    $_SESSION['class_id'] = $class_id;
+    header("location: select-subject-options.php");
+          
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -75,28 +99,69 @@ $guardians = $getGuardians->getGuardians();
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                
                   <th>Firstname</th>
                   <th>Middlename</th>
                   <th>Lastname</th>
                   <th>Primary Phone</th>
-				  <th>Email</th>
-				  <th>Action</th>
+        				  <th>Email</th>
+        				  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php
+        $i = 0;
 				if(isset($guardians) && count($guardians)>0){
-					foreach($guardians as $guardian){ ?>
+					foreach($guardians as $guardian){ 
+            $i++;   ?>
 					<tr>
-                 
                   <td><?php echo $guardian['firstname']; ?></td>
                   <td><?php echo $guardian['middlename']; ?></td>
                   <td> <?php echo $guardian['lastname']; ?></td>
                   <td><?php echo $guardian['primary_phone']; ?></td>
-				  <td><?php echo $guardian['email']; ?> </td>
-				  <td><a href="add-student.php?id=<?php echo $guardian['id']; ?>"><i class="fa fa-plus"></i> Add Student</a></td>
+        				  <td><?php echo $guardian['email']; ?> </td>
+        				  <td><a data-toggle="modal" data-target="#my<?php echo $i; ?>Modal" href=""><i class="fa fa-plus"></i> Add Student</a></td>
                 </tr>
+
+<!-- Modal -->
+<div id="my<?php echo $i; ?>Modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Select Class</h4>
+      </div>
+      <div class="modal-body">
+        <form action="select-guardian.php" method="POST">
+        <input type="hidden" name="guardian_id" value="<?php echo $guardian['id']; ?>">
+        <div class="form-group">
+          <label>Select Class</label>
+          <select name="sub_class" class="form-control">
+          <?php
+          if(count($sub_classes)>0){
+            foreach($sub_classes as $row){ ?>
+              <option value="<?php echo $row['id']; ?>"><?php echo $row['name']?></option>
+              <?php
+            }
+          }else{
+            echo "No classes Available";
+          }
+          ?>                            
+          </select>
+        </div>
+        <button type="submit" name="select_class" class="btn btn-primary">Continue</button>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 					<?php
 						
 					}

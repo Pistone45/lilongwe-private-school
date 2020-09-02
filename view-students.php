@@ -1,6 +1,17 @@
 <?php
 include_once("functions/functions.php");
 
+unset($_SESSION['class_id']);
+unset($_SESSION['sub_class']);
+unset($_SESSION['guardian_id']);
+unset($_SESSION['option_a']);
+unset($_SESSION['option_b']);
+unset($_SESSION['option_c']);
+unset($_SESSION['option_d']);
+unset($_SESSION['option_e']);
+unset($_SESSION['option_f']);
+
+
 $getStudents = new Students();
 $students = $getStudents->getStudents();
 
