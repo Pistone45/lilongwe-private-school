@@ -34,7 +34,7 @@ CREATE TABLE `accountants` (
   `experience` varchar(255) NOT NULL,
   `date_joined` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,6 +43,7 @@ CREATE TABLE `accountants` (
 
 LOCK TABLES `accountants` WRITE;
 /*!40000 ALTER TABLE `accountants` DISABLE KEYS */;
+INSERT INTO `accountants` VALUES (2,'Pistone','Junior','Sanjama','+265882550227','Post Office Box 31 Ngabu','Diploma','accountant@accountant.com','1','2020-06-08');
 /*!40000 ALTER TABLE `accountants` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -96,7 +97,7 @@ CREATE TABLE `assignments` (
   CONSTRAINT `fk_assignments_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_assignments_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +106,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (25,'Triangles','null (1).docx','2020-06-27',2020,1,'0212463690',3,1),(26,'Triangles Part 2','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-27',2020,1,'0212463690',3,2),(27,'Bonjour','IDEAS FOR EARTHLOOM WEBSITE.odt','2020-07-11',2020,1,'0212463690',7,1),(28,'Bonjour 2','Mo&Mic for the Website.doc','2020-07-10',2020,1,'0212463690',7,2);
+INSERT INTO `assignments` VALUES (38,'Romeo and Juliet Part 1','INFORMATION SYSTEMS.docx','2020-08-27',2020,1,'0212463690',1,1),(39,'this is a title','New Text Document.txt','2020-08-27',2020,1,'0212463690',7,1);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,7 +215,7 @@ CREATE TABLE `books` (
 
 LOCK TABLES `books` WRITE;
 /*!40000 ALTER TABLE `books` DISABLE KEYS */;
-INSERT INTO `books` VALUES ('001','Effects of RSI','Pistone Junior Sanjama',2020,9,1),('002','Data Structures and Algorithms','Blena Chisenga',2018,14,1);
+INSERT INTO `books` VALUES ('1','Computer Repair','Pistone',2014,17,1);
 /*!40000 ALTER TABLE `books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -236,7 +237,7 @@ CREATE TABLE `borrowed_books` (
   PRIMARY KEY (`id`),
   KEY `students_student_no` (`students_student_no`),
   KEY `books_id` (`books_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +246,7 @@ CREATE TABLE `borrowed_books` (
 
 LOCK TABLES `borrowed_books` WRITE;
 /*!40000 ALTER TABLE `borrowed_books` DISABLE KEYS */;
-INSERT INTO `borrowed_books` VALUES (8,'2020-06-11',NULL,'002','LPS/S/1','1','2020-07-11'),(7,'2020-06-11',NULL,'001','LPS/S/1','1','2020-07-11'),(6,'2020-06-11',NULL,'001','LPS/S/1','0','2020-06-11');
+INSERT INTO `borrowed_books` VALUES (11,'2020-08-26',NULL,'1','LPS/S/1','1','2020-09-26'),(10,'2020-08-26',NULL,'001','LPS/S/1','1','2020-09-26');
 /*!40000 ALTER TABLE `borrowed_books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -297,7 +298,7 @@ CREATE TABLE `classes_has_subjects` (
 
 LOCK TABLES `classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `classes_has_subjects` VALUES (1,1),(1,2),(1,3),(1,6),(1,7),(1,8),(1,9),(1,10),(1,15),(2,1),(2,2),(2,3),(2,6),(2,7),(2,8),(2,9),(2,10),(2,15),(3,1),(3,2),(3,3),(3,6),(3,7),(3,8),(3,9),(3,10),(3,15);
+INSERT INTO `classes_has_subjects` VALUES (1,1),(1,2),(1,3),(1,6),(1,7),(1,8),(1,9),(1,10),(1,15),(2,1),(2,2),(2,3),(2,6),(2,7),(2,8),(2,9),(2,10),(2,15),(3,1),(3,2),(3,3),(3,6),(3,7),(3,8),(3,9),(3,10),(3,15),(4,2),(4,4),(4,5),(4,6),(4,7),(4,8),(4,9),(4,10),(4,12),(4,13),(4,14),(4,16),(5,2),(5,4),(5,5),(5,6),(5,7),(5,8),(5,9),(5,10),(5,12),(5,13),(5,14),(5,16),(6,1),(6,3),(6,4),(6,5),(6,10),(6,12),(6,13),(6,14),(6,16);
 /*!40000 ALTER TABLE `classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -316,7 +317,7 @@ CREATE TABLE `exam_results` (
   `academic_year` year(4) NOT NULL,
   `marks` decimal(10,2) NOT NULL,
   `staff_id` varchar(255) NOT NULL,
-  `exam_status_id` int(11) NOT NULL,
+  `exam_status_id` int(11) NOT NULL DEFAULT 1,
   `classes_has_subjects_classes_id` int(11) NOT NULL,
   `classes_has_subjects_subjects_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -332,7 +333,7 @@ CREATE TABLE `exam_results` (
   CONSTRAINT `fk_exam_results_staff1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_students1` FOREIGN KEY (`students_student_no`) REFERENCES `students` (`student_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_exam_results_terms1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -341,7 +342,7 @@ CREATE TABLE `exam_results` (
 
 LOCK TABLES `exam_results` WRITE;
 /*!40000 ALTER TABLE `exam_results` DISABLE KEYS */;
-INSERT INTO `exam_results` VALUES (33,'LPS/S/1',1,1,2020,50.00,'0212463690',1,1,3),(34,'LPS/S/1',1,1,2020,60.00,'0212463690',1,1,7);
+INSERT INTO `exam_results` VALUES (46,'LPS/S/2',1,1,2020,60.00,'0212463690',2,1,1),(47,'LPS/S/3',1,1,2020,60.00,'0212463690',2,1,1),(48,'LPS/S/4',1,1,2020,60.00,'0212463690',2,1,1),(49,'LPS/S/5',1,1,2020,60.00,'0212463690',2,1,1),(51,'LPS/S/2',1,1,2020,70.00,'0212463690',2,1,3),(52,'LPS/S/3',1,1,2020,70.00,'0212463690',2,1,3),(53,'LPS/S/4',1,1,2020,70.00,'0212463690',2,1,3),(54,'LPS/S/5',1,1,2020,70.00,'0212463690',2,1,3);
 /*!40000 ALTER TABLE `exam_results` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,7 +469,7 @@ CREATE TABLE `librarians` (
   `email` varchar(255) NOT NULL,
   `date_joined` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -477,6 +478,7 @@ CREATE TABLE `librarians` (
 
 LOCK TABLES `librarians` WRITE;
 /*!40000 ALTER TABLE `librarians` DISABLE KEYS */;
+INSERT INTO `librarians` VALUES (2,'James','Junior','Phiri','088800900','James','Diploma','jamesphiri@gmail.com','2020-06-19');
 /*!40000 ALTER TABLE `librarians` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -495,7 +497,7 @@ CREATE TABLE `messages` (
   `status` int(11) DEFAULT 0 COMMENT '0 - not read\n1 - read',
   `student_no` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -504,7 +506,7 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (4,'message','Linux Kali 2019.1 stuck on installing using a bootable USB drive','2020-06-12 08:43:27',0,'LPS/S/1'),(5,'message 1','Subject 1','2020-06-12 08:43:27',0,'LPS/S/1'),(6,'message 2','Subject 2','2020-06-12 08:43:27',0,'LPS/S/1'),(7,'message 3','subject 3','2020-06-11 08:58:42',1,'LPS/S/1');
+INSERT INTO `messages` VALUES (8,'hey','hi shawn','2020-08-26 07:26:51',1,'LPS/S/1');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -522,7 +524,7 @@ CREATE TABLE `notices` (
   `date_added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `status` varchar(45) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,7 +533,6 @@ CREATE TABLE `notices` (
 
 LOCK TABLES `notices` WRITE;
 /*!40000 ALTER TABLE `notices` DISABLE KEYS */;
-INSERT INTO `notices` VALUES (2,'Notice Here','2020-06-30','2020-06-08 09:17:52','0');
 /*!40000 ALTER TABLE `notices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -582,6 +583,33 @@ INSERT INTO `numberstwo` VALUES ('088855619155'),('088879168569'),('099908454789
 UNLOCK TABLES;
 
 --
+-- Table structure for table `options`
+--
+
+DROP TABLE IF EXISTS `options`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `options` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `classes_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_options_classes1_idx` (`classes_id`),
+  CONSTRAINT `fk_options_classes1` FOREIGN KEY (`classes_id`) REFERENCES `classes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `options`
+--
+
+LOCK TABLES `options` WRITE;
+/*!40000 ALTER TABLE `options` DISABLE KEYS */;
+INSERT INTO `options` VALUES (1,'Option A',4),(2,'Option B',4),(3,'Option C',4),(4,'Option D',4),(5,'Option E',4),(6,'Option F',4),(7,'Option A',5),(8,'Option B',5),(9,'Option C',5),(10,'Option D',5),(11,'Option E',5),(12,'Option F',5),(13,'Option A',6),(14,'Option B',6),(15,'Option C',6),(16,'Option D',6),(17,'Option E',6),(18,'Option F',6);
+/*!40000 ALTER TABLE `options` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `payment_type`
 --
 
@@ -619,7 +647,7 @@ CREATE TABLE `payments` (
   `ref_num` varchar(145) NOT NULL,
   `remarks` text DEFAULT NULL,
   `payment_type_id` int(11) NOT NULL,
-  `students_student_no` varchar(255) NOT NULL,
+  `students_student_no` varchar(45) NOT NULL,
   `academic_year` year(4) NOT NULL,
   `term` int(11) DEFAULT NULL,
   `books_id` int(11) DEFAULT NULL,
@@ -627,7 +655,7 @@ CREATE TABLE `payments` (
   KEY `payment_type_id` (`payment_type_id`),
   KEY `students_student_no` (`students_student_no`),
   KEY `FK_book_id` (`books_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -636,7 +664,7 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES (16,50000.00,'2020-06-18','3Z8oSd0Ub0AJdSrUNNgwnBLYRXDDssKk3TRepqtE','remarks',1,'LPS/S/1',2020,1,NULL),(8,800.00,'2020-06-13','Ycz0eoI0Hg',NULL,2,'LPS/S/5',2020,1,1),(13,7000.00,'2020-06-18','O9yhaYBZikykiURDHAcjth2Xz0dbmFBobyA0Mx1i','paid in full',1,'LPS/S/1',2020,1,NULL),(15,50000.00,'2020-06-18','Khgx5IcFFDWyTMNpvimQleSNxbhfe6I0qUupyhnz','remarks',1,'LPS/S/1',2020,1,NULL);
+INSERT INTO `payments` VALUES (28,5000.00,'2020-08-28','KB8FQwWdgxduoUEkU2rZpVJQ6N5tLxdoFObktzLn','remarks',1,'LPS/S/2',2020,1,NULL),(27,5000.00,'2020-08-28','pNmCfcYP3S5Vfx4510hUZYfevb1aw43E4MMyG05q','remarks',1,'LPS/S/3',2020,1,NULL),(26,25000.00,'2020-08-28','A6ShaHmcH8pl1bpdOXCmk2RLyFrzZ1NdjU8CKHlo','remark',1,'LPS/S/2',2020,1,NULL),(25,5000.00,'2020-08-27','N1hXVXNtJ1weuWwiW5LQVACYZvwqkSsZeRHOMD5f','remark',1,'LPS/S/1',2020,1,NULL),(24,25000.00,'2020-08-27','utMXOBZRjUlvNMU0lio09Cs43a2jxJQ1I4zijPGE','no',1,'LPS/S/1',2020,1,NULL);
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -660,7 +688,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teachers'),(30,'Students'),(40,'Librarian'),(50,'Guardian'),(60,'Accountant');
+INSERT INTO `roles` VALUES (10,'Admin'),(20,'Teacher'),(30,'Student'),(40,'Librarian'),(50,'Guardian'),(60,'Accountant');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -773,7 +801,7 @@ CREATE TABLE `student_count` (
 
 LOCK TABLES `student_count` WRITE;
 /*!40000 ALTER TABLE `student_count` DISABLE KEYS */;
-INSERT INTO `student_count` VALUES (10,7);
+INSERT INTO `student_count` VALUES (10,9);
 /*!40000 ALTER TABLE `student_count` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -853,7 +881,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES ('LPS/S/1','Shawn','BSC','Chisenga','2019-04-17','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/2','Lusu','','Chisenga','2019-06-10','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-02-24',NULL,1,1,1,'0886449677',1),('LPS/S/3','Sam','','Chisenga','2018-11-07','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0886449677',1),('LPS/S/4','Test','','Chisenga','2020-02-24','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/Jazz.jpg','NA','2020-02-27',NULL,1,1,1,'0886449677',1),('LPS/S/5','Bronny','','James','2019-11-26','Ohio','USA','American','English',2020,'Basketball','Hiphop','Dancing','NA','NA','students/mask.jpg','NA','2020-03-02',NULL,1,1,1,'0999999999',1),('LPS/S/6','Kyle','','Chisenga','2020-05-30','Blantyre','Malawi','Malawi','English, Chichewa',2015,'Basketball','Hiphop','NA','NA','NA','students/bball.png','NA','2020-05-29',NULL,1,1,5,'0886449677',1);
+INSERT INTO `students` VALUES ('LPS/S/2','Lusu','','Chisenga','2019-06-10','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-02-24',NULL,1,1,1,'0999999999',1),('LPS/S/3','Sam','','Chisenga','2018-11-07','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/bball.png','NA','2020-03-02',NULL,1,1,1,'0999999999',1),('LPS/S/4','Test','','Chisenga','2020-02-24','Adventist','Malawi','malawian','English, Chichewa',2020,'Basketball','Hiphop','Dancing','NA','NA','students/Jazz.jpg','NA','2020-02-27',NULL,1,1,1,'0999999999',1),('LPS/S/5','Bronny','','James','2019-11-26','Ohio','USA','American','English',2020,'Basketball','Hiphop','Dancing','NA','NA','students/mask.jpg','NA','2020-03-02',NULL,1,1,1,'0999999999',1),('LPS/S/6','Kyle','','Chisenga','2020-05-30','Blantyre','Malawi','Malawi','English, Chichewa',2015,'Basketball','Hiphop','NA','NA','NA','students/bball.png','NA','2020-05-29',NULL,1,1,5,'0999999999',1),('LPS/S/8','Pistone','Junior','Sanjama','2020-09-16','CHikwawa','Malawi','Malawian','Chichewa',2018,'NA','EDM','NA','NA','Matindi','students/60557803.jpg','Chris','2020-09-02',NULL,1,1,15,'0999999999',1);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -882,8 +910,40 @@ CREATE TABLE `students_has_classes_has_subjects` (
 
 LOCK TABLES `students_has_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `students_has_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `students_has_classes_has_subjects` VALUES ('LPS/S/2',1,1),('LPS/S/2',1,2),('LPS/S/2',1,3),('LPS/S/2',1,6),('LPS/S/2',1,7),('LPS/S/2',1,8),('LPS/S/2',1,9),('LPS/S/2',1,10),('LPS/S/2',1,15),('LPS/S/3',1,1),('LPS/S/3',1,2),('LPS/S/3',1,3),('LPS/S/3',1,6),('LPS/S/3',1,7),('LPS/S/3',1,8),('LPS/S/3',1,9),('LPS/S/3',1,10),('LPS/S/3',1,15),('LPS/S/4',1,1),('LPS/S/4',1,2),('LPS/S/4',1,3),('LPS/S/4',1,6),('LPS/S/4',1,7),('LPS/S/4',1,8),('LPS/S/4',1,9),('LPS/S/4',1,10),('LPS/S/4',1,15),('LPS/S/5',1,1),('LPS/S/5',1,2),('LPS/S/5',1,3),('LPS/S/5',1,6),('LPS/S/5',1,7),('LPS/S/5',1,8),('LPS/S/5',1,9),('LPS/S/5',1,10),('LPS/S/5',1,15),('LPS/S/6',2,1),('LPS/S/6',2,2),('LPS/S/6',2,3),('LPS/S/6',2,6),('LPS/S/6',2,7),('LPS/S/6',2,8),('LPS/S/6',2,9),('LPS/S/6',2,10),('LPS/S/6',2,15);
+INSERT INTO `students_has_classes_has_subjects` VALUES ('LPS/S/2',1,1),('LPS/S/2',1,2),('LPS/S/2',1,3),('LPS/S/2',1,6),('LPS/S/2',1,7),('LPS/S/2',1,8),('LPS/S/2',1,9),('LPS/S/2',1,10),('LPS/S/2',1,15),('LPS/S/3',1,1),('LPS/S/3',1,2),('LPS/S/3',1,3),('LPS/S/3',1,6),('LPS/S/3',1,7),('LPS/S/3',1,8),('LPS/S/3',1,9),('LPS/S/3',1,10),('LPS/S/3',1,15),('LPS/S/4',1,1),('LPS/S/4',1,2),('LPS/S/4',1,3),('LPS/S/4',1,6),('LPS/S/4',1,7),('LPS/S/4',1,8),('LPS/S/4',1,9),('LPS/S/4',1,10),('LPS/S/4',1,15),('LPS/S/5',1,1),('LPS/S/5',1,2),('LPS/S/5',1,3),('LPS/S/5',1,6),('LPS/S/5',1,7),('LPS/S/5',1,8),('LPS/S/5',1,9),('LPS/S/5',1,10),('LPS/S/5',1,15),('LPS/S/6',2,1),('LPS/S/6',2,2),('LPS/S/6',2,3),('LPS/S/6',2,6),('LPS/S/6',2,7),('LPS/S/6',2,8),('LPS/S/6',2,9),('LPS/S/6',2,10),('LPS/S/6',2,15),('LPS/S/8',5,5),('LPS/S/8',5,7),('LPS/S/8',5,9),('LPS/S/8',5,10),('LPS/S/8',5,14),('LPS/S/8',5,16);
 /*!40000 ALTER TABLE `students_has_classes_has_subjects` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `students_options`
+--
+
+DROP TABLE IF EXISTS `students_options`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `students_options` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `subjects_id` int(11) NOT NULL,
+  `options_id` int(11) NOT NULL,
+  `classes_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_table1_subjects1_idx` (`subjects_id`),
+  KEY `fk_table1_options1_idx` (`options_id`),
+  KEY `fk_table1_classes1_idx` (`classes_id`),
+  CONSTRAINT `fk_table1_classes1` FOREIGN KEY (`classes_id`) REFERENCES `classes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_table1_options1` FOREIGN KEY (`options_id`) REFERENCES `options` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_table1_subjects1` FOREIGN KEY (`subjects_id`) REFERENCES `subjects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `students_options`
+--
+
+LOCK TABLES `students_options` WRITE;
+/*!40000 ALTER TABLE `students_options` DISABLE KEYS */;
+INSERT INTO `students_options` VALUES (1,5,1,4),(2,13,1,4),(3,2,1,4),(4,10,1,4),(5,4,2,4),(6,16,2,4),(7,6,2,4),(8,16,3,4),(9,5,3,4),(10,9,3,4),(11,8,3,4),(12,13,4,4),(13,9,4,4),(14,7,4,4),(15,10,4,4),(16,12,5,4),(17,4,5,4),(18,10,5,4),(19,14,6,4),(20,12,6,4),(21,8,6,4),(22,5,1,5),(23,13,1,5),(24,2,1,5),(25,10,1,5),(26,4,2,5),(27,16,2,5),(28,6,2,5),(29,16,3,5),(30,5,3,5),(31,9,3,5),(32,8,3,5),(33,13,4,5),(34,9,4,5),(35,7,4,5),(36,10,4,5),(37,12,5,5),(38,4,5,5),(39,10,5,5),(40,14,6,5),(41,12,6,5),(42,8,6,5),(43,1,13,6),(44,5,14,6),(45,12,14,6),(46,3,15,6),(47,16,16,6),(48,14,16,6),(49,4,17,6),(50,13,17,6),(51,10,18,6);
+/*!40000 ALTER TABLE `students_options` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -937,7 +997,7 @@ CREATE TABLE `sub_classes_has_assignments` (
 
 LOCK TABLES `sub_classes_has_assignments` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_assignments` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_assignments` VALUES (1,25),(1,26),(1,27),(1,28);
+INSERT INTO `sub_classes_has_assignments` VALUES (1,38),(1,39);
 /*!40000 ALTER TABLE `sub_classes_has_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -968,7 +1028,7 @@ CREATE TABLE `sub_classes_has_subjects` (
 
 LOCK TABLES `sub_classes_has_subjects` WRITE;
 /*!40000 ALTER TABLE `sub_classes_has_subjects` DISABLE KEYS */;
-INSERT INTO `sub_classes_has_subjects` VALUES (1,3,'0212463690'),(1,7,'0212463690');
+INSERT INTO `sub_classes_has_subjects` VALUES (1,1,'0212463690'),(1,3,'0212463690'),(1,7,'0212463690'),(1,8,'0777777777'),(1,9,'0777777777'),(1,15,'0777777777');
 /*!40000 ALTER TABLE `sub_classes_has_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -992,7 +1052,7 @@ CREATE TABLE `subjects` (
 
 LOCK TABLES `subjects` WRITE;
 /*!40000 ALTER TABLE `subjects` DISABLE KEYS */;
-INSERT INTO `subjects` VALUES (1,'English Language'),(2,'English Literiture'),(3,'Mathematics'),(4,'Chemistry'),(5,'Physics'),(6,'Arts'),(7,'French'),(8,'Geography'),(9,'History'),(10,'ICT'),(11,'ICT Ptacticals'),(12,'Business Studies'),(13,'Accounts'),(14,'Economics'),(15,'Science');
+INSERT INTO `subjects` VALUES (1,'English Language'),(2,'English Literiture'),(3,'Mathematics'),(4,'Chemistry'),(5,'Physics'),(6,'Arts'),(7,'French'),(8,'Geography'),(9,'History'),(10,'ICT'),(11,'ICT Ptacticals'),(12,'Business Studies'),(13,'Accounts'),(14,'Economics'),(15,'Science'),(16,'Biology');
 /*!40000 ALTER TABLE `subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1023,7 +1083,6 @@ CREATE TABLE `submissions` (
 
 LOCK TABLES `submissions` WRITE;
 /*!40000 ALTER TABLE `submissions` DISABLE KEYS */;
-INSERT INTO `submissions` VALUES ('LPS/S/1',25,12.00,'services.docx','2020-05-28'),('LPS/S/1',26,10.00,'Mo&Mic for the Website.doc','2020-05-28'),('LPS/S/1',27,11.00,'IDEAS FOR EARTHLOOM WEBSITE.odt','2020-06-04'),('LPS/S/1',28,11.00,'Mitra Services.docx','2020-06-04');
 /*!40000 ALTER TABLE `submissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1105,7 +1164,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ldDjbjV9ATbJt1OkiEx90e3fJEgzm.jwV1Ubfkh9xNYfymVk2hmFS\n','2020-03-19 01:49:00'),('0886449677','Blena','BSC','Chisenga',1,50,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('accountant','accountant',NULL,'accountant',1,60,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$uZpnYo19JFb/6mPO23PQiO2UwfFHk3iZ3mF0LVRtsZ6Kdq964IMfC\n','2020-05-19 06:53:00');
+INSERT INTO `users` VALUES ('01823567','Sujata',NULL,'Gwangwala',1,20,'$2y$10$wEojn27GOsM4/.vjHKzJMu6TtWYdEmOPmY7pttYogBeMdvbFHQKaa','2020-06-22 04:14:00'),('0212463690','Wyness','','Chisenga',1,20,'$2y$10$ujcUEj/7VJP5r/17JYustu7.GrM0oF8BJxWIT79zL2aljAdlkGo22\n','2020-03-19 01:49:00'),('0777777777','Fatsani',NULL,'Thom',1,20,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-06-22 04:14:00'),('0886449677','Blena','BSC','Chisenga',1,50,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('088800900','James','Junior','Phiri',1,40,'$2y$10$kIGoKkCYnwiRJ3L8oBZNqefoiMi3J4kXSnTdK5qxQpSwvjTlZy2Ii\n','2020-06-22 03:16:00'),('0999999999','Lebron',NULL,'James',1,50,'$2y$10$wEojn27GOsM4/.vjHKzJMu6TtWYdEmOPmY7pttYogBeMdvbFHQKaa','2020-06-22 04:14:00'),('accountant@accountant.com','Pistone','Junior','Sanjama',1,60,'$2y$10$wEojn27GOsM4/.vjHKzJMu6TtWYdEmOPmY7pttYogBeMdvbFHQKaa\n','2020-06-22 02:52:00'),('admin@admin.com','admin','','admin',1,10,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','0000-00-00 00:00:00'),('blena.c@gmail.com','Blena',NULL,'Chisenga',1,10,'$2y$10$Gj4zStb9dyoV2u.ZNnmndOCuFbwehMj9NEwceFfXCHEiWIRQNj3MS','0000-00-00 00:00:00'),('librarian@librarian.com','librarian','','librarian',1,40,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/1','Shawn','BSC','Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/2','Lusu',NULL,'	Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-05-19 06:53:00'),('LPS/S/3','Sam',NULL,'Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-06-22 04:14:00'),('LPS/S/4','Test',NULL,'Chisenga',1,30,'$2y$10$H/gqvUtrii6BR14NCbmS6.dFd.AQP3niPLMQrTHpwea6fXoDVsvk6','2020-06-22 04:14:00'),('LPS/S/5','Bronny',NULL,'James',1,30,'$2y$10$Rubgvr4tTtSLQV.dDBAXEurow3F6h/bXCv7HPJbkTbx8jQITW2BAG','2020-06-22 04:14:00'),('LPS/S/6','Kyle','','Chisenga',1,30,'$2y$10$Tks0vjyX0tDtQ6lOXES2M.EWTnzmlpgzkDFxe5.W4WXONU4fUgnre\n','2020-05-19 06:53:00'),('LPS/S/8','Pistone','Junior','Sanjama',1,30,'$2y$10$US.6Z36ok/EtveEaluIuMODP9CvuOfoaFfnpahzQ2au2/nu7DiRWq\n','2020-09-02 06:14:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -1118,4 +1177,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-18 23:28:45
+-- Dump completed on 2020-09-08 13:25:41
