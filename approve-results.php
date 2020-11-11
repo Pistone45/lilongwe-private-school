@@ -195,10 +195,7 @@ $classname = $getClassAndSubjectName->getClassAndSubjectName($sub_class_id, $sub
           <input type="text" hidden="" name="subject_id" value="<?php if(isset($_POST['submit'])){ echo  $subject_id = $_POST['subject_id'];} ?>">
 
           <input type="text" hidden="" name="sub_class_id" value="<?php if(isset($_POST['submit'])){ echo  $sub_class_id = $_POST['sub_class_id'];} ?>">
-        <?php if(isset($checkStudent['exam_status_id']) == 2){  ?>
-        <button disabled="" class="btn btn-success btn-lg btn-block">Results Already Approved</button>
-        <?php  }else{ ?>
-        <button type="submit" name="approve" class="btn btn-success btn-lg btn-block">Approve Results</button><?php } ?>
+        <button type="submit" name="approve" class="btn btn-success btn-lg btn-block">Approve Results</button>
 
        </form>
 

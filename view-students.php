@@ -118,6 +118,7 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
                 <tr>
                   <th>Guardian</th>
                   <th>Student NO</th>
+                  <th>Email</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
                   <th>Class</th>
@@ -139,12 +140,13 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
 					<tr>
               <td><?php echo $student['guardian']; ?></td>
               <td><?php echo $student_no = $student['student_no']; ?></td>
+              <td><?php echo $student['email']; ?></td>
               <td><?php echo $student['firstname']; ?></td>
               <td> <?php echo $student['lastname']; ?></td>
               <td><?php echo $student['sub_class']; ?></td>
     				  <td><?php echo $student['student_status']; ?> </td>
     				  <td><a href="student-details.php?id=<?php echo $student['student_no']; ?>"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a></td>
-              <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Contact Student</button></td>
+              <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $i; ?>"> Message</button></td>
               <td><a href="#"><i style="font-size: 28px; color: red;" data-toggle="modal" data-target="#my<?php echo$delete; ?>Modal" class="fa fa-trash-o" aria-hidden="true"></i></a></td>
           </tr>
 

@@ -77,6 +77,7 @@ if(isset($_POST['submit'])){
 	$gender = $_POST['gender'];
 	$blood_type = $_POST['blood_type'];
 	$dob = $_POST['dob'];
+  $email = $_POST['email'];
 	$place_of_birth =$_POST['place_of_birth'];
 	$country_of_birth =$_POST['country_of_birth'];
 	$nationality = $_POST['nationality'];
@@ -93,7 +94,7 @@ if(isset($_POST['submit'])){
 	
 	//echo $certificate; die();
 	$addStudent = new Students();
-	$addStudent->addStudent($guardian_id,$sub_class, $student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date);
+	$addStudent->addStudent($guardian_id,$sub_class, $student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob, $email ,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date);
 	
 }
 
@@ -223,6 +224,11 @@ if(isset($_POST['submit'])){
                 </div>
 				
 				<div class="form-group">
+                  <label for="Email">Email</label>
+                  <input type="text" class="form-control" id="email" name="email" required>
+                </div>
+
+        <div class="form-group">
                   <label for="Lastname">Date of Birth</label>
                   <input type="date" class="form-control" id="dob" name="dob" required>
                 </div>
@@ -240,11 +246,7 @@ if(isset($_POST['submit'])){
                   <label for="class">Nationality</label>
                   <input type="text" class="form-control" id="nationality" name="nationality">
                 </div>
-				
-				<div class="form-group">
-                  <label for="class">Home Language</label>
-                  <input type="text" class="form-control" id="home_language" name="home_language">
-                </div>
+			
 				
                 
             
@@ -257,7 +259,11 @@ if(isset($_POST['submit'])){
         <!--/.col (left) -->
         <!-- right column -->
         <div class="col-md-6">
-				
+
+        <div class="form-group">
+                  <label for="class">Home Language</label>
+                  <input type="text" class="form-control" id="home_language" name="home_language">
+                </div>				
 				
 				<div class="form-group">
                   <label for="class">Year of Entry</label>

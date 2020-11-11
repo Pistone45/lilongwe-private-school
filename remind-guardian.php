@@ -29,7 +29,7 @@ if (isset($_POST['remind_guardian'])) {
   $firstname = $specificStudent['firstname'];
   $lastname = $specificStudent['lastname'];
 
-	    $recipient ="pistone@virtualtechmalawi.com";
+	    $recipient = $email;
 	    $name = "School Fees Reminder";
 	    $subject = "REMINDER ON FEES BALANCE";
 	    $message = "Your Student ".$firstname.' '.$lastname." has a fees balance of K".number_format($balance).". Please settle this Balance as soon as possible.";

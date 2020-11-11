@@ -82,6 +82,7 @@ $guardians = $getGuardians->getGuardians();
                   <th>Lastname</th>
                   <th>Primary Phone</th>
 				  <th>Email</th>
+          <th>Details</th>
 				  <th>Action</th>
                 </tr>
                 </thead>
@@ -96,6 +97,7 @@ $guardians = $getGuardians->getGuardians();
                   <td> <?php echo $guardian['lastname']; ?></td>
                   <td><?php echo $guardian['primary_phone']; ?></td>
 				  <td><?php echo $guardian['email']; ?> </td>
+          <td><a href="guardian-details.php?id=<?php echo $guardian['id']; ?>"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a></td>
 				  <td><a href="edit-guardian.php?id=<?php echo $guardian['id']; ?>"><i class="fa fa-edit"></i> Edit Guardian</a></td>
                 </tr>
 					<?php

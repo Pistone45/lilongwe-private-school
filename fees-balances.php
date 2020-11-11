@@ -10,8 +10,8 @@ $term = $settings['term'];
 
 $getStudentsWithFeesBalances = new Staff();
 $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $academic_year, $term);
-
-
+$getnonPaidStudents = new Staff();
+$unpaidstudents = $getnonPaidStudents->getnonPaidStudents($fees, $academic_year, $term);
 
 ?>
 <!DOCTYPE html>
@@ -72,65 +72,151 @@ $students = $getStudentsWithFeesBalances->getStudentsWithFeesBalances($fees, $ac
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-xs-12">
-         <div class="box-header with-border">
-            </div>
-          <div class="box">
-            
-            <!-- /.box-header -->
-            <div class="box-body">
+        <div class="col-lg-12 col-xs-12">
+          <!-- Box -->
+          <div class="box box-primary">
+          <?php
+            if(isset($_SESSION["reminder_sent"]) && $_SESSION["reminder_sent"]==true)
+            {
+                echo "<div class='alert alert-success'>";
+                echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+                echo "<strong>Success! </strong>"; echo "You have successfully sent a reminder to Guardian";
+                unset($_SESSION["reminder_sent"]);
+                echo "</div>";
+                //header('Refresh: 5; URL= accountant-index.php');
+                }
+            ?>
+
+              <div class="box-body">
+              <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Paid with Balances</a></li>
+                <li><a data-toggle="tab" href="#menu1">Not Paid</a></li>
+              </ul>
+
+              <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                                  <h3>Paid with Fees Balances</h3>
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Student No</th>
+                  <th>Guardian Name</th>
+                  <th>Guardian Phone</th>
+                  <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
-                  <th>Class</th>
+                  <th>Class Name</th>
                   <th>Academic Year</th>
                   <th>Term</th>
-                  <th>Balance</th>
+                  <th>Fees Balance</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-				if(isset($students) && count($students)>0){
-					foreach($students as $student){ 
-            if($fees - $student['amount'] == 0) {}else{?>
-					<tr>
+        <?php
+        if(isset($students) && count($students)>0){
+          foreach($students as $student){ 
+              if($fees - $student['amount'] == 0){}else{  ?>          <tr>
+                  <td><?php echo $student['guardian_name']; ?></td>
+                  <td><?php echo $student['phone']; ?></td>
                   <td><?php echo $student['student_no']; ?></td>
                   <td><?php echo $student['firstname']; ?></td>
-                  <td> <?php echo $student['lastname']; ?></td>
+                  <td><?php echo $student['lastname']; ?></td>
                   <td><?php echo $student['sub_class_name']; ?></td>
-				          <td><?php echo $academic_year; ?> </td>
-                  <td><?php echo $term; ?> </td>
-                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($fees - $student['amount']);} ?></td>
-                </tr>
-					<?php }
-						
-					}
-				}else{echo "No students with fees balances found";}
-				?>
+                  <td><?php echo $academic_year ?></td>
+                  <td><?php echo $term = $settings['term']; ?></td>
+                  <td><?php if($fees - $student['amount'] == $fees){ ?> <p style="color: red;">Not Paid</p> <?php }else{echo"K"; echo number_format($balance = $fees - $student['amount']);} ?></td>
+                </tr><?php } ?>
+
+
+
+          <?php
+            
+          }
+        }else{
+          echo "No Students with Fees Balances found";
+        }
+        ?>
                 
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Student No</th>
+                  <th>Guardian Name</th>
+                  <th>Guardian Phone</th>
+                  <th>Student ID</th>
                   <th>First Name</th>
                   <th>Last Name</th>
-                  <th>Class</th>
-        				  <th>Academic Year</th>
+                  <th>Class Name</th>
+                  <th>Academic Year</th>
                   <th>Term</th>
-                  <th>Balance</th>
+                  <th>Fees Balance</th>
                 </tr>
                 </tfoot>
               </table>
+                </div>
+
+                <div id="menu1" class="tab-pane fade">
+              <h3>Not Paid</h3>
+              <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Guardian Name</th>
+                  <th>Guardian Phone</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Fees Balance</th>
+                </tr>
+                </thead>
+                <tbody>
+        <?php
+        if(isset($unpaidstudents) && count($unpaidstudents)>0){
+          foreach($unpaidstudents as $unpaidstudent){   ?>          <tr>
+                  <td><?php echo $unpaidstudent['guardian_name']; ?></td>
+                  <td><?php echo $unpaidstudent['phone']; ?></td>
+                  <td><?php echo $unpaidstudent['student_no']; ?></td>
+                  <td><?php echo $unpaidstudent['firstname']; ?></td>
+                  <td><?php echo $unpaidstudent['lastname']; ?></td>
+                  <td><?php echo $unpaidstudent['sub_class_name']; ?></td>
+                  <td><?php echo $academic_year ?></td>
+                  <td><?php echo $term = $settings['term']; ?></td>
+                  <td style="color: red;">K<?php echo number_format($fees); ?></td>
+                </tr>
+
+
+
+          <?php
+            
+          }
+        }else{
+          echo "No Students with Fees Balances found";
+        }
+        ?>
+                
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Guardian Name</th>
+                  <th>Guardian Phone</th>
+                  <th>Student ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class Name</th>
+                  <th>Academic Year</th>
+                  <th>Term</th>
+                  <th>Fees Balance</th>
+                </tr>
+                </tfoot>
+              </table>
+                </div>
+
+              </div>
+
+              </div>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
         </div>
-        <!-- /.col -->
-      </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->

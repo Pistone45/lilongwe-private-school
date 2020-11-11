@@ -21,7 +21,7 @@ if (isset($_POST['select_class'])) {
     $_SESSION['sub_class'] = $_POST['sub_class'];
     header("location: add-student.php");
 
-  }elseif($class_id==4 || $class_id==5 || $class_id==6){
+  }elseif($class_id==4 || $class_id==5 || $class_id==6 || $class_id==7){
     $_SESSION['guardian_id'] = $_POST['guardian_id'];
     $_SESSION['sub_class'] = $_POST['sub_class'];
     $_SESSION['class_id'] = $class_id;

@@ -506,7 +506,7 @@ class Students{
 	}
 
 	public function getStudents(){
-		$getStudents = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, CONCAT(guardians.firstname, ' ' ,guardians.lastname)as guardian, place_of_birth,country_of_birth,nationality,home_language,
+		$getStudents = $this->dbCon->Prepare("SELECT student_no, students.email as email, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, CONCAT(guardians.firstname, ' ' ,guardians.lastname)as guardian, place_of_birth,country_of_birth,nationality,home_language,
 		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type,
 		student_status.name as student_status,sub_classes.name as sub_class
 		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
@@ -564,7 +564,7 @@ public function getLoginStatus($id){
 
 
 	//add student
-	public function addStudent($guardian_id,$sub_class,$student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date){
+	public function addStudent($guardian_id,$sub_class,$student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob, $email, $place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date){
 				//echo 'dd'; die();
 				$student_status_id =1; // active status
 				
@@ -594,9 +594,9 @@ public function getLoginStatus($id){
 					
 					//insert into students
 					
-					$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob,place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
+					$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob, email, place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
 					musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,blood_type_id,student_status_id,sub_classes_id,guardians_id, gender_id)
-					VALUES (:student_no,:firstname,:middlename,:lastname,:dob,:place_of_birth,:country_of_birth,:nationality,:home_language,:year_of_entry,:sporting_interests,
+					VALUES (:student_no,:firstname,:middlename,:lastname,:dob, :email, :place_of_birth,:country_of_birth,:nationality,:home_language,:year_of_entry,:sporting_interests,
 					:musical_interests,:other_interests,:medical_information,:other_schools_attended,:student_picture,:home_doctor,:admission_date,:blood_type_id,:student_status_id,:sub_classes_id,:guardian_id, :gender_id)" );
 					$addStudent->execute(array(
 						  ':student_no'=>($student_no),
@@ -604,6 +604,7 @@ public function getLoginStatus($id){
 						  ':middlename'=>($middlename),
 						  ':lastname'=>($lastname),						  
 						  ':dob'=>($dob),
+						  ':email'=>($email),
 						  ':place_of_birth'=>($place_of_birth),
 						  ':country_of_birth'=>($country_of_birth),
 						  ':nationality'=>($nationality),
@@ -2297,6 +2298,49 @@ public function getAssignmentID($sub_class_id){
 
 
 
+	public function DemoteOrPromote($class, $student_no){
+		$checkClassHistory = $this->dbCon->PREPARE("SELECT year, old_class_id
+		FROM demotions_and_promotions 
+		WHERE year=? AND old_class_id=? " );
+		$checkClassHistory->bindValue(1, $_SESSION['academic_year']);
+		$checkClassHistory->bindValue(2, $_SESSION['sub_class']);
+		$checkClassHistory->execute();
+		if($checkClassHistory->rowCount()>0){
+
+			echo "<script>alert('You have already Promoted or Demoted this Class');</script>";
+		}else{
+			
+			if(count($student_no)>0){
+				foreach(array_combine($student_no, $class) as $students => $sub_class){
+					
+				$updateClass = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=? ");
+				$updateClass->bindParam(1, $sub_class);
+				$updateClass->bindParam(2, $students);
+				$updateClass->execute();
+
+
+					$DemoteOrPromote = $this->dbCon->prepare("INSERT INTO demotions_and_promotions 
+					(year, students_student_no, new_class_id, old_class_id)
+				VALUES (:year, :students_student_no, :new_class_id, :old_class_id)" );
+				$DemoteOrPromote->execute(array(
+						  ':year'=>($_SESSION['academic_year']),
+						  ':students_student_no'=>($students),
+						  ':new_class_id'=>($sub_class),
+						  ':old_class_id'=>($_SESSION['sub_class']) 
+						  ));
+					
+				}
+				
+			}
+				
+		$_SESSION['class_promoted']=true;		  		
+	}
+
+	}
+
+
+
+
 	public function deleteNotice($id){
 
 		$deleteNotice =$this->dbCon->PREPARE("DELETE FROM notices WHERE id='$id'");
@@ -2801,27 +2845,59 @@ public function getBookCount($book_id){
 	} //end of getting Students Per SUb Class
 
 
+	// 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
+	// 	$payment_type_id = 1;	
+	// 	$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_class_name, SUM(amount) as amount
+	// 		FROM (SELECT payments.students_student_no as student_no, SUM(amount) as amount, students.firstname as firstname, guardians.firstname as gfirstname, students.lastname as lastname, sub_classes.name as sub_class_name FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id)
+	// 			WHERE payment_type_id=? AND academic_year=? AND term=? 
+	// 				GROUP BY payments.students_student_no HAVING (SUM(amount) <=?)
+	// 		UNION ALL
+	// 		SELECT student_no as student_no, firstname, lastname, sub_classes.name as sub_class_name, null
+	// 		FROM students  INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) 
+					
+	// 				GROUP BY student_no
+	// 		) results
+	// 		group by student_no");
+	// 	$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
+	// 	$getStudentsWithFeesBalances->bindParam(2,$academic_year);
+	// 	$getStudentsWithFeesBalances->bindParam(3,$term);
+	// 	$getStudentsWithFeesBalances->bindParam(4,$fees);
+	// 	$getStudentsWithFeesBalances->execute();
+		
+	// 	if($getStudentsWithFeesBalances->rowCount()>0){
+	// 		$rows = $getStudentsWithFeesBalances->fetchAll();
+	// 		return $rows;
+	// 	}
+	// } //end of getting Students Per Class and Payment
+
+
+
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, firstname, lastname, sub_class_name, SUM(amount) as amount
-			FROM (SELECT payments.students_student_no as student_no, SUM(amount) as amount, students.firstname as firstname, students.lastname as lastname, sub_classes.name as sub_class_name FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id)
-				WHERE payment_type_id=? AND academic_year=? AND term=? 
-					GROUP BY payments.students_student_no HAVING (SUM(amount) <=?)
-			UNION ALL
-			SELECT student_no as student_no, firstname, lastname, sub_classes.name as sub_class_name, null
-			FROM students  INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) 
-					
-					GROUP BY student_no
-			) results
-			group by student_no");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, SUM(amount) as amount, CONCAT(guardians.firstname, guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id)  WHERE payment_type_id=? AND payments.academic_year=? AND payments.term=? GROUP BY student_no");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);
-		$getStudentsWithFeesBalances->bindParam(4,$fees);
+		//$getStudentsWithFeesBalances->bindParam(4,$fees);
 		$getStudentsWithFeesBalances->execute();
 		
 		if($getStudentsWithFeesBalances->rowCount()>0){
 			$rows = $getStudentsWithFeesBalances->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Class and Payment
+
+
+	public function getnonPaidStudents($fees, $academic_year, $term){	
+		$getnonPaidStudents = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, CONCAT(guardians.firstname, guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM students INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id) WHERE student_no NOT IN (SELECT students_student_no FROM payments) ");
+		//$getnonPaidStudents->bindParam(1,$payment_type_id);
+		//$getnonPaidStudents->bindParam(2,$academic_year);
+		//$getnonPaidStudents->bindParam(3,$term);
+		//$getStudentsWithFeesBalances->bindParam(4,$fees);
+		$getnonPaidStudents->execute();
+		
+		if($getnonPaidStudents->rowCount()>0){
+			$rows = $getnonPaidStudents->fetchAll();
 			return $rows;
 		}
 	} //end of getting Students Per Class and Payment

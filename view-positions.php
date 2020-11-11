@@ -7,11 +7,25 @@ if (isset($_POST['submit'])) {
   $term = (int)$_POST['term'];
   $sub_class = (int)$_POST['level'];
 
+  $_SESSION['academic_year'] = $academic_year;
+  $_SESSION['sub_class'] = $sub_class;
 
 $getFinalPositions = new Staff();
 $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_class);
 
+$getAllSubclassesOnFilter = new Staff();
+$sub_classes = $getAllSubclassesOnFilter->getAllSubclassesOnFilter();
 }
+
+if (isset($_POST['change_class'])) {
+  $class = $_POST['class'];
+  $student_no = $_POST['student_no'];
+
+  $DemoteOrPromote = new Staff();
+  $DemoteOrPromote->DemoteOrPromote($class, $student_no);
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +34,7 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>View Positions | Lilongwe Private School</title>
-  <!-- Tell the browser to be responsive to screen width -->
+<!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -28,6 +42,8 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -42,9 +58,8 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="submit.js"></script>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -75,28 +90,35 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
         <div class="col-md-12">
           <!-- general form elements -->
           <div class="box box-primary">
-
-       <h3>View Final Results</h3>
-      <?php
-      $i = 0;
-        if(isset($positions) && count($positions)>0){ 
+          <?php
+            if(isset($_SESSION["class_promoted"]) && $_SESSION["class_promoted"]==true)
+            {
+              echo "<div class='alert alert-success'>";
+              echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+              echo "<strong>Success! </strong>"; echo "You have successfully Promoted and Demoted Students";
+              unset($_SESSION["class_promoted"]);
+              echo "</div>";
+             header('Refresh: 5; URL= index.php');
+              }
           ?>
-
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Position</th>
-                  <th>Student Name</th>
-                  <th>Class Name</th>
-                  <th>Grading Type</th>
-                  <th>Academic Year</th>
-                  <th>Term</th>
-                  <th>Marks</th>
-                </tr>
-                </thead>
-                <tbody>
+        <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Student Name</th>
+            <th>Class Name</th>
+            <th>Grading Type</th>
+            <th>Academic Year</th>
+            <th>Term</th>
+            <th>Marks</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
                   <?php
-
+                $i = 0;
+          if(isset($positions) && count($positions)>0){
           foreach($positions as $position){ 
             $i++;  ?>
           <tr>    
@@ -107,16 +129,29 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
                   <td><?php echo $position['academic_year']; ?></td>
                   <td><?php echo $position['term']; ?></td>
                   <td><?php echo $position['mark']; ?> </td>
-                  <td></td>
+                  <td>
+                  <form action="view-positions.php" method="POST">
+                  <input type="hidden" name="student_no[]" value="<?php if(isset($position)){ echo $position['student_no'];  } ?>">
+                  <div class="form-group">
+                    <select required="" name="class[]" class="form-control" id="sel1">
+          <?php
+          if(isset($sub_classes) && count($sub_classes)>0){
+          foreach($sub_classes as $sub_class){   ?>
+                      <option value="<?php echo $sub_class['sub_class_id']; ?>"><?php echo $sub_class['name']; ?></option>
+                <?php
+              }
+            } ?>
+               
+                    </select>
+                  </div>
+
+                  </td>
 
                 </tr>
 
-
-
           <?php
-
+            }
           } ?>
-
                 
                 </tbody>
                 <tfoot>
@@ -128,13 +163,14 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
                   <th>Academic Year</th>
                   <th>Term</th>
                   <th>Marks</th>
+                  <th>Action</th>
                 </tr>
                 </tfoot>
-              </table> <?php
-                      }else {
-                        echo "No Students Available in the class at the moment";
-                      }
-        ?>
+              </table>
+              <button type="submit" name="change_class" class="btn btn-success btn-block">Promote or Demote</button>
+            </form>
+
+        </div>
           
             <!-- form start -->
 
@@ -153,35 +189,23 @@ $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_c
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <script type="text/javascript">
-    function RecordExams() {
-    var mark = $("#mark").val();
-    var academic_year = $("#academic_year").val();
-    var term = $("#term").val();
-    var students_student_no = $("#students_student_no").val();
-    var exam_type_id = $("#exam_type_id").val();
-    var staff_id = $("#staff_id").val();
-    var classes_has_subjects_classes_id = $("#classes_has_subjects_classes_id").val();
-    var classes_has_subjects_subjects_id = $("#classes_has_subjects_subjects_id").val();
-    $.post("record-student-exams.php", { mark: mark, academic_year: academic_year,
-     term: term, students_student_no: students_student_no, exam_type_id:exam_type_id, staff_id:staff_id, classes_has_subjects_classes_id: classes_has_subjects_classes_id, classes_has_subjects_subjects_id: classes_has_subjects_subjects_id},
-    function(data) {
-   $('#results').html(data);
-   $('#myForm')[0].reset();
-    });
-}
-  </script>
 <?php include_once("footer.html"); ?>
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+<!-- page script -->
 </body>
 </html>
