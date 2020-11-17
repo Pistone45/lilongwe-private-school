@@ -66,7 +66,10 @@ $user_details = $getUserProfile-> getUserProfile();
               
               <!-- Menu Footer-->
               <li class="user-footer">
-               
+                <div class="pull-left">
+                  <p><b><?php echo $user_details['role']; ?></b></p>
+                </div>
+
                 <div class="pull-right">
                   <a href="logout.php" class="btn btn-default btn-flat">Sign out</a>
                 </div>

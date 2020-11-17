@@ -228,7 +228,7 @@ class User{
 
 	
 	public function getUserProfile(){	
-				$getUserProfile = $this->dbCon->prepare("SELECT username,firstname,middlename,lastname FROM users WHERE username=?" );
+				$getUserProfile = $this->dbCon->prepare("SELECT username,firstname,middlename,lastname, roles.name as role FROM users INNER JOIN roles ON(users.roles_id=roles.id) WHERE username=? " );
 				$getUserProfile->bindParam(1, $_SESSION['user']['username']);
 				$getUserProfile->execute();
 
@@ -533,6 +533,22 @@ class Students{
 			return $row;
 		}
 	} //end of getting Specific Student
+
+
+	public function getAllStudentsPerSub_class($sub_class){
+		$getAllStudentsPerSub_class = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, gender_id, guardians.email as guardian_email, CONCAT(guardians.firstname, ' ', guardians.middlename, ' ', guardians.lastname) as guardian_name, place_of_birth,country_of_birth,nationality,home_language,
+		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type, blood_type_id,
+		student_status.name as student_status,sub_classes.name as sub_class, sub_classes.id as sub_class_id
+		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
+		ON (student_status.id=students.student_status_id) INNER JOIN gender ON (gender.id=students.gender_id) WHERE students.sub_classes_id=?");
+		$getAllStudentsPerSub_class->bindParam(1,$sub_class);
+		$getAllStudentsPerSub_class->execute();
+		
+		if($getAllStudentsPerSub_class->rowCount()>0){
+			$rows = $getAllStudentsPerSub_class->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students Per Sub Class
 	
 		public function getStudentDetails(){
 		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender,place_of_birth,country_of_birth,nationality,home_language,
@@ -1611,7 +1627,7 @@ class Classes{
 
 
 	public function getSubClasses(){
-		$getSubClasses = $this->dbCon->Prepare("SELECT id,name, classes_id FROM sub_classes");
+		$getSubClasses = $this->dbCon->Prepare("SELECT id,name, classes_id FROM sub_classes LIMIT 18");
 		$getSubClasses->execute();
 		
 		if($getSubClasses->rowCount()>0){
@@ -1833,6 +1849,18 @@ class Staff{
 			return $row;
 		}
 	} //End of getting Sub Class Name
+
+
+	public function changeClass($sub_class, $student_no){
+		$changeClass = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=? ");
+		$changeClass->bindParam(1, $sub_class);
+		$changeClass->bindParam(2, $student_no);
+		$changeClass->execute();
+
+		$_SESSION['class_changed'] = true;
+
+	}//End of changing a student Class
+
 
 
 	public function AddNotice($notice, $deadline){
@@ -2515,7 +2543,7 @@ public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id
 	public function checkStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id, $academic_year){
 		$checkStudentsPerExamType = $this->dbCon->PREPARE("SELECT students_student_no as student_no, students.firstname as firstname, students.lastname as lastname, marks, academic_year, exam_status_id
 		FROM exam_results INNER JOIN students ON(exam_results.students_student_no=students.student_no)
-		INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=? AND classes_has_subjects_subjects_id=?");
+		INNER JOIN exam_type ON(exam_results.exam_type_id=exam_type.id) WHERE students.sub_classes_id=? AND exam_type.id=? AND academic_year=? AND classes_has_subjects_subjects_id=? LIMIT 1");
 		$checkStudentsPerExamType->bindParam(1,$sub_class_id);
 		$checkStudentsPerExamType->bindParam(2,$exam_type_id);
 		$checkStudentsPerExamType->bindParam(3,$academic_year);
@@ -2531,6 +2559,516 @@ public function getStudentsPerExamType($sub_class_id, $subject_id, $exam_type_id
 		
 	}// Checking if a class is already approved
 
+
+
+public function promoteStudents(){
+					
+		//start transaction.
+		//Form 7 to Graduation
+		$this->dbCon->beginTransaction();
+		try{
+		$F7 ='18';
+		$graduated ='19';
+		//Graduation
+		//remember to add graduation datetime
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$graduated);
+		$promoteStudent->bindParam(2,$F7);
+        $promoteStudent->execute();
+
+
+        //Form 6 to Form 7
+       	$F7 ='18';
+		$F6 ='17';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F6);
+		$promoteStudent->bindParam(2,$F7);
+        $promoteStudent->execute();
+
+
+        //Form 5 South to Form 6
+       	$F5S ='16';
+		$F6 ='17';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F6);
+		$promoteStudent->bindParam(2,$F5S);
+        $promoteStudent->execute();
+
+
+        //Form 5 North to Form 6
+       	$F5N ='15';
+		$F6 ='17';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F6);
+		$promoteStudent->bindParam(2,$F5N);
+        $promoteStudent->execute();
+
+
+        //Form 4 South to Form 4 South
+       	$F4S ='14';
+		$F5S ='16';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F5S);
+		$promoteStudent->bindParam(2,$F4S);
+        $promoteStudent->execute();
+
+
+        //Form 4 North to Form 5 North
+       	$F4N ='13';
+		$F5N ='15';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F5N);
+		$promoteStudent->bindParam(2,$F4N);
+        $promoteStudent->execute();
+
+
+        //Form 3 South to Form 4 South
+       	$F3S ='12';
+		$F4S ='14';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F4S);
+		$promoteStudent->bindParam(2,$F3S);
+        $promoteStudent->execute();
+
+
+        //Form 3 North to Form 4 North
+       	$F3N ='11';
+		$F4N ='13';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F4N);
+		$promoteStudent->bindParam(2,$F3N);
+        $promoteStudent->execute();
+
+
+        //Form 3 West to Form 4 North
+       	$F3W ='9';
+		$F4N ='13';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F4N);
+		$promoteStudent->bindParam(2,$F3W);
+        $promoteStudent->execute();
+
+
+        //Form 3 East to Form 4 South
+       	$F3E ='10';
+		$F4S ='14';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F4S);
+		$promoteStudent->bindParam(2,$F3E);
+        $promoteStudent->execute();
+
+
+
+        //Form 2 South to Form 3 South
+       	$F2S ='8';
+		$F3S ='12';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F3S);
+		$promoteStudent->bindParam(2,$F2S);
+        $promoteStudent->execute();
+
+
+        //Form 2 North to Form 3 North
+       	$F2N ='7';
+		$F3N ='11';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F3N);
+		$promoteStudent->bindParam(2,$F2N);
+        $promoteStudent->execute();
+
+
+        //Form 2 West to Form 3 West
+       	$F2W ='5';
+		$F3W ='9';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F3W);
+		$promoteStudent->bindParam(2,$F2W);
+        $promoteStudent->execute();
+
+
+        //Form 2 East to Form 3 East
+       	$F2E ='6';
+		$F3E ='10';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F3E);
+		$promoteStudent->bindParam(2,$F2E);
+        $promoteStudent->execute();
+
+		
+        //Form 1 South to Form 2 South
+       	$F1S ='4';
+		$F2S ='8';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F2S);
+		$promoteStudent->bindParam(2,$F1S);
+        $promoteStudent->execute();
+
+
+        //Form 1 North to Form 2 North
+       	$F1N ='3';
+		$F2N ='7';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F2N);
+		$promoteStudent->bindParam(2,$F1N);
+        $promoteStudent->execute();
+
+
+        //Form 1 West to Form 2 West
+       	$F1W ='1';
+		$F2W ='5';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F2W);
+		$promoteStudent->bindParam(2,$F1W);
+        $promoteStudent->execute();
+
+
+        //Form 1 East to Form 2 East
+       	$F1E ='2';
+		$F2E ='6';
+		$promoteStudent =$this->dbCon->prepare("UPDATE students set sub_classes_id=? where sub_classes_id=?");
+		$promoteStudent->bindParam(1,$F2E);
+		$promoteStudent->bindParam(2,$F1E);
+        $promoteStudent->execute();
+		
+		//Commit the changes to the database
+		$this->dbCon->commit();
+
+		$_SESSION['students_promoted']= true;
+		}catch(Exception $e){
+				
+				echo $e->getMessage();
+				//Rollback the transaction.
+				$this->dbCon->rollBack();
+			}
+
+	
+	}// end of promoting students
+
+
+
+	public function demoteStudents($students){
+		if(!empty($students)){
+			$F1W = 1;
+			$F1E = 2;
+			$F1N = 3;
+			$F1S = 4;
+			$F2W = 5;
+			$F2E = 6;
+			$F2N = 7;
+			$F2S = 8;
+			$F3W = 9;
+			$F3E = 10;
+			$F3N = 11;
+			$F3S = 12;
+			$F4N = 13;
+			$F4S = 14;
+			$F5N = 15;
+			$F5S = 16;
+			$F6 = 17;
+			$F7 = 18;
+			$Graduation = 19;
+
+			foreach($students as $student){
+
+			switch ($_SESSION['sub_class']) {
+
+				case '1': //Form 1 West
+					$_SESSION['failed'] = true;
+					break;
+
+				case '2': //Form 1 East
+					$_SESSION['failed'] = true;
+					break;
+
+				case '3': //Form 1 North
+					$_SESSION['failed'] = true;
+					break;
+
+				case '4': //Form 1 South
+					$_SESSION['failed'] = true;
+					break;
+
+				case '5': //Form 2 West
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F1W);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F1W) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '6': //Form 2 East
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F1E);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			      	$demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F1E) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '7': //Form 2 North
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F1N);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F1N) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '8': //Form 2 South
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F1S);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F1S) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '9': //Form 3 West
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F2W);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F2W) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '10': //Form 3 East
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F2E);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F2E) 
+						));
+			        $_SESSION['students_demoted']=true;
+					break;
+
+				case '11': //Form 3 North
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F2N);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F2N) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '12': //Form 3 South
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F2S);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F2S) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '13': //Form 4 North
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F3W);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F3W) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '14': //Form 4 South
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F5S);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F5S) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '15': //Form 5 North
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F4N);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F4N) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '16': //Form 5 South
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F4S);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F4S) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '17': //Form 6
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F5S);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F5S) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '18': //Form 7
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F6);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F6) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				case '19': //Graduation
+					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
+					$demoteStudents->bindParam(1,$F7);
+					$demoteStudents->bindParam(2,$student);
+			        $demoteStudents->execute();
+
+			        $demotionRecord = $this->dbCon->prepare("INSERT INTO demotions 
+					(year, students_student_no, class_from, class_to)
+					VALUES (:year, :students_student_no, :class_from, :class_to)" );
+					$demotionRecord->execute(array(
+						':year'=>($_SESSION['academic_year']),
+						':students_student_no'=>($student),
+						':class_from'=>($_SESSION['sub_class']),
+						':class_to'=>($F7) 
+						));
+					$_SESSION['students_demoted']=true;
+					break;
+
+				default:
+					$_SESSION['failed'] = true;
+					break;
+			}
+
+			}
+			
+			
+		}
+		
+	} //end of demoting student(s)
 
 
 
@@ -2874,7 +3412,7 @@ public function getBookCount($book_id){
 
 	public function getStudentsWithFeesBalances($fees, $academic_year, $term){	
 		$payment_type_id = 1;	
-		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, SUM(amount) as amount, CONCAT(guardians.firstname, guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id)  WHERE payment_type_id=? AND payments.academic_year=? AND payments.term=? GROUP BY student_no");
+		$getStudentsWithFeesBalances = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, SUM(amount) as amount, CONCAT(guardians.firstname,' ', guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM payments INNER JOIN students ON (payments.students_student_no=students.student_no) INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id)  WHERE payment_type_id=? AND payments.academic_year=? AND payments.term=? GROUP BY student_no");
 		$getStudentsWithFeesBalances->bindParam(1,$payment_type_id);
 		$getStudentsWithFeesBalances->bindParam(2,$academic_year);
 		$getStudentsWithFeesBalances->bindParam(3,$term);
@@ -2889,7 +3427,7 @@ public function getBookCount($book_id){
 
 
 	public function getnonPaidStudents($fees, $academic_year, $term){	
-		$getnonPaidStudents = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, CONCAT(guardians.firstname, guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM students INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id) WHERE student_no NOT IN (SELECT students_student_no FROM payments) ");
+		$getnonPaidStudents = $this->dbCon->Prepare("SELECT student_no, students.firstname as firstname, students.lastname as lastname, students.email as email, sub_classes.name as sub_class_name, CONCAT(guardians.firstname,' ', guardians.lastname) as guardian_name, guardians.primary_phone as phone FROM students INNER JOIN sub_classes ON (students.sub_classes_id=sub_classes.id) INNER JOIN guardians ON(students.guardians_id=guardians.id) WHERE student_no NOT IN (SELECT students_student_no FROM payments) ");
 		//$getnonPaidStudents->bindParam(1,$payment_type_id);
 		//$getnonPaidStudents->bindParam(2,$academic_year);
 		//$getnonPaidStudents->bindParam(3,$term);
