@@ -139,7 +139,8 @@ $unpaidstudents = $getnonPaidStudents->getnonPaidStudents($fees, $academic_year,
         <?php
         if(isset($students) && count($students)>0){
           foreach($students as $student){ 
-              if($fees - $student['amount'] == 0){}else{  ?>          <tr>
+              if($fees - $student['amount'] == 0){}else{  ?>
+                <tr>
                   <td><?php echo $student['guardian_name']; ?></td>
                   <td><?php echo $student['phone']; ?></td>
                   <td><?php echo $student['student_no']; ?></td>

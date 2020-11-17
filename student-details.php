@@ -10,6 +10,9 @@ if(isset($_GET['id'])){
   $loginstatus = $getLoginStatus->getLoginStatus($id);
 }
 
+$getSubClasses = new Classes();
+$levels = $getSubClasses->getSubClasses();
+
 $getGuardians = new Guardian();
 $guardians = $getGuardians->getGuardians();
 
@@ -19,6 +22,14 @@ if (isset($_POST['change_guardian'])) {
 
   $changeGuardian = new Guardian();
   $changeGuardian->changeGuardian($guardian_id, $student_no);
+}
+
+if (isset($_POST['change_class'])) {
+  $sub_class = $_POST['sub_class'];
+  $student_no = $_POST['student_no'];
+
+  $changeClass = new Staff();
+  $changeClass->changeClass($sub_class, $student_no);
 }
 
 ?>
@@ -64,7 +75,7 @@ if (isset($_POST['change_guardian'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Student Details <button data-toggle="modal" data-target="#changeGuardian" class="btn btn-primary">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></button>
+        Student Details <button data-toggle="modal" data-target="#changeGuardian" class="btn btn-primary">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></button>&nbsp;<button data-toggle="modal" data-target="#changeClass" class="btn btn-primary">Change Class <i class="fa fa-exchange" aria-hidden="true"></i></button>
 
       </h1>
       <ol class="breadcrumb">
@@ -85,6 +96,18 @@ if (isset($_POST['change_guardian'])) {
         echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
         echo "<strong>Success! </strong>"; echo "You have successfully changed a Guardian for a student";
         unset($_SESSION["guardian_changed"]);
+        echo "</div>";
+         header('Refresh: 4; URL= view-students.php');
+      }
+      ?>
+
+      <?php
+      if(isset($_SESSION["class_changed"]) && $_SESSION["class_changed"]==true)
+      {
+        echo "<div class='alert alert-success'>";
+        echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+        echo "<strong>Success! </strong>"; echo "You have successfully changed a Class for a student";
+        unset($_SESSION["class_changed"]);
         echo "</div>";
          header('Refresh: 4; URL= view-students.php');
       }
@@ -256,6 +279,49 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 
   </div>
 </div>
+
+
+
+          <!-- Modal -->
+<div id="changeClass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Change Class <i class="fa fa-exchange" aria-hidden="true"></i></h4>
+      </div>
+      <div class="modal-body">
+        <form action="student-details.php?id=<?php if(isset($_GET['id'])){ echo $_GET['id'];} ?>" method="POST">
+           <div class="form-group">
+            <label>Select new Class</label>
+            <div class="radio">
+          <?php
+            if(isset($levels) && count($levels)>0){
+              foreach($levels as $level){ ?>
+                  <label><input required="" type="radio" name="sub_class" value="<?php if(isset($level)){echo $level['id'];} ?>"><?php if(isset($level)){echo $level['name'];} ?></label> <br>
+              <?php
+                
+              }
+            }
+          ?>
+          <input type="hidden" name="student_no" value="<?php if(isset($_GET['id'])){ echo $_GET['id'];} ?>">
+          
+          </div>
+          </div>
+          <button type="submit" name="change_class" class="btn btn-primary">Change Class</button>
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
