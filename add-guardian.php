@@ -84,7 +84,7 @@ if(isset($_POST['submit'])){
                                 echo "<strong>Success! </strong>"; echo "You have successfully added a guardian";
                                 unset($_SESSION["guardian-added"]);
                                 echo "</div>";
-								 header('Refresh: 5; URL= view-guardians.php');
+								 header('Refresh: 5; URL= view-guardian.php');
                             }
 							?>
       <div class="row box box-primary">

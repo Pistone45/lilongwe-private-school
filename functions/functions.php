@@ -506,7 +506,7 @@ class Students{
 	}
 
 	public function getStudents(){
-		$getStudents = $this->dbCon->Prepare("SELECT student_no,  students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, CONCAT(guardians.firstname, ' ' ,guardians.lastname)as guardian, place_of_birth,country_of_birth,nationality,home_language,
+		$getStudents = $this->dbCon->Prepare("SELECT student_no, students.email as email, students.firstname as firstname, students.middlename as middlename, students.lastname as lastname,dob, gender.name as gender, CONCAT(guardians.firstname, ' ' ,guardians.lastname)as guardian, place_of_birth,country_of_birth,nationality,home_language,
 		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type,
 		student_status.name as student_status,sub_classes.name as sub_class
 		FROM students INNER JOIN guardians ON(students.guardians_id=guardians.id) INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
