@@ -9,20 +9,21 @@ if (isset($_POST['submit'])) {
 
   $_SESSION['academic_year'] = $academic_year;
   $_SESSION['sub_class'] = $sub_class;
+  $_SESSION['term'] = $term;
 
 $getFinalPositions = new Staff();
 $positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_class);
 
 $getAllSubclassesOnFilter = new Staff();
 $sub_classes = $getAllSubclassesOnFilter->getAllSubclassesOnFilter();
-}
+}else{
 
-if (isset($_POST['change_class'])) {
-  $class = $_POST['class'];
-  $student_no = $_POST['student_no'];
+  $academic_year = $_SESSION['academic_year'];
+  $term = $_SESSION['term'];
+  $sub_class = $_SESSION['sub_class'];
 
-  $DemoteOrPromote = new Staff();
-  $DemoteOrPromote->DemoteOrPromote($class, $student_no);
+$getFinalPositions = new Staff();
+$positions = $getFinalPositions->getFinalPositions($academic_year, $term, $sub_class);
 
 }
 
@@ -129,24 +130,7 @@ if (isset($_POST['change_class'])) {
                   <td><?php echo $position['academic_year']; ?></td>
                   <td><?php echo $position['term']; ?></td>
                   <td><?php echo $position['mark']; ?> </td>
-                  <td>
-                  <form action="view-positions.php" method="POST">
-                  <input type="hidden" name="student_no[]" value="<?php if(isset($position)){ echo $position['student_no'];  } ?>">
-                  <div class="form-group">
-                    <select required="" name="class[]" class="form-control" id="sel1">
-          <?php
-          if(isset($sub_classes) && count($sub_classes)>0){
-          foreach($sub_classes as $sub_class){   ?>
-                      <option value="<?php echo $sub_class['sub_class_id']; ?>"><?php echo $sub_class['name']; ?></option>
-                <?php
-              }
-            } ?>
-               
-                    </select>
-                  </div>
-
-                  </td>
-
+                  <td><a href="student-stats.php?id=<?php echo $position['student_no']; ?>"><button class="btn btn-success">Details</button></a></td>
                 </tr>
 
           <?php
@@ -167,9 +151,6 @@ if (isset($_POST['change_class'])) {
                 </tr>
                 </tfoot>
               </table>
-              <button type="submit" name="change_class" class="btn btn-success btn-block">Promote or Demote</button>
-            </form>
-
         </div>
           
             <!-- form start -->

@@ -142,7 +142,7 @@ $exams = $getAllExamsPerClassSubject->getAllExamsPerClassSubject($class_id, $sub
                 </tfoot>
               </table> <?php
                       }else {
-                        echo "No Assignments Available";
+                        echo "No Exam results Available";
                       }
         ?>
            

@@ -12,6 +12,7 @@ $exam_type = $getExamTypes->getExamTypes();
 
 
 
+
 if (isset($_POST['submit'])) {
 	$subject_id = $_POST['subject_id'];
 	$sub_class_id = $_POST['sub_class_id'];
@@ -19,6 +20,9 @@ if (isset($_POST['submit'])) {
 	//get all students taking the subject per class
 	$getAllStudentsPerClassSubject = new Staff();
 	$student = $getAllStudentsPerClassSubject->getAllStudentsPerClassSubject($sub_class_id, $subject_id);
+
+  $checkAllStudentsPerClassSubject = new Staff();
+  $checkAllStudentsPerClassSubject = $checkAllStudentsPerClassSubject->checkAllStudentsPerClassSubject($sub_class_id, $subject_id);
 	
 }
 
@@ -208,8 +212,14 @@ if(isset($_POST['addMarks'])) {
         ?>
 					
 					<input type="hidden" id="class_id"  value="<?php if(isset($students['classes_id'])){echo $students['classes_id'];} ?>" name="class_id">					
-					<input type="hidden" id="subject_id" value="<?php if(isset($subject_id)) { echo $subject_id;} ?>" name="subject_id">						
-					<button type="submit" name="addMarks" class="btn btn-block btn-success">Submit Students Marks</button>
+					<input type="hidden" id="subject_id" value="<?php if(isset($subject_id)) { echo $subject_id;} ?>" name="subject_id">
+          <?php if ($checkAllStudentsPerClassSubject['student_no'] == 0) {
+            ?><?php
+          }else{
+            ?>
+            <button type="submit" name="addMarks" class="btn btn-block btn-success">Submit Students Marks</button>
+            <?php
+          } ?>						
 				  </form>       
             <!-- form ends -->
 

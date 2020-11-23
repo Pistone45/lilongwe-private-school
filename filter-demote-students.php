@@ -1,8 +1,8 @@
 <?php
 include_once("functions/functions.php");
 
-$getSubClasses = new Classes();
-$levels = $getSubClasses->getSubClasses();
+$getDemotionSubClasses = new Classes();
+$levels = $getDemotionSubClasses->getDemotionSubClasses();
 
 ?>
 <!DOCTYPE html>

@@ -566,6 +566,21 @@ class Students{
 	} //end of getting Specific Student
 	
 
+	public function getStudentDetailsPerAdmin($id){
+		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, firstname, middlename, lastname,dob, gender.name as gender,place_of_birth,country_of_birth,nationality,home_language,
+		year_of_entry,sporting_interests,musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,leaving_date,blood_type.name as blood_type,
+		student_status.name as student_status,sub_classes.name as sub_class, sub_classes.id as sub_class_id
+		FROM students INNER JOIN blood_type ON (blood_type.id=students.blood_type_id) INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN student_status 
+		ON (student_status.id=students.student_status_id) INNER JOIN gender ON (gender.id=students.gender_id) WHERE student_no=?");
+		$getSpecificStudent->bindParam(1,$id);
+		$getSpecificStudent->execute();
+		
+		if($getSpecificStudent->rowCount()>0){
+			$row = $getSpecificStudent->fetch();
+			return $row;
+		}
+	} //end of getting Specific Student
+
 
 public function getLoginStatus($id){
 		$getLoginStatus = $this->dbCon->Prepare("SELECT user_status_id FROM users WHERE username=?");
@@ -673,7 +688,7 @@ public function getLoginStatus($id){
 						  $_SESSION['student-added']=true;
 		
 					
-				}elseif($class_id==4 || $class_id==5 || $class_id==6){
+				}elseif($class_id==4 || $class_id==5 || $class_id==6 || $class_id==7){
 
 									$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob,place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
 					musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,blood_type_id,student_status_id,sub_classes_id,guardians_id, gender_id)
@@ -907,6 +922,26 @@ public function getLoginStatus($id){
 	WHERE sub_classes_has_assignments.sub_classes_id=? AND students_student_no=?" );
 		$getStudentAssignment->bindParam(1, $sub_class_id);
 		$getStudentAssignment->bindParam(2, $_SESSION['user']['username']);
+		$getStudentAssignment->execute();
+		
+		if($getStudentAssignment->rowCount()>0){
+			$rows = $getStudentAssignment->fetchAll();
+			return $rows;
+		}
+	} //end of getting assignments per student
+
+
+	public function getStudentAssignmentMarksPerAdmin($sub_class_id, $id){
+
+	$getStudentAssignment = $this->dbCon->Prepare("SELECT assignments.id as assignment_id, title, due_date, submissions.marks as marks,
+	subjects_id, assignment_type.name as assignment_type_name, terms_id, assignment_url, academic_year, subjects.name as subject_name
+	FROM assignments INNER JOIN submissions ON(submissions.assignments_id=assignments.id) INNER JOIN assignment_type
+	ON(assignments.assignment_type_id=assignment_type.id) INNER JOIN sub_classes_has_assignments ON (sub_classes_has_assignments.assignments_id=assignments.id)
+	INNER JOIN sub_classes
+	ON (sub_classes.id=sub_classes_has_assignments.sub_classes_id) INNER JOIN subjects ON (assignments.subjects_id=subjects.id) 
+	WHERE sub_classes_has_assignments.sub_classes_id=? AND students_student_no=?" );
+		$getStudentAssignment->bindParam(1, $sub_class_id);
+		$getStudentAssignment->bindParam(2, $id);
 		$getStudentAssignment->execute();
 		
 		if($getStudentAssignment->rowCount()>0){
@@ -1636,6 +1671,17 @@ class Classes{
 		}
 	} //end of getting classes
 
+
+	public function getDemotionSubClasses(){
+		$getDemotionSubClasses = $this->dbCon->Prepare("SELECT id,name, classes_id FROM sub_classes");
+		$getDemotionSubClasses->execute();
+		
+		if($getDemotionSubClasses->rowCount()>0){
+			$row = $getDemotionSubClasses->fetchAll();
+			return $row;
+		}
+	} //end of getting classes
+
 	
 	public function getClassPerSubClass($sub_class){
 		$getClassPerSubClass = $this->dbCon->PREPARE("SELECT classes_id FROM sub_classes WHERE id=?");
@@ -2110,6 +2156,44 @@ public function getAllSubclassSubjects($sub_class_id){
 		}
 	} //end of getting exam Results
 
+
+
+	public function getFinalAssignmentMarkPerAdmin($academic_year,$term, $id){
+		$general=3;
+		$exam_status_id = 2;
+		
+		$getFinalAssignmentMarkPerAdmin = $this->dbCon->Prepare("SELECT  student_no, SUM(mark) as mark, 
+		subject_name,academic_year,term, subjects_id
+			FROM (SELECT exam_results.students_student_no as student_no, exam_results.marks as mark, 
+					subjects.name as subject_name,exam_results.academic_year,exam_results.terms_id as term, classes_has_subjects_subjects_id as subjects_id
+					FROM exam_results INNER JOIN subjects ON (subjects.id=exam_results.classes_has_subjects_subjects_id)
+				WHERE exam_results.exam_status_id=? AND exam_results.students_student_no=? AND exam_results.academic_year=? AND exam_results.terms_id=?
+					GROUP BY classes_has_subjects_subjects_id,exam_results.students_student_no
+			UNION ALL
+			SELECT students_student_no as student_no, SUM(marks) as mark, 
+					subjects.name as subject_name,academic_year,terms_id as term, subjects_id
+					FROM submissions  INNER JOIN assignments ON (assignments.id=submissions.assignments_id) INNER JOIN subjects ON(subjects.id=assignments.subjects_id)
+					WHERE students_student_no=? AND academic_year=? AND terms_id=? AND assignment_type_id !=?
+					GROUP BY subjects_id,students_student_no
+			) results
+			group by subjects_id,student_no");
+		$getFinalAssignmentMarkPerAdmin->bindParam(1,$exam_status_id);
+		$getFinalAssignmentMarkPerAdmin->bindParam(2,$id);
+		$getFinalAssignmentMarkPerAdmin->bindParam(3,$academic_year);
+		$getFinalAssignmentMarkPerAdmin->bindParam(4,$term);
+		$getFinalAssignmentMarkPerAdmin->bindParam(5,$id);
+		$getFinalAssignmentMarkPerAdmin->bindParam(6,$academic_year);
+		$getFinalAssignmentMarkPerAdmin->bindParam(7,$term);
+		$getFinalAssignmentMarkPerAdmin->bindParam(8,$general);
+		$getFinalAssignmentMarkPerAdmin->execute();
+		
+		if($getFinalAssignmentMarkPerAdmin->rowCount()>0){
+			$rows = $getFinalAssignmentMarkPerAdmin->fetchAll();
+			return $rows;
+		}else{
+			return null;
+		}
+	} //end of getting exam Results
 	
 	public function getFinalPositions($academic_year,$term, $sub_class){
 	//get subjects count per sub_class
@@ -2326,49 +2410,6 @@ public function getAssignmentID($sub_class_id){
 
 
 
-	public function DemoteOrPromote($class, $student_no){
-		$checkClassHistory = $this->dbCon->PREPARE("SELECT year, old_class_id
-		FROM demotions_and_promotions 
-		WHERE year=? AND old_class_id=? " );
-		$checkClassHistory->bindValue(1, $_SESSION['academic_year']);
-		$checkClassHistory->bindValue(2, $_SESSION['sub_class']);
-		$checkClassHistory->execute();
-		if($checkClassHistory->rowCount()>0){
-
-			echo "<script>alert('You have already Promoted or Demoted this Class');</script>";
-		}else{
-			
-			if(count($student_no)>0){
-				foreach(array_combine($student_no, $class) as $students => $sub_class){
-					
-				$updateClass = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=? ");
-				$updateClass->bindParam(1, $sub_class);
-				$updateClass->bindParam(2, $students);
-				$updateClass->execute();
-
-
-					$DemoteOrPromote = $this->dbCon->prepare("INSERT INTO demotions_and_promotions 
-					(year, students_student_no, new_class_id, old_class_id)
-				VALUES (:year, :students_student_no, :new_class_id, :old_class_id)" );
-				$DemoteOrPromote->execute(array(
-						  ':year'=>($_SESSION['academic_year']),
-						  ':students_student_no'=>($students),
-						  ':new_class_id'=>($sub_class),
-						  ':old_class_id'=>($_SESSION['sub_class']) 
-						  ));
-					
-				}
-				
-			}
-				
-		$_SESSION['class_promoted']=true;		  		
-	}
-
-	}
-
-
-
-
 	public function deleteNotice($id){
 
 		$deleteNotice =$this->dbCon->PREPARE("DELETE FROM notices WHERE id='$id'");
@@ -2494,6 +2535,25 @@ public function getAllStudentsPerClassSubject($sub_class_id, $subjects_id){
 		if($getAllStudentsPerClassSubject->rowCount()>0){
 			$rows = $getAllStudentsPerClassSubject->fetchAll();			
 			return $rows;
+			
+		}
+		
+	}
+
+
+	public function checkAllStudentsPerClassSubject($sub_class_id, $subjects_id){
+		$checkAllStudentsPerClassSubject = $this->dbCon->PREPARE(" SELECT  COUNT(student_no) as student_no,firstname,middlename,lastname,subjects.name as subject, subjects.id as subject_id, classes.id as classes_id
+		FROM students INNER JOIN sub_classes ON (sub_classes.id=students.sub_classes_id) INNER JOIN classes ON (classes.id=sub_classes.classes_id)
+		INNER JOIN sub_classes_has_subjects ON (sub_classes_has_subjects.sub_classes_id=sub_classes.id) 
+		INNER JOIN subjects ON (subjects.id=sub_classes_has_subjects.subjects_id)
+		WHERE students.sub_classes_id =? AND sub_classes_has_subjects.subjects_id=?");
+		$checkAllStudentsPerClassSubject->bindParam(1,$sub_class_id);
+		$checkAllStudentsPerClassSubject->bindParam(2,$subjects_id);
+		$checkAllStudentsPerClassSubject->execute();
+		
+		if($checkAllStudentsPerClassSubject->rowCount()>0){
+			$row = $checkAllStudentsPerClassSubject->fetch();			
+			return $row;
 			
 		}
 		
@@ -2952,7 +3012,7 @@ public function promoteStudents(){
 
 				case '14': //Form 4 South
 					$demoteStudents = $this->dbCon->Prepare("UPDATE students SET sub_classes_id=? WHERE student_no=?	");
-					$demoteStudents->bindParam(1,$F5S);
+					$demoteStudents->bindParam(1,$F3S);
 					$demoteStudents->bindParam(2,$student);
 			        $demoteStudents->execute();
 
