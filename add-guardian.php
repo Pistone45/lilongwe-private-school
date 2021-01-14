@@ -116,12 +116,11 @@ if(isset($_POST['submit'])){
                   <label for="fatherEmail">Secondary Phone</label>
                   <input type="text" class="form-control" name="secondaryPhone" id="secondaryPhone" >
                 </div>
-				
-				 <div class="form-group">
-                  <label for="exampleInputPassword1">Address</label>
-                  <input type="text" class="form-control" name="address" id="address">
+
+         <div class="form-group">
+                  <label for="exampleInputPassword1">Email</label>
+                  <input type="text" class="form-control" name="email" id="email" >
                 </div>
-              
                 
               </div>
               <!-- /.box-body -->
@@ -135,9 +134,10 @@ if(isset($_POST['submit'])){
         <div class="col-md-6">
             
 			<div class="box-body">
-				 <div class="form-group">
-                  <label for="exampleInputPassword1">Email</label>
-                  <input type="text" class="form-control" name="email" id="email" >
+        
+         <div class="form-group">
+                  <label for="exampleInputPassword1">Address</label>
+                  <input type="text" class="form-control" name="address" id="address">
                 </div>
                <div class="form-group">
                   <label for="exampleInputPassword1">Ocuppation</label>

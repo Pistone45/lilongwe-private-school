@@ -3,7 +3,6 @@ include_once("functions/functions.php");
 
 if (isset($_SESSION['class_id'])) {
 
-
   $class_id = $_SESSION['class_id'];
 
   $getSpecificClass = new Classes();
@@ -26,6 +25,20 @@ if (isset($_SESSION['class_id'])) {
 
   $getOptionF = new Classes();
   $optionF = $getOptionF->getOptionF($class_id);
+
+}
+
+if (isset($_POST['subject_options'])) {
+  
+  $_SESSION['option_a'] = $_POST['option_a'];
+  $_SESSION['option_b'] = $_POST['option_b'];
+  $_SESSION['option_c'] = $_POST['option_c'];
+  $_SESSION['option_d'] = $_POST['option_d'];
+  $_SESSION['option_e'] = $_POST['option_e'];
+  $_SESSION['option_f'] = $_POST['option_f'];
+
+  $changeSubjectOptions = new Students();
+  $changeSubjectOptions->changeSubjectOptions();
 
 }
 
@@ -84,10 +97,21 @@ if (isset($_SESSION['class_id'])) {
     <!-- Main content -->
     <section class="content">
 	   <div class="box box-primary">
+      <?php
+      if(isset($_SESSION["subjects_changed"]) && $_SESSION["subjects_changed"]==true)
+      {
+          echo "<div class='alert alert-success'>";
+          echo "<button type='button' class='close' data-dismiss='alert'>*</button>";
+          echo "<strong>Success! </strong>"; echo "You have successfully changed subjects for a student";
+          unset($_SESSION["subjects_changed"]);
+          echo "</div>";
+       header('Refresh: 4; URL= view-students.php');
+        }
+     ?>
       <div class="row">
         <!-- left column -->
 		   <!-- form start -->
-      <form role="form" action="add-student.php" method="POST"> 
+      <form role="form" action="change-subjects.php" method="POST">
       <div class="box-body">
 			  
         <div class="col-md-6">
@@ -195,7 +219,7 @@ if (isset($_SESSION['class_id'])) {
 	
 				<br>
 				<div class="form-group">
-          <button type="submit" name="subject_options" class="btn btn-block btn-primary">Continue <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+          <button type="submit" name="subject_options" class="btn btn-block btn-primary">Change Subjects <i class="fa fa-save" aria-hidden="true"></i></button>
         </div>
 			  
         </div>

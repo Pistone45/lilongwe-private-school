@@ -118,7 +118,6 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
                 <tr>
                   <th>Guardian</th>
                   <th>Student NO</th>
-                  <th>Email</th>
                   <th>Firstname</th>
                   <th>Lastname</th>
                   <th>Class</th>
@@ -140,7 +139,6 @@ $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
 					<tr>
               <td><?php echo $student['guardian']; ?></td>
               <td><?php echo $student_no = $student['student_no']; ?></td>
-              <td><?php echo $student['email']; ?></td>
               <td><?php echo $student['firstname']; ?></td>
               <td> <?php echo $student['lastname']; ?></td>
               <td><?php echo $student['sub_class']; ?></td>

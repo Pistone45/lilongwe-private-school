@@ -2,9 +2,16 @@
 include_once("functions/functions.php");
 if(isset($_GET['id'])){
 	$id = $_GET['id'];
+  $_SESSION['student_id'] = $id; 
 	
 	$getSpecificStudent = new Students();
 	$details = $getSpecificStudent->getSpecificStudent($id);
+  $sub_class = $details['sub_class_id'];
+
+  $getClassPerSubClass = new Classes();
+  $classes_id = $getClassPerSubClass->getClassPerSubClass($sub_class);
+  $class_id = $classes_id['classes_id'];
+  $_SESSION['class_id'] = $class_id;
 
   $getLoginStatus = new Students();
   $loginstatus = $getLoginStatus->getLoginStatus($id);
@@ -15,14 +22,6 @@ $levels = $getSubClasses->getSubClasses();
 
 $getGuardians = new Guardian();
 $guardians = $getGuardians->getGuardians();
-
-if (isset($_POST['change_guardian'])) {
-  $guardian_id = $_POST['guardian_id'];
-  $student_no = $_POST['student_no'];
-
-  $changeGuardian = new Guardian();
-  $changeGuardian->changeGuardian($guardian_id, $student_no);
-}
 
 if (isset($_POST['change_class'])) {
   $sub_class = $_POST['sub_class'];
@@ -75,7 +74,7 @@ if (isset($_POST['change_class'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Student Details <button data-toggle="modal" data-target="#changeGuardian" class="btn btn-primary">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></button>&nbsp;<button data-toggle="modal" data-target="#changeClass" class="btn btn-primary">Change Class <i class="fa fa-exchange" aria-hidden="true"></i></button>
+        Student Details <a href="change-guardian.php"><button class="btn btn-primary">Change Guardian <i class="fa fa-exchange" aria-hidden="true"></i></button></a>&nbsp;<button data-toggle="modal" data-target="#changeClass" class="btn btn-primary">Change Class <i class="fa fa-exchange" aria-hidden="true"></i></button>
 
       </h1>
       <ol class="breadcrumb">
@@ -168,8 +167,17 @@ if ($loginstatus['user_status_id'] == 0) { ?>
 
 				</div>
 			</div>
-              
-		
+    <br>
+    <?php
+
+  if ($class_id == 1 || $class_id==2 || $class_id==3) {
+
+  }elseif($class_id==4 || $class_id==5 || $class_id==6 || $class_id==7){
+    ?>
+        <a href="change-subjects.php"><button class="btn btn-primary btn-block">Change Subjects</button></a>
+        <?php
+    }
+    ?>   
               
             </div>
             <!-- /.box-body -->

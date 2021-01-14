@@ -677,7 +677,7 @@ public function getLoginStatus($id){
 						  $updateStudentCount = new Students();
 						  $updateStudentCount->updateStudentCount($newCount);
 						  
-						  //add the teacher to users table for logins
+						  //add the Student to users table for logins
 							$role =30; //Students role id
 							$status = 1; //active status
 							$username = $student_no;
@@ -690,7 +690,7 @@ public function getLoginStatus($id){
 					
 				}elseif($class_id==4 || $class_id==5 || $class_id==6 || $class_id==7){
 
-									$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob,place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
+					$addStudent = $this->dbCon->prepare("INSERT INTO students (student_no,firstname,middlename,lastname,dob,place_of_birth,country_of_birth,nationality,home_language,year_of_entry,sporting_interests,
 					musical_interests,other_interests,medical_information,other_schools_attended,student_picture,home_doctor,admission_date,blood_type_id,student_status_id,sub_classes_id,guardians_id, gender_id)
 					VALUES (:student_no,:firstname,:middlename,:lastname,:dob,:place_of_birth,:country_of_birth,:nationality,:home_language,:year_of_entry,:sporting_interests,
 					:musical_interests,:other_interests,:medical_information,:other_schools_attended,:student_picture,:home_doctor,:admission_date,:blood_type_id,:student_status_id,:sub_classes_id,:guardian_id, :gender_id)" );
@@ -780,7 +780,7 @@ public function getLoginStatus($id){
 				  $updateStudentCount = new Students();
 				  $updateStudentCount->updateStudentCount($newCount);
 				  
-				  //add the teacher to users table for logins
+				  //add the Student to users table for logins
 					$role =30; //Students role id
 					$status = 1; //active status
 					$username = $student_no;
@@ -795,6 +795,70 @@ public function getLoginStatus($id){
 				
 	}
 	
+
+public function changeSubjectOptions(){
+
+		$deleteOptions = $this->dbCon->Prepare("DELETE FROM students_has_classes_has_subjects WHERE students_student_no=?");
+		$deleteOptions->bindParam(1,$_SESSION['student_id']);
+		$deleteOptions->execute();
+
+
+			  $addFirstStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addFirstStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_a']
+			  ));
+
+			  $addSecondStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addSecondStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_b']
+			  ));
+
+			  $addThirdStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addThirdStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_c']
+			  ));
+
+			  $addFourthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addFourthStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_d']
+			  ));
+
+			  $addFifthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addFifthStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_e']
+			  ));
+
+			  $addSixthStudentSubject = $this->dbCon->PREPARE("INSERT INTO students_has_classes_has_subjects 
+			  (students_student_no,classes_has_subjects_classes_id,classes_has_subjects_subjects_id)
+			  VALUES (:students_student_no,:classes_has_subjects_classes_id,:classes_has_subjects_subjects_id)");
+			  $addSixthStudentSubject->execute(array(
+				':students_student_no'=>$_SESSION['student_id'],
+				':classes_has_subjects_classes_id'=>$_SESSION['class_id'],
+				':classes_has_subjects_subjects_id'=>$_SESSION['option_f']
+			  ));
+
+		$_SESSION['subjects_changed'] = true;
+	} //end of changing subject options
 	
 	
 	public function editStudent($student_no,$sub_class, $student_picture,$firstname,$middlename,$lastname,$gender,$blood_type,$dob,$place_of_birth,$country_of_birth,$nationality,$home_language,$year_of_entry,$sporting_interests,$musical_interests,$other_interests,$medical_information,$other_schools_attended,$home_doctor,$admission_date){
@@ -2000,7 +2064,7 @@ class Staff{
 
 
 	public function getAllclasses(){
-		$getAllclasses = $this->dbCon->PREPARE("SELECT id as class_id, name as class_name FROM classes");
+		$getAllclasses = $this->dbCon->PREPARE("SELECT id as class_id, name as class_name FROM classes LIMIT 7");
 		$getAllclasses->bindParam(1,$_SESSION['user']['username']);
 		$getAllclasses->execute();
 		

@@ -174,7 +174,7 @@ if(isset($_POST['submit'])){
           <!-- general form elements -->
        
 				<input type="hidden" value="<?php if(isset($guardian_id)){ echo $guardian_id; } ?>" name="guardian_id" />
-			
+
                 <div class="form-group">
                   <label for="firstname">Firstname</label>
                   <input type="text" class="form-control" id="firstname" name="firstname" required>
@@ -225,7 +225,7 @@ if(isset($_POST['submit'])){
 				
 				<div class="form-group">
                   <label for="Email">Email</label>
-                  <input type="text" class="form-control" id="email" name="email" required>
+                  <input type="text" class="form-control" id="email" name="email">
                 </div>
 
         <div class="form-group">
