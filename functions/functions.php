@@ -3684,7 +3684,7 @@ public function getBookCount($book_id){
 
 
 	public function getAllBookCount(){	
-		$getAllBookCount = $this->dbCon->Prepare("SELECT SUM(count) as book_count FROM books");
+		$getAllBookCount = $this->dbCon->Prepare("SELECT COUNT(id) as book_count FROM books");
 		//$getAllBookCount->bindParam(1,id);
 		$getAllBookCount->execute();
 		
